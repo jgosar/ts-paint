@@ -1,11 +1,11 @@
 @import 'variables';
 
-:host(tsp-menus){
+:host(tsp-menu){
   display: flex;
   cursor: default;
 }
 
-.tsp-menus__menu-level-1{
+.tsp-menu__menu-level-1{
   padding-left: 6px;
   padding-right: 6px;
   padding-top: 3px;
@@ -13,12 +13,12 @@
   position: relative;
 }
 
-.tsp-menus__menu-level-1:hover{
+.tsp-menu__menu-level-1:hover{
   background-color: @color--dark-blue;
   color: white;
 }
 
-.tsp-menus__menu-level-2-container{
+.tsp-menu__menu-level-2-container{
   display: none;
   position: absolute;
   z-index: 1;
@@ -27,15 +27,15 @@
   top: 19px;
 }
 
-.tsp-menus__menu-level-1:hover .tsp-menus__menu-level-2-container{
+.tsp-menu__menu-level-1:hover .tsp-menu__menu-level-2-container{
   display: block;
 }
 
-.tsp-menus__menu-level-2:last-child{
+.tsp-menu__menu-level-2:last-child{
   margin-bottom: 2px;
 }
 
-.tsp-menus__menu-level-2{
+.tsp-menu__menu-level-2{
   padding-left: 23px;
   padding-right: 21px;
   padding-top: 2px;
@@ -43,15 +43,15 @@
   white-space: nowrap;
 }
 
-.tsp-menus__menu-level-2:hover{
+.tsp-menu__menu-level-2:hover{
   background-color: @color--dark-blue;
   color: white;
 }
 
-.tsp-menus__menu-level-2--disabled{
+.tsp-menu__menu-level-2--disabled{
   color: @color--grey;
 }
 
-.tsp-menus__menu-level-2--disabled:hover{
+.tsp-menu__menu-level-2--disabled:hover{
   color: @color--grey;
 }

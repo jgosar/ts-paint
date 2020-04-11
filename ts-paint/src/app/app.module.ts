@@ -4,13 +4,13 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { TsPaintComponent } from './views/ts-paint/ts-paint.component';
 import { TsPaintStore } from './services/ts-paint/ts-paint.store';
-import { MenusComponent } from './components/menus/menus.component';
+import { MenuComponent } from './components/menu/menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     TsPaintComponent,
-    MenusComponent
+    MenuComponent
   ],
   imports: [
     BrowserModule

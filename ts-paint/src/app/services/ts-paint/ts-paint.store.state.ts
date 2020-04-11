@@ -1,5 +1,5 @@
-import { MenuAction } from 'src/app/types/menu-action';
-import { MenuItem } from 'src/app/types/menu-item';
+import { MenuAction } from 'src/app/types/menu/menu-action';
+import { MenuItem } from 'src/app/types/menu/menu-item';
 
 export class TsPaintStoreState {
   menuStructure: MenuItem[] = [
