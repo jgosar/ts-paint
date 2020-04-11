@@ -1,0 +1,35 @@
+<div class="tsp-ts-paint__container" (paste)="onPaste($event)" (copy)="onCopy()">
+  <div class="tsp-horizontal-bar">
+    <!--tsPaintMenus [menuStructure]="menuStructure"></tsPaintMenus-->
+  </div>
+
+  <div class="tsp-horizontal-bar tsp-can-grow">
+    <div class="tsp-vertical-bar" style="margin-left: 8px; margin-right: 4px">
+      <!--tsPaintToolbox [availableTools]="availableDrawingTools" [selectedTool]="selectedDrawingTool.name"
+        (selectedToolChange)="changeDrawingTool($event)">
+      </tsPaintToolbox-->
+    </div>
+    <div #canvasContainer class="tsp-vertical-bar tsp-can-grow tsp-ts-paint__canvas-container">
+      <!--tsPaintCanvas #canvas [zoom]="zoomFactor" [selectionCorners]="selectedDrawingTool?.selectionCorners"
+        (mouseMove)="mouseMove($event)" (mouseDown)="mouseDown($event)" (mouseUp)="mouseUp($event)"
+        (mouseScroll)="mouseScroll($event)"></tsPaintCanvas-->
+    </div>
+  </div>
+
+  <div class="tsp-horizontal-bar">
+    <!--tsPaintPalette [selectedPrimaryColor]="primaryColor" [selectedSecondaryColor]="secondaryColor"
+      (selectedColorChange)="changeColor($event)"></tsPaintPalette-->
+  </div>
+
+  <div class="tsp-horizontal-bar">
+    TODO: info
+  </div>
+</div>
+
+<div style="display: none">
+  <!--tsPaintFileUpload #fileUpload (imageUploaded)="imageUploaded($event)"></tsPaintFileUpload>
+  <tsPaintFileDownload #fileDownload [imageDataGetter]="getImageData.bind(this)" [fileName]="fileName">
+  </tsPaintFileDownload>
+  <tsPaintSelectionCopy #selectionCopy>
+  </tsPaintSelectionCopy-->
+</div>
