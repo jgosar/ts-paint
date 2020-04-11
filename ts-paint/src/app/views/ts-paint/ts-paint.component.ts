@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { TsPaintStore } from 'src/app/services/ts-paint/ts-paint.store';
 
 @Component({
   selector: 'tsp-ts-paint',
@@ -7,7 +8,7 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TsPaintComponent implements OnInit {
 
-  constructor() { }
+  constructor(public store: TsPaintStore) { }
 
   ngOnInit(): void {
   }

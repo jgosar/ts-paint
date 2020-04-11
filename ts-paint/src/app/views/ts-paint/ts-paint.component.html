@@ -1,6 +1,7 @@
 <div class="tsp-ts-paint__container" (paste)="onPaste($event)" (copy)="onCopy()">
   <div class="tsp-horizontal-bar">
     <!--tsPaintMenus [menuStructure]="menuStructure"></tsPaintMenus-->
+    <tsp-menus [menuStructure]="store.state.menuStructure"></tsp-menus>
   </div>
 
   <div class="tsp-horizontal-bar tsp-can-grow">

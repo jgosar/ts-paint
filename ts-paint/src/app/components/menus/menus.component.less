@@ -1,0 +1,57 @@
+@import 'variables';
+
+:host(tsp-menus){
+  display: flex;
+  cursor: default;
+}
+
+.tsp-menus__menu-level-1{
+  padding-left: 6px;
+  padding-right: 6px;
+  padding-top: 3px;
+  padding-bottom: 4px;
+  position: relative;
+}
+
+.tsp-menus__menu-level-1:hover{
+  background-color: @color--dark-blue;
+  color: white;
+}
+
+.tsp-menus__menu-level-2-container{
+  display: none;
+  position: absolute;
+  z-index: 1;
+  background-color: @color--lighter-grey;
+  color: black;
+  top: 19px;
+}
+
+.tsp-menus__menu-level-1:hover .tsp-menus__menu-level-2-container{
+  display: block;
+}
+
+.tsp-menus__menu-level-2:last-child{
+  margin-bottom: 2px;
+}
+
+.tsp-menus__menu-level-2{
+  padding-left: 23px;
+  padding-right: 21px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  white-space: nowrap;
+}
+
+.tsp-menus__menu-level-2:hover{
+  background-color: @color--dark-blue;
+  color: white;
+}
+
+.tsp-menus__menu-level-2--disabled{
+  color: @color--grey;
+}
+
+.tsp-menus__menu-level-2--disabled:hover{
+  color: @color--grey;
+}

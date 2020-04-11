@@ -1,3 +1,5 @@
+@import 'variables';
+
 @font-face {
   font-family: 'Windows95';
   src: url('assets/fonts/win95.woff2') format('woff2'),
@@ -9,6 +11,7 @@
 body{
   font-family: Windows95;
   font-size: 8px;
+  color: black;
 }
 
 .tsp-can-grow{
@@ -24,4 +27,14 @@ body{
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.tsp-raised-item-container{
+  border: 1px solid;
+  border-color: @color--lighter-grey black black @color--lighter-grey;
+}
+
+.tsp-raised-item{
+  border: 1px solid;
+  border-color: white @color--grey @color--grey white;
 }
