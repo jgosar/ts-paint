@@ -1,10 +1,12 @@
 import { MenuAction } from 'src/app/types/menu/menu-action';
 import { MenuItem } from 'src/app/types/menu/menu-item';
 import { createImage } from 'src/app/helpers/image.helpers';
+import { FileUploadComponent } from 'src/app/components/file-upload/file-upload.component';
 
 export class TsPaintStoreState {
   zoom: number = 1;
   image: ImageData = createImage(300, 200);
+  fileName: string;
   menuStructure: MenuItem[] = [
     {
       name: 'File',

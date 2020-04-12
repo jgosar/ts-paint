@@ -27,9 +27,9 @@ export class ZoomableCanvasComponent implements OnChanges {
   }
 
   private drawImage(image: ImageData, canvas: HTMLCanvasElement) {
-    canvas.width = this.image.width;
-    canvas.height = this.image.height;
+    canvas.width = image.width;
+    canvas.height = image.height;
     const context = canvas.getContext('2d');
-    context.putImageData(this.image, 0, 0);
+    context.putImageData(image, 0, 0);
   }
 }
