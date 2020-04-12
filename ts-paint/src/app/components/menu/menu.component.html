@@ -3,8 +3,7 @@
     <div class="tsp-raised-item">
       <ng-container *ngFor="let menu2 of menu1.menus">
         <div *ngIf="menu2.name" class="tsp-menu__menu-level-2"
-          [ngClass]="{'tsp-menu__menu-level-2--disabled': menu2.disabled}"
-          (click)="store.executeMenuAction(menu2.action)">
+          [ngClass]="{'tsp-menu__menu-level-2--disabled': menu2.disabled}" (click)="itemSelected.emit(menu2)">
           {{menu2.name}}
         </div>
         <hr *ngIf="!menu2.name" />

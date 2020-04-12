@@ -1,6 +1,7 @@
 <div class="tsp-ts-paint__container" (paste)="onPaste($event)" (copy)="onCopy()">
   <div class="tsp-horizontal-bar">
-    <tsp-menu [menuStructure]="store.state.menuStructure"></tsp-menu>
+    <tsp-menu [menuStructure]="store.state.menuStructure" (itemSelected)="store.executeMenuAction($event.action)">
+    </tsp-menu>
   </div>
 
   <div class="tsp-horizontal-bar tsp-can-grow">
@@ -10,6 +11,7 @@
       </tsPaintToolbox-->
     </div>
     <div #canvasContainer class="tsp-vertical-bar tsp-can-grow tsp-ts-paint__canvas-container">
+      <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
       <!--tsPaintCanvas #canvas [zoom]="zoomFactor" [selectionCorners]="selectedDrawingTool?.selectionCorners"
         (mouseMove)="mouseMove($event)" (mouseDown)="mouseDown($event)" (mouseUp)="mouseUp($event)"
         (mouseScroll)="mouseScroll($event)"></tsPaintCanvas-->

@@ -1,7 +1,10 @@
 import { MenuAction } from 'src/app/types/menu/menu-action';
 import { MenuItem } from 'src/app/types/menu/menu-item';
+import { createImage } from 'src/app/helpers/image.helpers';
 
 export class TsPaintStoreState {
+  zoom: number = 1;
+  image: ImageData = createImage(300, 200);
   menuStructure: MenuItem[] = [
     {
       name: 'File',
@@ -216,4 +219,12 @@ export class TsPaintStoreState {
       ]
     }
   ];
+  /*drawingTools = {
+    rectangleSelect: () => new RectangleSelectTool(paintArea, saveChanges, clearChanges, getImageData, setSelection),
+    colorFiller: () => new ColorFillerTool(paintArea, saveChanges, clearChanges, getImageData, batchPaintPixels),
+    colorPicker: () => new ColorPickerTool(paintArea, saveChanges, clearChanges, getImageData, changeColor),
+    line: () => new LineTool(paintArea, saveChanges, clearChanges),
+    pencil: () => new PencilTool(paintArea, saveChanges, clearChanges),
+    rectangle: () => new RectangleTool(paintArea, saveChanges, clearChanges)
+  };*/
 }
