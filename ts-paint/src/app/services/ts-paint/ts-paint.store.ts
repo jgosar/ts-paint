@@ -8,7 +8,6 @@ import { Color } from 'src/app/types/base/color';
 import { Point } from 'src/app/types/base/point';
 import { ImageSelection } from 'src/app/types/base/image-selection';
 import { TsPaintService } from './ts-paint.service';
-import { FileUploadEvent } from 'src/app/types/file-upload/file-upload-event';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -25,11 +24,6 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     this.patchState(image, 'image');
   }
 
-  imageUploaded(upload: FileUploadEvent) {
-    this.setImage(upload.imageData);
-    this.patchState(upload.fileName, 'fileName');
-  }
-
   private getMenuActionFunction(menuAction: MenuAction): () => void {
     switch (menuAction) {
       case MenuAction.OPEN_FILE: return this.openFile.bind(this);
@@ -43,7 +37,10 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private openFile() {
-    this.tsPaintService.openFileUploadDialog();
+    this.tsPaintService.openFile().then(value => {
+      this.setImage(value.imageData);
+      this.patchState(value.fileName, 'fileName');
+    });
   }
 
   private saveFile() {

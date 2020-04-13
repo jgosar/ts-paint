@@ -3,7 +3,7 @@ import { FileUploadEvent } from 'src/app/types/file-upload/file-upload-event';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TsPaintService } from 'src/app/services/ts-paint/ts-paint.service';
-import { TsPaintStore } from 'src/app/services/ts-paint/ts-paint.store';
+import { PromiseParams } from 'src/app/types/async/promise-params';
 
 @Component({
   selector: 'tsp-file-upload',
@@ -11,28 +11,29 @@ import { TsPaintStore } from 'src/app/services/ts-paint/ts-paint.store';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FileUploadComponent implements OnDestroy {
-  //@Output()
-  //imageUploaded: EventEmitter<FileUploadEvent> = new EventEmitter<FileUploadEvent>();
-
   @ViewChild('fileInput')
   fileInput: ElementRef;
   @ViewChild('hiddenCanvas')
   hiddenCanvas: ElementRef;
 
-  private ngUnsubscribe$: Subject<undefined> = new Subject();
+  private _ngUnsubscribe: Subject<undefined> = new Subject();
+  private _promise: PromiseParams<FileUploadEvent>;
 
-  constructor(private tsPaintService: TsPaintService,
-    private tsPaintStore: TsPaintStore) {
-    tsPaintService.openFileUploadDialogSubject
-      .pipe(takeUntil(this.ngUnsubscribe$))
-      .subscribe(() => {
+  constructor(private tsPaintService: TsPaintService) {
+    tsPaintService.openFileSubject
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((openFilePromise) => {
+        if (this._promise) {
+          this._promise.reject();
+        }
+        this._promise = openFilePromise;
         this.openFileDialog();
       });
   }
 
   ngOnDestroy(): void {
-    this.ngUnsubscribe$.next();
-    this.ngUnsubscribe$.complete();
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   openFileDialog() {
@@ -44,10 +45,9 @@ export class FileUploadComponent implements OnDestroy {
     const fileName: string = this.getFileNameWithoutExtension(uploadedFile.name);
 
     this.getImageDataFromUpload(uploadedFile)
-      .pipe(takeUntil(this.ngUnsubscribe$))
+      .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(imageData => {
-        //this.imageUploaded.emit({ imageData, fileName });
-        this.tsPaintStore.imageUploaded({ imageData, fileName });
+        this._promise.resolve({ imageData, fileName });
       });
   }
 
