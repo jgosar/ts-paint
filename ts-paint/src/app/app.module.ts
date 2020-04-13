@@ -10,6 +10,7 @@ import { FileUploadComponent } from './components/file-upload/file-upload.compon
 import { TsPaintService } from './services/ts-paint/ts-paint.service';
 import { FileDownloadComponent } from './components/file-download/file-download.component';
 import { MouseTrackerComponent } from './components/mouse-tracker/mouse-tracker.component';
+import { ToolboxComponent } from './components/toolbox/toolbox.component';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,8 @@ import { MouseTrackerComponent } from './components/mouse-tracker/mouse-tracker.
     ZoomableCanvasComponent,
     FileUploadComponent,
     FileDownloadComponent,
-    MouseTrackerComponent
+    MouseTrackerComponent,
+    ToolboxComponent
   ],
   imports: [
     BrowserModule

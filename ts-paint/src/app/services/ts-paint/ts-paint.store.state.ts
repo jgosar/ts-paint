@@ -5,6 +5,7 @@ import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
 import { DrawingToolBehaviour } from 'src/app/types/drawing-tools/drawing-tool-behaviour';
 import { Color } from 'src/app/types/base/color';
 import { DrawingToolAction } from 'src/app/types/drawing-tools/drawing-tool-action';
+import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 
 export class TsPaintStoreState {
   zoom: number = 1;
@@ -16,6 +17,9 @@ export class TsPaintStoreState {
   previewAction: DrawingToolAction;
   actions: DrawingToolAction[] = [];
   selectedDrawingTool: DrawingTool;
+  availableDrawingTools: DrawingToolType[] = [
+    DrawingToolType.pencil, DrawingToolType.line
+  ];
   menuStructure: MenuItem[] = [
     {
       name: 'File',

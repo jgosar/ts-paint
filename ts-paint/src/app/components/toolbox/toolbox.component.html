@@ -1,0 +1,3 @@
+<button *ngFor="let tool of availableTools" class="tsp-button tsp-toolbox__button" [ngClass]="getNgClass(tool)"
+  (click)="selectTool(tool)">
+</button>

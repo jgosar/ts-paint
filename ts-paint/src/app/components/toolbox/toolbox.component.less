@@ -1,0 +1,50 @@
+@import 'variables';
+
+:host(tsp-toolbox){
+  width: 50px;
+  padding-top: 1px;
+}
+
+.tsp-toolbox__button{
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  margin: -1px 0 0 1px;
+  display: inline-block;
+}
+
+.tsp-toolbox__button:active{
+  background-position: calc(50% + 2px) calc(50% + 2px);
+  border-color: @color--grey white white @color--grey;
+  background-color: @color--lighter-grey;
+}
+
+.tsp-toolbox__button--selected{
+  background-position: calc(50% + 1px) calc(50% + 1px);
+  border-color: @color--grey white white @color--grey;
+  background-color: @color--lightest-grey;
+}
+
+.tsp-toolbox__button--lineIcon{
+  background: url("../../../assets/icons/line.png") no-repeat center;
+}
+
+.tsp-toolbox__button--pencilIcon{
+  background: url("../../../assets/icons/pencil.png") no-repeat center;
+}
+
+.tsp-toolbox__button--rectangleIcon{
+  background: url("../../../assets/icons/rectangle.png") no-repeat center;
+}
+
+.tsp-toolbox__button--colorPickerIcon{
+  background: url("../../../assets/icons/colorPicker.png") no-repeat center;
+}
+
+.tsp-toolbox__button--colorFillerIcon{
+  background: url("../../../assets/icons/colorFiller.png") no-repeat center;
+}
+
+.tsp-toolbox__button--rectangleSelectIcon{
+  background: url("../../../assets/icons/rectangleSelect.png") no-repeat center;
+}

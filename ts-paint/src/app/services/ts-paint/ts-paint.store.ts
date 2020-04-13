@@ -92,10 +92,6 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     }
 
     this.patchState(image, action.preview ? 'previewImage' : 'image');
-
-    if (!action.preview) {
-      this.setDrawingTool(action.tool);
-    }
   }
 
   private openFile() {

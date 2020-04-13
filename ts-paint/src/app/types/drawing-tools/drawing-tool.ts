@@ -8,9 +8,8 @@ import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
   private readonly _maxPoints: number;
-  private _hidden: boolean = false;
 
-  constructor(private type: DrawingToolType, private addAction: (action: DrawingToolAction) => void) {
+  constructor(public type: DrawingToolType, private addAction: (action: DrawingToolAction) => void) {
     switch (type) {
       /*case DrawingToolType.freeFormSelect:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
@@ -69,48 +68,55 @@ export class DrawingTool {
       case DrawingToolType.moveSelection:
         this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
         this._maxPoints = 2;
-        this._hidden = true;
         return;*/
     }
 
     assertUnreachable(type);
   }
 
-  private mouseIsDown: boolean
-  private mouseDownPoint: Point;
-  private mousePoints: Point[] = [];
+  private _mouseIsDown: boolean
+  private _mouseDownPoint: Point;
+  private _mousePoints: Point[] = [];
 
   mouseDown(event: MouseButtonEvent) {
-    this.mouseIsDown = true;
+    this._mouseIsDown = true;
 
     if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
-      this.mouseDownPoint = event.point;
+      this._mouseDownPoint = event.point;
     } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
-      this.mousePoints.push(event.point);
+      this._mousePoints.push(event.point);
     }
   }
 
   mouseUp(point: Point) {
-    this.mouseIsDown = false;
+    this._mouseIsDown = false;
 
     if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
-      this.addAction({ tool: this.type, points: [this.mouseDownPoint, point], preview: false });
+      this.addAction({ tool: this.type, points: [this._mouseDownPoint, point], preview: false });
+      this.clearData();
     } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
-      this.mousePoints.push(point);
-      this.addAction({ tool: this.type, points: this.mousePoints, preview: false });
+      this._mousePoints.push(point);
+      this.addAction({ tool: this.type, points: this._mousePoints, preview: false });
+      this.clearData();
     }
   }
 
   mouseMove(point: Point) {
     if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
-      if (this.mouseIsDown) {
-        this.addAction({ tool: this.type, points: [this.mouseDownPoint, point], preview: true });
+      if (this._mouseIsDown) {
+        this.addAction({ tool: this.type, points: [this._mouseDownPoint, point], preview: true });
       }
     } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
-      if (this.mouseIsDown) {
-        this.mousePoints.push(point);
-        this.addAction({ tool: this.type, points: this.mousePoints, preview: true });
+      if (this._mouseIsDown) {
+        this._mousePoints.push(point);
+        this.addAction({ tool: this.type, points: this._mousePoints, preview: true });
       }
     }
+  }
+
+  private clearData() {
+    this._mouseIsDown = undefined;
+    this._mouseDownPoint = undefined;
+    this._mousePoints = [];
   }
 }

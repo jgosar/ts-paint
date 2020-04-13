@@ -6,9 +6,9 @@
 
   <div class="tsp-horizontal-bar tsp-can-grow">
     <div class="tsp-vertical-bar" style="margin-left: 8px; margin-right: 4px">
-      <!--tsPaintToolbox [availableTools]="availableDrawingTools" [selectedTool]="selectedDrawingTool.name"
-        (selectedToolChange)="changeDrawingTool($event)">
-      </tsPaintToolbox-->
+      <tsp-toolbox [availableTools]="store.state.availableDrawingTools"
+        [selectedTool]="store.state.selectedDrawingTool?.type" (selectedToolChange)="store.setDrawingTool($event)">
+      </tsp-toolbox>
     </div>
     <div #canvasContainer class="tsp-vertical-bar tsp-can-grow tsp-ts-paint__canvas-container">
       <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>

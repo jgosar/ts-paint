@@ -12,7 +12,7 @@ export class TsPaintComponent implements OnInit {
   constructor(public store: TsPaintStore) { }
 
   ngOnInit(): void {
-    this.store.setDrawingTool(DrawingToolType.pencil);
+    this.store.setDrawingTool(DrawingToolType.line);
   }
 
   onPaste(event: any) {
