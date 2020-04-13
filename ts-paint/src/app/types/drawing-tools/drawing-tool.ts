@@ -4,6 +4,7 @@ import { MouseButtonEvent } from '../mouse-tracker/mouse-button-event';
 import { Point } from '../base/point';
 import { DrawingToolType } from './drawing-tool-type';
 import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
+import { MouseButton } from '../mouse-tracker/mouse-button';
 
 export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
@@ -77,9 +78,11 @@ export class DrawingTool {
   private _mouseIsDown: boolean
   private _mouseDownPoint: Point;
   private _mousePoints: Point[] = [];
+  private _swapColors: boolean;
 
   mouseDown(event: MouseButtonEvent) {
     this._mouseIsDown = true;
+    this._swapColors = event.button !== MouseButton.LEFT;
 
     if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
       this._mouseDownPoint = event.point;
@@ -92,31 +95,39 @@ export class DrawingTool {
     this._mouseIsDown = false;
 
     if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
-      this.addAction({ tool: this.type, points: [this._mouseDownPoint, point], preview: false });
-      this.clearData();
+      this.addFinalAction([this._mouseDownPoint, point]);
     } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
       this._mousePoints.push(point);
-      this.addAction({ tool: this.type, points: this._mousePoints, preview: false });
-      this.clearData();
+      this.addFinalAction(this._mousePoints);
     }
   }
 
   mouseMove(point: Point) {
     if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
       if (this._mouseIsDown) {
-        this.addAction({ tool: this.type, points: [this._mouseDownPoint, point], preview: true });
+        this.addPreviewAction([this._mouseDownPoint, point]);
       }
     } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
       if (this._mouseIsDown) {
         this._mousePoints.push(point);
-        this.addAction({ tool: this.type, points: this._mousePoints, preview: true });
+        this.addPreviewAction(this._mousePoints);
       }
     }
+  }
+
+  private addPreviewAction(points: Point[]) {
+    this.addAction({ tool: this.type, points, swapColors: this._swapColors, preview: true });
+  }
+
+  private addFinalAction(points: Point[]) {
+    this.addAction({ tool: this.type, points, swapColors: this._swapColors, preview: false });
+    this.clearData();
   }
 
   private clearData() {
     this._mouseIsDown = undefined;
     this._mouseDownPoint = undefined;
     this._mousePoints = [];
+    this._swapColors = undefined;
   }
 }

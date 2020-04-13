@@ -1,0 +1,19 @@
+<div class="colorSelector">
+  <div class="depressedItemContainer">
+    <div class="depressedItem selectedColorsDiv">
+      <div class="raisedItemContainer colorSampleContainer" style="bottom: 3px; right: 3px">
+        <div class="raisedItem colorSample" [style.background-color]="getRgb(selectedSecondaryColor)">
+        </div>
+      </div>
+      <div class="raisedItemContainer colorSampleContainer" style="top: 3px; left: 2px">
+        <div class="raisedItem colorSample" [style.background-color]="getRgb(selectedPrimaryColor)">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngFor="let color of availableColors" class="depressedItemContainer">
+    <div class="depressedItem paletteButton" [style.background-color]="getRgb(color)"
+      (click)="selectColor($event, color)" (contextmenu)="selectColor($event, color)">
+    </div>
+  </div>
+</div>

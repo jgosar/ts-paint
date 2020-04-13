@@ -11,6 +11,7 @@ import { TsPaintService } from './services/ts-paint/ts-paint.service';
 import { FileDownloadComponent } from './components/file-download/file-download.component';
 import { MouseTrackerComponent } from './components/mouse-tracker/mouse-tracker.component';
 import { ToolboxComponent } from './components/toolbox/toolbox.component';
+import { PaletteComponent } from './components/palette/palette.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { ToolboxComponent } from './components/toolbox/toolbox.component';
     FileUploadComponent,
     FileDownloadComponent,
     MouseTrackerComponent,
-    ToolboxComponent
+    ToolboxComponent,
+    PaletteComponent
   ],
   imports: [
     BrowserModule

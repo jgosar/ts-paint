@@ -16,15 +16,14 @@
       <tsp-mouse-tracker [zoom]="store.state.zoom" [image]="store.state.image"
         (mouseMove)="store.processMouseMove($event)" (mouseDown)="store.processMouseDown($event)"
         (mouseUp)="store.processMouseUp($event)" (mouseScroll)="store.processMouseScroll($event)"></tsp-mouse-tracker>
-      <!--tsPaintCanvas #canvas [zoom]="zoomFactor" [selectionCorners]="selectedDrawingTool?.selectionCorners"
-        (mouseMove)="mouseMove($event)" (mouseDown)="mouseDown($event)" (mouseUp)="mouseUp($event)"
-        (mouseScroll)="mouseScroll($event)"></tsPaintCanvas-->
     </div>
   </div>
 
   <div class="tsp-horizontal-bar">
-    <!--tsPaintPalette [selectedPrimaryColor]="primaryColor" [selectedSecondaryColor]="secondaryColor"
-      (selectedColorChange)="changeColor($event)"></tsPaintPalette-->
+    <tsp-palette [selectedPrimaryColor]="this.store.state.primaryColor"
+      [selectedSecondaryColor]="this.store.state.secondaryColor" [availableColors]="this.store.state.availableColors"
+      (selectedColorChange)="this.store.setColor($event)">
+    </tsp-palette>
   </div>
 
   <div class="tsp-horizontal-bar">

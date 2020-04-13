@@ -14,6 +14,7 @@ import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
 import { DrawingToolAction } from 'src/app/types/drawing-tools/drawing-tool-action';
 import { drawLine, drawLines } from 'src/app/helpers/drawing.helpers';
 import { cloneImage } from 'src/app/helpers/image.helpers';
+import { ColorSelection } from 'src/app/types/base/color-selection';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -32,6 +33,14 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   setDrawingTool(toolType: DrawingToolType) {
     this.patchState(this.getDrawingTool(toolType), 'selectedDrawingTool');
+  }
+
+  setColor(selection: ColorSelection) {
+    if (selection.primary) {
+      this.patchState(selection.color, 'primaryColor');
+    } else {
+      this.patchState(selection.color, 'secondaryColor');
+    }
   }
 
   processMouseDown(event: MouseButtonEvent) {
@@ -79,13 +88,14 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   private executeDrawingToolAction(action: DrawingToolAction) {
     const image: ImageData = action.preview ? new ImageData(this.state.image.width, this.state.image.height) : cloneImage(this.state.image);
+    const color: Color = action.swapColors ? this.state.secondaryColor : this.state.primaryColor;
 
     switch (action.tool) {
       case DrawingToolType.pencil:
-        drawLines(action.points, this.state.primaryColor, image);
+        drawLines(action.points, color, image);
         break;
       case DrawingToolType.line:
-        drawLine(action.points[0], action.points[1], this.state.primaryColor, image);
+        drawLine(action.points[0], action.points[1], color, image);
         break;
       default:
         assertUnreachable(action.tool);

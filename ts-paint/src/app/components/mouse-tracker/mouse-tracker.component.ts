@@ -62,7 +62,7 @@ export class MouseTrackerComponent implements OnChanges {
 
   onMouseDown(event: MouseEvent) {
     this._mouseIsDown = true;
-    this.mouseDown.emit({ point: this.getUnzoomedPoint(event), button: event.button }); //TODO!!!
+    this.mouseDown.emit({ point: this.getUnzoomedPoint(event), button: event.button });
   }
 
   onMouseScroll(event: WheelEvent) {

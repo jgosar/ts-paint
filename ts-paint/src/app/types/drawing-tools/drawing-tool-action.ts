@@ -5,5 +5,6 @@ export interface DrawingToolAction {
   tool: DrawingToolType,
   points: Point[],
   preview: boolean,
+  swapColors?: boolean,
   extraParams?: { [key: string]: any }
 }

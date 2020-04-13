@@ -1,4 +1,4 @@
 <div class="tsp-mouse-tracker__div" [ngStyle]="{'width': zoomedWidth+'px', 'height': zoomedHeight+'px'}"
   (mousemove)="onMouseMove($event)" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)"
   (mouseover)="onMouseIn($event)" (mouseout)="onMouseOut($event)" (selectstart)="onSelectStart()"
-  (wheel)="onMouseScroll($event)"></div>
+  (wheel)="onMouseScroll($event)" (contextmenu)="$event.preventDefault()"></div>
