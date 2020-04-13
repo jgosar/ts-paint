@@ -8,13 +8,69 @@ import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
   private readonly _maxPoints: number;
+  private _hidden: boolean = false;
 
   constructor(private type: DrawingToolType, private addAction: (action: DrawingToolAction) => void) {
     switch (type) {
+      /*case DrawingToolType.freeFormSelect:
+        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
+        return;
+      case DrawingToolType.rectangleSelect:
+        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
+        this._maxPoints = 2;
+        return;
+      case DrawingToolType.eraser:
+        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
+        return;
+      case DrawingToolType.colorFiller:
+        this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
+        return;
+      case DrawingToolType.colorPicker:
+        this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
+        return;
+      case DrawingToolType.magnifier:
+        this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
+        return;
+      case DrawingToolType.pencil:
+        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
+        return;
+      case DrawingToolType.brush:
+        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
+        return;
+      case DrawingToolType.airbrush:
+        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
+        return;
+      case DrawingToolType.text:
+        this._behaviour = DrawingToolBehaviour.TEXT;
+        return;*/
       case DrawingToolType.line:
         this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
         this._maxPoints = 2;
         return;
+      /*case DrawingToolType.curve:
+        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
+        this._maxPoints = 4;
+        return;
+      case DrawingToolType.rectangle:
+        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
+        this._maxPoints = 2;
+        return;
+      case DrawingToolType.polygon:
+        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
+        return;
+      case DrawingToolType.ellipse:
+        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
+        this._maxPoints = 2;
+        return;
+      case DrawingToolType.roundedRectangle:
+        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
+        this._maxPoints = 2;
+        return;
+      case DrawingToolType.moveSelection:
+        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
+        this._maxPoints = 2;
+        this._hidden = true;
+        return;*/
     }
 
     assertUnreachable(type);
