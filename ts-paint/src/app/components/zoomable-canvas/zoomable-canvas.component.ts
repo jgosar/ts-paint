@@ -12,6 +12,10 @@ export class ZoomableCanvasComponent implements OnChanges {
   zoom: number = 1;
   @Input()
   image: ImageData;
+  @Input()
+  offsetW: number = 0;
+  @Input()
+  offsetH: number = 0;
   @ViewChild('imageCanvas', { static: true })
   imageCanvas: ElementRef;
 
@@ -22,7 +26,7 @@ export class ZoomableCanvasComponent implements OnChanges {
     this.zoomedWidth = (this.image?.width ?? 0) * this.zoom;
     this.zoomedHeight = (this.image?.height ?? 0) * this.zoom;
 
-    if (changes.image && this.imageCanvas) {
+    if (changes.image && this.image && this.imageCanvas) {
       loadImageToCanvas(this.image, this.imageCanvas);
     }
   }

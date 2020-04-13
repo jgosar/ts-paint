@@ -1,4 +1,4 @@
-import { MenuAction } from 'src/app/types/menu/menu-action';
+import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { MenuItem } from 'src/app/types/menu/menu-item';
 import { createImage } from 'src/app/helpers/image.helpers';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
@@ -10,7 +10,9 @@ import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 export class TsPaintStoreState {
   zoom: number = 1;
   image: ImageData = createImage(300, 200);
-  previewImage: ImageData = createImage(300, 200, { r: 0, g: 0, b: 0, a: 0 });
+  previewImage: ImageData;
+  previewOffsetW: number = 0;
+  previewOffsetH: number = 0;
   fileName: string;
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = { r: 255, g: 255, b: 255 };
@@ -32,12 +34,12 @@ export class TsPaintStoreState {
         {
           name: 'Open...',
           hotkeys: 'Ctrl+O',
-          action: MenuAction.OPEN_FILE
+          action: MenuActionType.OPEN_FILE
         },
         {
           name: 'Save',
           hotkeys: 'Ctrl+S',
-          action: MenuAction.SAVE_FILE
+          action: MenuActionType.SAVE_FILE
         },
         {
           name: 'Save As...',
@@ -82,11 +84,11 @@ export class TsPaintStoreState {
       menus: [
         {
           name: 'Undo',
-          action: MenuAction.UNDO
+          action: MenuActionType.UNDO
         },
         {
           name: 'Repeat',
-          action: MenuAction.REPEAT
+          action: MenuActionType.REPEAT
         },
         {},
         {
@@ -195,7 +197,7 @@ export class TsPaintStoreState {
         {
           name: 'Clear Image',
           hotkeys: 'Ctrl+Shft+N',
-          action: MenuAction.CLEAR_IMAGE
+          action: MenuActionType.CLEAR_IMAGE
         },
       ]
     },

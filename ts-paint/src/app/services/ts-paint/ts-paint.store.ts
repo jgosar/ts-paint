@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TsPaintStoreState } from './ts-paint.store.state';
 import { Store } from 'rxjs-observable-store';
-import { MenuAction } from 'src/app/types/menu/menu-action';
+import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 import { PaintableColor } from 'src/app/types/base/paintable-color';
 import { Color } from 'src/app/types/base/color';
@@ -22,13 +22,9 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     super(new TsPaintStoreState());
   }
 
-  executeMenuAction(menuAction: MenuAction) {
+  executeMenuAction(menuAction: MenuActionType) {
     const menuActionFunction: () => void = this.getMenuActionFunction(menuAction);
     menuActionFunction();
-  }
-
-  setImage(image: ImageData) {
-    this.patchState(image, 'image');
   }
 
   setDrawingTool(toolType: DrawingToolType) {
@@ -59,13 +55,13 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     //TODO: Zooming
   }
 
-  private getMenuActionFunction(menuAction: MenuAction): () => void {
+  private getMenuActionFunction(menuAction: MenuActionType): () => void {
     switch (menuAction) {
-      case MenuAction.OPEN_FILE: return this.openFile.bind(this);
-      case MenuAction.SAVE_FILE: return this.saveFile.bind(this);
-      case MenuAction.UNDO: return this.undo.bind(this);
-      case MenuAction.REPEAT: return this.repeat.bind(this);
-      case MenuAction.CLEAR_IMAGE: return this.clearImage.bind(this);
+      case MenuActionType.OPEN_FILE: return this.openFile.bind(this);
+      case MenuActionType.SAVE_FILE: return this.saveFile.bind(this);
+      case MenuActionType.UNDO: return this.undo.bind(this);
+      case MenuActionType.REPEAT: return this.repeat.bind(this);
+      case MenuActionType.CLEAR_IMAGE: return this.clearImage.bind(this);
     }
 
     assertUnreachable(menuAction);
@@ -87,7 +83,22 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private executeDrawingToolAction(action: DrawingToolAction) {
-    const image: ImageData = action.preview ? new ImageData(this.state.image.width, this.state.image.height) : cloneImage(this.state.image);
+    let image: ImageData;
+    if (action.preview) {
+      const minW: number = Math.min(...action.points.map(x => x.w));
+      const maxW: number = Math.max(...action.points.map(x => x.w));
+      const minH: number = Math.min(...action.points.map(x => x.h));
+      const maxH: number = Math.max(...action.points.map(x => x.h));
+
+      image = new ImageData(1 + maxW - minW, 1 + maxH - minH);
+      action = this.cropAction(action, minW, minH);
+
+      this.patchState(minW, 'previewOffsetW');
+      this.patchState(minH, 'previewOffsetH');
+    } else {
+      image = cloneImage(this.state.image);
+    }
+
     const color: Color = action.swapColors ? this.state.secondaryColor : this.state.primaryColor;
 
     switch (action.tool) {
@@ -101,12 +112,24 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
         assertUnreachable(action.tool);
     }
 
-    this.patchState(image, action.preview ? 'previewImage' : 'image');
+    if (action.preview) {
+      this.patchState(image, 'previewImage');
+    } else {
+      this.patchState(image, 'image');
+      this.patchState(new ImageData(1, 1), 'previewImage');
+    }
+  }
+
+  private cropAction(action: DrawingToolAction, offsetW: number, offsetH: number): DrawingToolAction {
+    return {
+      ...action,
+      points: action.points.map(point => { return { w: point.w - offsetW, h: point.h - offsetH }; })
+    };
   }
 
   private openFile() {
     this.tsPaintService.openFile().then(value => {
-      this.setImage(value.imageData);
+      this.patchState(value.imageData, 'image');
       this.patchState(value.fileName, 'fileName');
     });
   }

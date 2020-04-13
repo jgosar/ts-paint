@@ -1,4 +1,4 @@
-export enum MenuAction {
+export enum MenuActionType {
   OPEN_FILE,
   SAVE_FILE,
   UNDO,

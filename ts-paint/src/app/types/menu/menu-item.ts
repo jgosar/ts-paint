@@ -1,9 +1,9 @@
-import { MenuAction } from "./menu-action";
+import { MenuActionType } from "./menu-action-type";
 
 export interface MenuItem {
   name?: string;
   disabled?: boolean;
   hotkeys?: string;
-  action?: MenuAction;
+  action?: MenuActionType;
   menus?: MenuItem[];
 }
