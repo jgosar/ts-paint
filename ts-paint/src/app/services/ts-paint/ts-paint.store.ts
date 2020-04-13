@@ -11,7 +11,6 @@ import { TsPaintService } from './ts-paint.service';
 import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
-import { LineTool } from 'src/app/types/drawing-tools/line-tool';
 import { DrawingToolAction } from 'src/app/types/drawing-tools/drawing-tool-action';
 import { drawLine } from 'src/app/helpers/drawing.helpers';
 import { cloneImage } from 'src/app/helpers/image.helpers';
@@ -64,11 +63,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private getDrawingTool(toolType: DrawingToolType): DrawingTool {
-    switch (toolType) {
-      case DrawingToolType.line: return new LineTool(this.addDrawingToolAction.bind(this));
-    }
-
-    assertUnreachable(toolType);
+    return new DrawingTool(toolType, this.addDrawingToolAction.bind(this));
   }
 
   private addDrawingToolAction(action: DrawingToolAction) {

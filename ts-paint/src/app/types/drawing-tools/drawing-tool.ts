@@ -3,36 +3,25 @@ import { DrawingToolAction } from './drawing-tool-action';
 import { MouseButtonEvent } from '../mouse-tracker/mouse-button-event';
 import { Point } from '../base/point';
 import { DrawingToolType } from './drawing-tool-type';
+import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 
-export abstract class DrawingTool {
-  constructor(private addAction: (action: DrawingToolAction) => void, private type: DrawingToolType, behaviour: DrawingToolBehaviour, maxPoints?: number, hidden?: boolean) {
+export class DrawingTool {
+  private readonly _behaviour: DrawingToolBehaviour;
+  private readonly _maxPoints: number;
 
+  constructor(private type: DrawingToolType, private addAction: (action: DrawingToolAction) => void) {
+    switch (type) {
+      case DrawingToolType.line:
+        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
+        this._maxPoints = 2;
+        return;
+    }
+
+    assertUnreachable(type);
   }
 
   private mouseIsDown: boolean
   private mouseDownPoint: Point;
-
-  /*  private mouseIsDown: boolean
-  private mouseDownPoint: Point;
-
-  mouseDown(point: Point) {
-    this.mouseIsDown = true;
-    this.mouseDownPoint = point;
-
-    this.paintArea(point.w, point.h, point.w, point.h);
-  }
-
-  mouseUp(point: Point) {
-    this.mouseIsDown = false;
-    this.saveChanges();
-  }
-
-  mouseMove(point: Point) {
-    if (this.mouseIsDown) {
-      this.clearChanges();
-      this.paintLine(this.mouseDownPoint, point);
-    }
-  } */
 
   mouseDown(event: MouseButtonEvent) {
     this.mouseIsDown = true;
