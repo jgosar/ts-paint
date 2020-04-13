@@ -7,6 +7,12 @@ export function drawLine(start: Point, end: Point, color: Color, image: ImageDat
   bresenhamLinePlot([x0, y0, x1, y1], (x, y) => setPixel({ w: x, h: y }, color, image));
 }
 
+export function drawLines(points: Point[], color: Color, image: ImageData) {
+  for (let i = 0; i < points.length - 1; i++) {
+    drawLine(points[i], points[i + 1], color, image);
+  }
+}
+
 function setPixel(point: Point, color: Color, image: ImageData) {
   const pixelOffset = getPixelOffset(point, image);
   [image.data[pixelOffset], image.data[pixelOffset + 1], image.data[pixelOffset + 2], image.data[pixelOffset + 3]] = [color.r, color.g, color.b, 255];

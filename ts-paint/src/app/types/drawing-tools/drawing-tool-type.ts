@@ -4,9 +4,9 @@ export enum DrawingToolType {
   eraser,
   colorFiller,
   colorPicker,
-  magnifier,
+  magnifier,*/
   pencil,
-  brush,
+  /*brush,
   airbrush,
   text,*/
   line,

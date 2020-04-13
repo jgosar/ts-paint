@@ -30,11 +30,11 @@ export class DrawingTool {
         return;
       case DrawingToolType.magnifier:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
-        return;
+        return;*/
       case DrawingToolType.pencil:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
         return;
-      case DrawingToolType.brush:
+      /*case DrawingToolType.brush:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
         return;
       case DrawingToolType.airbrush:
@@ -78,20 +78,39 @@ export class DrawingTool {
 
   private mouseIsDown: boolean
   private mouseDownPoint: Point;
+  private mousePoints: Point[] = [];
 
   mouseDown(event: MouseButtonEvent) {
     this.mouseIsDown = true;
-    this.mouseDownPoint = event.point;
+
+    if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
+      this.mouseDownPoint = event.point;
+    } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
+      this.mousePoints.push(event.point);
+    }
   }
 
   mouseUp(point: Point) {
     this.mouseIsDown = false;
-    this.addAction({ tool: this.type, points: [this.mouseDownPoint, point], preview: false });
+
+    if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
+      this.addAction({ tool: this.type, points: [this.mouseDownPoint, point], preview: false });
+    } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
+      this.mousePoints.push(point);
+      this.addAction({ tool: this.type, points: this.mousePoints, preview: false });
+    }
   }
 
   mouseMove(point: Point) {
-    if (this.mouseIsDown) {
-      this.addAction({ tool: this.type, points: [this.mouseDownPoint, point], preview: true });
+    if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
+      if (this.mouseIsDown) {
+        this.addAction({ tool: this.type, points: [this.mouseDownPoint, point], preview: true });
+      }
+    } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
+      if (this.mouseIsDown) {
+        this.mousePoints.push(point);
+        this.addAction({ tool: this.type, points: this.mousePoints, preview: true });
+      }
     }
   }
 }

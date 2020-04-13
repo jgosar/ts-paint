@@ -12,7 +12,7 @@ import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
 import { DrawingToolAction } from 'src/app/types/drawing-tools/drawing-tool-action';
-import { drawLine } from 'src/app/helpers/drawing.helpers';
+import { drawLine, drawLines } from 'src/app/helpers/drawing.helpers';
 import { cloneImage } from 'src/app/helpers/image.helpers';
 
 @Injectable()
@@ -81,13 +81,21 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     const image: ImageData = action.preview ? new ImageData(this.state.image.width, this.state.image.height) : cloneImage(this.state.image);
 
     switch (action.tool) {
+      case DrawingToolType.pencil:
+        drawLines(action.points, this.state.primaryColor, image);
+        break;
       case DrawingToolType.line:
         drawLine(action.points[0], action.points[1], this.state.primaryColor, image);
-        this.patchState(image, action.preview ? 'previewImage' : 'image');
-        return;
+        break;
+      default:
+        assertUnreachable(action.tool);
     }
 
-    assertUnreachable(action.tool);
+    this.patchState(image, action.preview ? 'previewImage' : 'image');
+
+    if (!action.preview) {
+      this.setDrawingTool(action.tool);
+    }
   }
 
   private openFile() {
