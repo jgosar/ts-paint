@@ -1,4 +1,4 @@
-export interface FileUploadEvent {
+export interface ImageFileData {
   imageData: ImageData;
   fileName: string;
 }

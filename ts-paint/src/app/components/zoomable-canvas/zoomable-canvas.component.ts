@@ -1,4 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { loadImageToCanvas } from 'src/app/helpers/canvas.helpers';
 
 @Component({
   selector: 'tsp-zoomable-canvas',
@@ -22,14 +23,7 @@ export class ZoomableCanvasComponent implements OnChanges {
     this.zoomedHeight = (this.image?.height ?? 0) * this.zoom;
 
     if (changes.image && this.imageCanvas) {
-      this.drawImage(this.image, this.imageCanvas.nativeElement);
+      loadImageToCanvas(this.image, this.imageCanvas);
     }
-  }
-
-  private drawImage(image: ImageData, canvas: HTMLCanvasElement) {
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const context = canvas.getContext('2d');
-    context.putImageData(image, 0, 0);
   }
 }

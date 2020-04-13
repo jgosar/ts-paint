@@ -44,7 +44,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private saveFile() {
-
+    this.tsPaintService.saveFile({ imageData: this.state.image, fileName: this.state.fileName });
   }
 
   private undo() {

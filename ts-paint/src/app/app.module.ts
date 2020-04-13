@@ -8,6 +8,7 @@ import { MenuComponent } from './components/menu/menu.component';
 import { ZoomableCanvasComponent } from './components/zoomable-canvas/zoomable-canvas.component';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { TsPaintService } from './services/ts-paint/ts-paint.service';
+import { FileDownloadComponent } from './components/file-download/file-download.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { TsPaintService } from './services/ts-paint/ts-paint.service';
     TsPaintComponent,
     MenuComponent,
     ZoomableCanvasComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    FileDownloadComponent
   ],
   imports: [
     BrowserModule

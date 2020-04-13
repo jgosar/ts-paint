@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, ViewChild, ElementRef, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { FileUploadEvent } from 'src/app/types/file-upload/file-upload-event';
+import { ImageFileData } from 'src/app/types/base/image-file-data';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TsPaintService } from 'src/app/services/ts-paint/ts-paint.service';
@@ -17,7 +17,7 @@ export class FileUploadComponent implements OnDestroy {
   hiddenCanvas: ElementRef;
 
   private _ngUnsubscribe: Subject<undefined> = new Subject();
-  private _promise: PromiseParams<FileUploadEvent>;
+  private _promise: PromiseParams<ImageFileData>;
 
   constructor(private tsPaintService: TsPaintService) {
     tsPaintService.openFileSubject
