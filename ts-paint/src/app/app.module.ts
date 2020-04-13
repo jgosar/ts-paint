@@ -9,6 +9,7 @@ import { ZoomableCanvasComponent } from './components/zoomable-canvas/zoomable-c
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { TsPaintService } from './services/ts-paint/ts-paint.service';
 import { FileDownloadComponent } from './components/file-download/file-download.component';
+import { MouseTrackerComponent } from './components/mouse-tracker/mouse-tracker.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +18,8 @@ import { FileDownloadComponent } from './components/file-download/file-download.
     MenuComponent,
     ZoomableCanvasComponent,
     FileUploadComponent,
-    FileDownloadComponent
+    FileDownloadComponent,
+    MouseTrackerComponent
   ],
   imports: [
     BrowserModule

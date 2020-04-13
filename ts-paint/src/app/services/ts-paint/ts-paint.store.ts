@@ -8,6 +8,13 @@ import { Color } from 'src/app/types/base/color';
 import { Point } from 'src/app/types/base/point';
 import { ImageSelection } from 'src/app/types/base/image-selection';
 import { TsPaintService } from './ts-paint.service';
+import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event';
+import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
+import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
+import { LineTool } from 'src/app/types/drawing-tools/line-tool';
+import { DrawingToolAction } from 'src/app/types/drawing-tools/drawing-tool-action';
+import { drawLine } from 'src/app/helpers/drawing.helpers';
+import { cloneImage } from 'src/app/helpers/image.helpers';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -24,6 +31,26 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     this.patchState(image, 'image');
   }
 
+  setDrawingTool(toolType: DrawingToolType) {
+    this.patchState(this.getDrawingTool(toolType), 'selectedDrawingTool');
+  }
+
+  processMouseDown(event: MouseButtonEvent) {
+    this.state.selectedDrawingTool?.mouseDown(event);
+  }
+
+  processMouseUp(point: Point) {
+    this.state.selectedDrawingTool?.mouseUp(point);
+  }
+
+  processMouseMove(point: Point) {
+    this.state.selectedDrawingTool?.mouseMove(point);
+  }
+
+  processMouseScroll(event: MouseWheelEvent) {
+    //TODO: Zooming
+  }
+
   private getMenuActionFunction(menuAction: MenuAction): () => void {
     switch (menuAction) {
       case MenuAction.OPEN_FILE: return this.openFile.bind(this);
@@ -34,6 +61,38 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     }
 
     assertUnreachable(menuAction);
+  }
+
+  private getDrawingTool(toolType: DrawingToolType): DrawingTool {
+    switch (toolType) {
+      case DrawingToolType.line: return new LineTool(this.addDrawingToolAction.bind(this));
+    }
+
+    assertUnreachable(toolType);
+  }
+
+  private addDrawingToolAction(action: DrawingToolAction) {
+    if (action.preview) {
+      this.patchState(action, 'previewAction');
+    } else {
+      this.patchState(undefined, 'previewAction');
+      this.patchState(this.state.actions.concat(action), 'actions');
+    }
+
+    this.executeDrawingToolAction(action);
+  }
+
+  private executeDrawingToolAction(action: DrawingToolAction) {
+    const image: ImageData = action.preview ? new ImageData(this.state.image.width, this.state.image.height) : cloneImage(this.state.image);
+
+    switch (action.tool) {
+      case DrawingToolType.line:
+        drawLine(action.points[0], action.points[1], this.state.primaryColor, image);
+        this.patchState(image, action.preview ? 'previewImage' : 'image');
+        return;
+    }
+
+    assertUnreachable(action.tool);
   }
 
   private openFile() {

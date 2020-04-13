@@ -12,6 +12,10 @@
     </div>
     <div #canvasContainer class="tsp-vertical-bar tsp-can-grow tsp-ts-paint__canvas-container">
       <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
+      <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.previewImage"></tsp-zoomable-canvas>
+      <tsp-mouse-tracker [zoom]="store.state.zoom" [image]="store.state.image"
+        (mouseMove)="store.processMouseMove($event)" (mouseDown)="store.processMouseDown($event)"
+        (mouseUp)="store.processMouseUp($event)" (mouseScroll)="store.processMouseScroll($event)"></tsp-mouse-tracker>
       <!--tsPaintCanvas #canvas [zoom]="zoomFactor" [selectionCorners]="selectedDrawingTool?.selectionCorners"
         (mouseMove)="mouseMove($event)" (mouseDown)="mouseDown($event)" (mouseUp)="mouseUp($event)"
         (mouseScroll)="mouseScroll($event)"></tsPaintCanvas-->

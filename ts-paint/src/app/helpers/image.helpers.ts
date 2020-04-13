@@ -7,6 +7,16 @@ export function createImage(width: number, height: number, color: Color = { r: 2
   return fillImage(image, color);
 }
 
+export function cloneImage(original: ImageData): ImageData {
+  const clone: ImageData = new ImageData(original.width, original.height);
+
+  original.data.forEach((x, i) => {
+    clone.data[i] = x;
+  });
+
+  return clone;
+}
+
 export function fillImage(image: ImageData, color: Color): ImageData {
   return fillArea(image, color, { start: { w: 0, h: 0 }, end: { w: image.width - 1, h: image.height - 1 } });
 }

@@ -1,12 +1,99 @@
 import { MenuAction } from 'src/app/types/menu/menu-action';
 import { MenuItem } from 'src/app/types/menu/menu-item';
 import { createImage } from 'src/app/helpers/image.helpers';
-import { FileUploadComponent } from 'src/app/components/file-upload/file-upload.component';
+import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
+import { DrawingToolBehaviour } from 'src/app/types/drawing-tools/drawing-tool-behaviour';
+import { Color } from 'src/app/types/base/color';
+import { DrawingToolAction } from 'src/app/types/drawing-tools/drawing-tool-action';
 
 export class TsPaintStoreState {
   zoom: number = 1;
   image: ImageData = createImage(300, 200);
+  previewImage: ImageData = createImage(300, 200, { r: 0, g: 0, b: 0, a: 0 });
   fileName: string;
+  primaryColor: Color = { r: 0, g: 0, b: 0 };
+  secondaryColor: Color = { r: 255, g: 255, b: 255 };
+  previewAction: DrawingToolAction;
+  actions: DrawingToolAction[] = [];
+  selectedDrawingTool: DrawingTool;
+  /*drawingTools: DrawingTool[] = [
+    {
+      name: 'freeFormSelect',
+      behaviour: DrawingToolBehaviour.FREE_DRAW
+    },
+    {
+      name: 'rectangleSelect',
+      behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+      maxPoints: 2
+    },
+    {
+      name: 'eraser',
+      behaviour: DrawingToolBehaviour.FREE_DRAW
+    },
+    {
+      name: 'colorFiller',
+      behaviour: DrawingToolBehaviour.SINGLE_POINT
+    },
+    {
+      name: 'colorPicker',
+      behaviour: DrawingToolBehaviour.SINGLE_POINT
+    },
+    {
+      name: 'magnifier',
+      behaviour: DrawingToolBehaviour.SINGLE_POINT
+    },
+    {
+      name: 'pencil',
+      behaviour: DrawingToolBehaviour.FREE_DRAW
+    },
+    {
+      name: 'brush',
+      behaviour: DrawingToolBehaviour.FREE_DRAW
+    },
+    {
+      name: 'airbrush',
+      behaviour: DrawingToolBehaviour.FREE_DRAW
+    },
+    {
+      name: 'text',
+      behaviour: DrawingToolBehaviour.TEXT
+    },
+    {
+      name: 'line',
+      behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+      maxPoints: 2
+    },
+    {
+      name: 'curve',
+      behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+      maxPoints: 4
+    },
+    {
+      name: 'rectangle',
+      behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+      maxPoints: 2
+    },
+    {
+      name: 'polygon',
+      behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+    },
+    {
+      name: 'ellipse',
+      behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+      maxPoints: 2
+    },
+    {
+      name: 'roundedRectangle',
+      behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+      maxPoints: 2
+    },
+    {
+      name: 'moveSelection',
+      behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+      maxPoints: 2,
+      hidden: true
+    },
+  ];*/
   menuStructure: MenuItem[] = [
     {
       name: 'File',

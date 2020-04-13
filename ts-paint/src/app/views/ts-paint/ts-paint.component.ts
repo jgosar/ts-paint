@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { TsPaintStore } from 'src/app/services/ts-paint/ts-paint.store';
+import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 
 @Component({
   selector: 'tsp-ts-paint',
@@ -11,6 +12,7 @@ export class TsPaintComponent implements OnInit {
   constructor(public store: TsPaintStore) { }
 
   ngOnInit(): void {
+    this.store.setDrawingTool(DrawingToolType.line);
   }
 
   onPaste(event: any) {
