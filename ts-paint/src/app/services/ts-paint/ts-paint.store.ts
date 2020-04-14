@@ -14,9 +14,12 @@ import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
 import { ColorSelection } from 'src/app/types/base/color-selection';
 import { DrawLineExecutor } from 'src/app/types/actions/draw-line/draw-line-executor';
 import { TsPaintStatePatch } from './ts-paint-state-patch';
-import { DrawingToolAction } from 'src/app/types/actions/drawing-tool-action';
 import { DrawPencilExecutor } from 'src/app/types/actions/draw-pencil/draw-pencil-executor';
 import { ActionExecutor } from 'src/app/types/actions/action-executor';
+import { TsPaintActionType } from 'src/app/types/actions/ts-paint-action-type';
+import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
+import { SetColorAction } from 'src/app/types/actions/set-color/set-color-action';
+import { SetColorExecutor } from 'src/app/types/actions/set-color/set-color-executor';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -34,11 +37,8 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   setColor(selection: ColorSelection) {
-    if (selection.primary) {
-      this.patchState(selection.color, 'primaryColor');
-    } else {
-      this.patchState(selection.color, 'secondaryColor');
-    }
+    const action: SetColorAction = { type: TsPaintActionType.SET_COLOR, renderIn: 'nowhere', selection: selection };
+    this.executeAction(action);
   }
 
   processMouseDown(event: MouseButtonEvent) {
@@ -70,33 +70,32 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private getDrawingTool(toolType: DrawingToolType): DrawingTool {
-    return new DrawingTool(toolType, this.addDrawingToolAction.bind(this));
+    return new DrawingTool(toolType, this.executeAction.bind(this));
   }
 
-  private addDrawingToolAction(action: DrawingToolAction) {
-    if (action.preview) {
+  private executeAction(action: TsPaintAction) {
+    let patches: TsPaintStatePatch<any>[];
+    let executor: ActionExecutor<any>;
+
+    if (action.renderIn === 'preview') {
       this.patchState(action, 'previewAction');
     } else {
       this.patchState(undefined, 'previewAction');
       this.patchState(this.state.actions.concat(action), 'actions');
     }
 
-    this.executeDrawingToolAction(action);
-  }
-
-  private executeDrawingToolAction(action: DrawingToolAction) {
-    let patches: TsPaintStatePatch<any>[];
-    let executor: ActionExecutor<any>;
-
-    switch (action.tool) {
-      case DrawingToolType.pencil:
+    switch (action.type) {
+      case TsPaintActionType.DRAW_PENCIL:
         executor = new DrawPencilExecutor(() => this.state);
         break;
-      case DrawingToolType.line:
+      case TsPaintActionType.DRAW_LINE:
         executor = new DrawLineExecutor(() => this.state);
         break;
+      case TsPaintActionType.SET_COLOR:
+        executor = new SetColorExecutor(() => this.state);
+        break;
       default:
-        assertUnreachable(action.tool);
+        assertUnreachable(action.type);
     }
 
     patches = executor.execute(action);

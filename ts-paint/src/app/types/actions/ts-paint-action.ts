@@ -1,8 +1,9 @@
 import { RectangleArea } from '../base/rectangle-area';
+import { TsPaintActionType } from './ts-paint-action-type';
 
 export interface TsPaintAction {
-  name: string,
-  preview: boolean,
+  type: TsPaintActionType,
+  renderIn: 'image' | 'preview' | 'nowhere',
   affectedArea?: RectangleArea,
   undoImage?: ImageData
 }

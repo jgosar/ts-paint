@@ -9,9 +9,15 @@ export abstract class ActionExecutor<T extends TsPaintAction>{
 
   }
 
-  protected abstract getAffectedArea(action: T): RectangleArea;
   protected abstract executeInternal(action: T, image: ImageData): TsPaintStatePatch<any>[];
-  protected abstract cropAction(action: T, offsetW: number, offsetH: number): T;
+
+  protected getAffectedArea(action: T): RectangleArea {
+    return undefined;
+  }
+
+  protected cropAction(action: T, offsetW: number, offsetH: number): T {
+    return action;
+  }
 
   public execute(action: T): TsPaintStatePatch<any>[] {
     const patches: TsPaintStatePatch<any>[] = [];
@@ -19,21 +25,21 @@ export abstract class ActionExecutor<T extends TsPaintAction>{
 
     const affectedArea: RectangleArea = this.getAffectedArea(action);
     let image: ImageData;
-    if (action.preview) {
+    if (action.renderIn === 'preview') {
       image = new ImageData(this.getAreaWidth(affectedArea), this.getAreaHeight(affectedArea));
       action = this.cropAction(action, affectedArea.start.w, affectedArea.start.h);
 
       patches.push({ value: affectedArea.start.w, property: 'previewOffsetW' });
       patches.push({ value: affectedArea.start.h, property: 'previewOffsetH' });
-    } else {
+    } else if (action.renderIn === 'image') {
       image = cloneImage(state.image);
     }
 
     patches.push(...this.executeInternal(action, image));
 
-    if (action.preview) {
+    if (action.renderIn === 'preview') {
       patches.push({ value: image, property: 'previewImage' });
-    } else {
+    } else if (action.renderIn === 'image') {
       patches.push({ value: image, property: 'image' });
       patches.push({ value: new ImageData(1, 1), property: 'previewImage' });
     }

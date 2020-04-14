@@ -4,7 +4,7 @@ import { createImage } from 'src/app/helpers/image.helpers';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
 import { Color } from 'src/app/types/base/color';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
-import { DrawingToolAction } from 'src/app/types/actions/drawing-tool-action';
+import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
 
 export class TsPaintStoreState {
   zoom: number = 1;
@@ -16,8 +16,8 @@ export class TsPaintStoreState {
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = { r: 255, g: 255, b: 255 };
   availableColors: Color[] = [{ r: 0, g: 0, b: 0 }, { r: 255, g: 255, b: 255 }, { r: 128, g: 128, b: 128 }, { r: 196, g: 196, b: 196 }, { r: 128, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 128, g: 128, b: 0 }, { r: 255, g: 255, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 255 }, { r: 0, g: 0, b: 128 }, { r: 0, g: 0, b: 255 }, { r: 128, g: 0, b: 128 }, { r: 255, g: 0, b: 255 }];
-  previewAction: DrawingToolAction;
-  actions: DrawingToolAction[] = [];
+  previewAction: TsPaintAction;
+  actions: TsPaintAction[] = [];
   selectedDrawingTool: DrawingTool;
   availableDrawingTools: DrawingToolType[] = [
     DrawingToolType.pencil, DrawingToolType.line

@@ -5,6 +5,7 @@ import { DrawingToolType } from './drawing-tool-type';
 import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
 import { DrawingToolAction } from '../actions/drawing-tool-action';
+import { TsPaintActionType } from '../actions/ts-paint-action-type';
 
 export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
@@ -116,12 +117,23 @@ export class DrawingTool {
   }
 
   private addPreviewAction(points: Point[]) {
-    this.addAction({ name: this.type + 'Draw', tool: this.type, points, swapColors: this._swapColors, preview: true });
+    this.addAction({ type: this.getActionType(this.type), tool: this.type, points, swapColors: this._swapColors, renderIn: 'preview' });
   }
 
   private addFinalAction(points: Point[]) {
-    this.addAction({ name: this.type + 'Draw', tool: this.type, points, swapColors: this._swapColors, preview: false });
+    this.addAction({ type: this.getActionType(this.type), tool: this.type, points, swapColors: this._swapColors, renderIn: 'image' });
     this.clearData();
+  }
+
+  private getActionType(toolType: DrawingToolType): TsPaintActionType {
+    switch (toolType) {
+      case DrawingToolType.pencil:
+        return TsPaintActionType.DRAW_PENCIL
+      case DrawingToolType.line:
+        return TsPaintActionType.DRAW_LINE
+    }
+
+    assertUnreachable(toolType);
   }
 
   private clearData() {
