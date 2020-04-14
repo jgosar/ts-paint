@@ -29,7 +29,7 @@ export abstract class DrawingToolActionExecutor<T extends DrawingToolAction> ext
     };
   }
 
-  protected executeInternal(action: T, image: ImageData): TsPaintStatePatch<any>[] {
+  protected executeInternal(action: T, image: ImageData) {
     const state: TsPaintStoreState = this.getState();
     const color1: Color = action.swapColors ? state.secondaryColor : state.primaryColor;
     const color2: Color = action.swapColors ? state.primaryColor : state.secondaryColor;
