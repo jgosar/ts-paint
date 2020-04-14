@@ -1,10 +1,10 @@
 import { DrawingToolBehaviour } from './drawing-tool-behaviour';
-import { DrawingToolAction } from './drawing-tool-action';
 import { MouseButtonEvent } from '../mouse-tracker/mouse-button-event';
 import { Point } from '../base/point';
 import { DrawingToolType } from './drawing-tool-type';
 import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
+import { DrawingToolAction } from '../actions/drawing-tool-action';
 
 export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
@@ -116,11 +116,11 @@ export class DrawingTool {
   }
 
   private addPreviewAction(points: Point[]) {
-    this.addAction({ tool: this.type, points, swapColors: this._swapColors, preview: true });
+    this.addAction({ name: this.type + 'Draw', tool: this.type, points, swapColors: this._swapColors, preview: true });
   }
 
   private addFinalAction(points: Point[]) {
-    this.addAction({ tool: this.type, points, swapColors: this._swapColors, preview: false });
+    this.addAction({ name: this.type + 'Draw', tool: this.type, points, swapColors: this._swapColors, preview: false });
     this.clearData();
   }
 

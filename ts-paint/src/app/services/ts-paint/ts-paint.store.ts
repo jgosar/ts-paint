@@ -11,10 +11,12 @@ import { TsPaintService } from './ts-paint.service';
 import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
-import { DrawingToolAction } from 'src/app/types/drawing-tools/drawing-tool-action';
-import { drawLine, drawLines } from 'src/app/helpers/drawing.helpers';
-import { cloneImage } from 'src/app/helpers/image.helpers';
 import { ColorSelection } from 'src/app/types/base/color-selection';
+import { DrawLineExecutor } from 'src/app/types/actions/draw-line/draw-line-executor';
+import { TsPaintStatePatch } from './ts-paint-state-patch';
+import { DrawingToolAction } from 'src/app/types/actions/drawing-tool-action';
+import { DrawPencilExecutor } from 'src/app/types/actions/draw-pencil/draw-pencil-executor';
+import { ActionExecutor } from 'src/app/types/actions/action-executor';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -83,48 +85,24 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private executeDrawingToolAction(action: DrawingToolAction) {
-    let image: ImageData;
-    if (action.preview) {
-      const minW: number = Math.min(...action.points.map(x => x.w));
-      const maxW: number = Math.max(...action.points.map(x => x.w));
-      const minH: number = Math.min(...action.points.map(x => x.h));
-      const maxH: number = Math.max(...action.points.map(x => x.h));
-
-      image = new ImageData(1 + maxW - minW, 1 + maxH - minH);
-      action = this.cropAction(action, minW, minH);
-
-      this.patchState(minW, 'previewOffsetW');
-      this.patchState(minH, 'previewOffsetH');
-    } else {
-      image = cloneImage(this.state.image);
-    }
-
-    const color: Color = action.swapColors ? this.state.secondaryColor : this.state.primaryColor;
+    let patches: TsPaintStatePatch<any>[];
+    let executor: ActionExecutor<any>;
 
     switch (action.tool) {
       case DrawingToolType.pencil:
-        drawLines(action.points, color, image);
+        executor = new DrawPencilExecutor(() => this.state);
         break;
       case DrawingToolType.line:
-        drawLine(action.points[0], action.points[1], color, image);
+        executor = new DrawLineExecutor(() => this.state);
         break;
       default:
         assertUnreachable(action.tool);
     }
 
-    if (action.preview) {
-      this.patchState(image, 'previewImage');
-    } else {
-      this.patchState(image, 'image');
-      this.patchState(new ImageData(1, 1), 'previewImage');
-    }
-  }
-
-  private cropAction(action: DrawingToolAction, offsetW: number, offsetH: number): DrawingToolAction {
-    return {
-      ...action,
-      points: action.points.map(point => { return { w: point.w - offsetW, h: point.h - offsetH }; })
-    };
+    patches = executor.execute(action);
+    patches.forEach(patch => {
+      this.patchState(patch.value, patch.property);
+    });
   }
 
   private openFile() {

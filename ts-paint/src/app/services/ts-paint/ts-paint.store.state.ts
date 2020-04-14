@@ -2,10 +2,9 @@ import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { MenuItem } from 'src/app/types/menu/menu-item';
 import { createImage } from 'src/app/helpers/image.helpers';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
-import { DrawingToolBehaviour } from 'src/app/types/drawing-tools/drawing-tool-behaviour';
 import { Color } from 'src/app/types/base/color';
-import { DrawingToolAction } from 'src/app/types/drawing-tools/drawing-tool-action';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
+import { DrawingToolAction } from 'src/app/types/actions/drawing-tool-action';
 
 export class TsPaintStoreState {
   zoom: number = 1;
