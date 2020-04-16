@@ -3,10 +3,7 @@ import { TsPaintStoreState } from './ts-paint.store.state';
 import { Store } from 'rxjs-observable-store';
 import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
-import { PaintableColor } from 'src/app/types/base/paintable-color';
-import { Color } from 'src/app/types/base/color';
 import { Point } from 'src/app/types/base/point';
-import { ImageSelection } from 'src/app/types/base/image-selection';
 import { TsPaintService } from './ts-paint.service';
 import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
@@ -24,6 +21,8 @@ import { SetDrawingToolExecutor } from 'src/app/types/actions/set-drawing-tool/s
 import { createSetDrawingToolAction, SetDrawingToolAction } from 'src/app/types/actions/set-drawing-tool/set-drawing-tool-action';
 import { OpenFileAction, createOpenFileAction } from 'src/app/types/actions/open-file/open-file-action';
 import { OpenFileExecutor } from 'src/app/types/actions/open-file/open-file-executor';
+import { ClearImageAction, createClearImageAction } from 'src/app/types/actions/clear-image/clear-image-action';
+import { ClearImageExecutor } from 'src/app/types/actions/clear-image/clear-image-executor';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -98,6 +97,9 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       case TsPaintActionType.OPEN_FILE:
         executor = new OpenFileExecutor(() => this.state);
         break;
+      case TsPaintActionType.CLEAR_IMAGE:
+        executor = new ClearImageExecutor(() => this.state);
+        break;
       default:
         assertUnreachable(action.type);
     }
@@ -128,43 +130,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private clearImage() {
-
-  }
-
-  paintArea(minW: number, minH: number, maxW: number, maxH: number, color?: PaintableColor): void {
-
-  }
-  saveChanges(): void {
-
-  }
-
-  clearChanges(): void {
-
-  }
-
-  getImageData(): ImageData {
-    return undefined;
-  }
-  batchPaintPixels(pixels: number[][]): void {
-
-  }
-  setSelectedColor(color: Color, primary: boolean): void {
-
-  }
-  /*imageSelection: ImageData{
-
-  }
-  initialSelectionLocation: Point{
-
-  }*/
-  pasteImage(imageSelection: ImageData, w: number, h: number): void {
-
-  }
-  setSelection(startPoint: Point, endPoint: Point): void {
-
-  }
-
-  getSelection(): ImageSelection {
-    return undefined;
+    const action: ClearImageAction = createClearImageAction();
+    this.executeAction(action);
   }
 }

@@ -3,5 +3,6 @@ export enum TsPaintActionType {
   DRAW_LINE,
   SET_COLOR,
   SET_DRAWING_TOOL,
-  OPEN_FILE
+  OPEN_FILE,
+  CLEAR_IMAGE,
 }

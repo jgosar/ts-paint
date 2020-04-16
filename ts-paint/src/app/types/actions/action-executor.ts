@@ -12,7 +12,7 @@ export abstract class ActionExecutor<T extends TsPaintAction>{
 
   private _patches: TsPaintStatePatch<any>[];
 
-  protected abstract executeInternal(action: T, image: ImageData);
+  protected abstract executeInternal(action: T, image: ImageData): ImageData;
 
   protected getAffectedArea(action: T): RectangleArea {
     return undefined;
