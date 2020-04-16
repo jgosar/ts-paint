@@ -10,7 +10,9 @@ export class SetDrawingToolExecutor extends ActionExecutor<SetDrawingToolAction>
     super(getState);
   }
 
-  protected executeInternal(action: SetDrawingToolAction, image: ImageData) {
+  protected executeInternal(action: SetDrawingToolAction, image: ImageData): ImageData {
     this.addPatch(this.getDrawingTool(action.toolType), 'selectedDrawingTool');
+
+    return image;
   }
 }

@@ -5,8 +5,7 @@ import { TsPaintStatePatch } from 'src/app/services/ts-paint/ts-paint-state-patc
 import { ColorSelection } from '../../base/color-selection';
 
 export class SetColorExecutor extends ActionExecutor<SetColorAction>{
-  protected executeInternal(action: SetColorAction, image: ImageData) {
-    const patches: TsPaintStatePatch<any>[] = [];
+  protected executeInternal(action: SetColorAction, image: ImageData): ImageData {
     const selection: ColorSelection = action.selection;
 
     if (selection.primary) {
@@ -15,6 +14,6 @@ export class SetColorExecutor extends ActionExecutor<SetColorAction>{
       this.addPatch(selection.color, 'secondaryColor');
     }
 
-    return patches;
+    return image;
   }
 }

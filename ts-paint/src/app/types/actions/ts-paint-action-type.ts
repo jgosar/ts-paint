@@ -2,5 +2,6 @@ export enum TsPaintActionType {
   DRAW_PENCIL,
   DRAW_LINE,
   SET_COLOR,
-  SET_DRAWING_TOOL
+  SET_DRAWING_TOOL,
+  OPEN_FILE
 }

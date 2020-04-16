@@ -7,5 +7,5 @@ export interface SetColorAction extends TsPaintAction {
 }
 
 export function createSetColorAction(selection: ColorSelection): SetColorAction {
-  return { type: TsPaintActionType.SET_COLOR, renderIn: 'nowhere', selection: selection };
+  return { type: TsPaintActionType.SET_COLOR, renderIn: 'nowhere', selection };
 }

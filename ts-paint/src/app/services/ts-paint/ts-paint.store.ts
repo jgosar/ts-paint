@@ -22,6 +22,8 @@ import { SetColorAction, createSetColorAction } from 'src/app/types/actions/set-
 import { SetColorExecutor } from 'src/app/types/actions/set-color/set-color-executor';
 import { SetDrawingToolExecutor } from 'src/app/types/actions/set-drawing-tool/set-drawing-tool-executor';
 import { createSetDrawingToolAction, SetDrawingToolAction } from 'src/app/types/actions/set-drawing-tool/set-drawing-tool-action';
+import { OpenFileAction, createOpenFileAction } from 'src/app/types/actions/open-file/open-file-action';
+import { OpenFileExecutor } from 'src/app/types/actions/open-file/open-file-executor';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -80,13 +82,6 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     let patches: TsPaintStatePatch<any>[];
     let executor: ActionExecutor<any>;
 
-    if (action.renderIn === 'preview') {
-      this.patchState(action, 'previewAction');
-    } else {
-      this.patchState(undefined, 'previewAction');
-      this.patchState(this.state.actions.concat(action), 'actions');
-    }
-
     switch (action.type) {
       case TsPaintActionType.DRAW_PENCIL:
         executor = new DrawPencilExecutor(() => this.state);
@@ -100,6 +95,9 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       case TsPaintActionType.SET_DRAWING_TOOL:
         executor = new SetDrawingToolExecutor(() => this.state, this.getDrawingTool.bind(this));
         break;
+      case TsPaintActionType.OPEN_FILE:
+        executor = new OpenFileExecutor(() => this.state);
+        break;
       default:
         assertUnreachable(action.type);
     }
@@ -112,8 +110,8 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   private openFile() {
     this.tsPaintService.openFile().then(value => {
-      this.patchState(value.imageData, 'image');
-      this.patchState(value.fileName, 'fileName');
+      const action: OpenFileAction = createOpenFileAction(value);
+      this.executeAction(action);
     });
   }
 

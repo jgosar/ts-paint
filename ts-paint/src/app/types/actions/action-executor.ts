@@ -45,7 +45,7 @@ export abstract class ActionExecutor<T extends TsPaintAction>{
       image = cloneImage(state.image);
     }
 
-    this.executeInternal(action, image);
+    image = this.executeInternal(action, image);
 
     if (action.renderIn === 'preview') {
       this.addPatch(image, 'previewImage');
