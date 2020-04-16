@@ -117,11 +117,11 @@ export class DrawingTool {
   }
 
   private addPreviewAction(points: Point[]) {
-    this.addAction({ type: this.getActionType(this.type), tool: this.type, points, swapColors: this._swapColors, renderIn: 'preview' });
+    this.addAction({ type: this.getActionType(this.type), points, swapColors: this._swapColors, renderIn: 'preview' });
   }
 
   private addFinalAction(points: Point[]) {
-    this.addAction({ type: this.getActionType(this.type), tool: this.type, points, swapColors: this._swapColors, renderIn: 'image' });
+    this.addAction({ type: this.getActionType(this.type), points, swapColors: this._swapColors, renderIn: 'image' });
     this.clearData();
   }
 

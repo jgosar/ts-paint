@@ -18,8 +18,10 @@ import { DrawPencilExecutor } from 'src/app/types/actions/draw-pencil/draw-penci
 import { ActionExecutor } from 'src/app/types/actions/action-executor';
 import { TsPaintActionType } from 'src/app/types/actions/ts-paint-action-type';
 import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
-import { SetColorAction } from 'src/app/types/actions/set-color/set-color-action';
+import { SetColorAction, createSetColorAction } from 'src/app/types/actions/set-color/set-color-action';
 import { SetColorExecutor } from 'src/app/types/actions/set-color/set-color-executor';
+import { SetDrawingToolExecutor } from 'src/app/types/actions/set-drawing-tool/set-drawing-tool-executor';
+import { createSetDrawingToolAction, SetDrawingToolAction } from 'src/app/types/actions/set-drawing-tool/set-drawing-tool-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -33,11 +35,12 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   setDrawingTool(toolType: DrawingToolType) {
-    this.patchState(this.getDrawingTool(toolType), 'selectedDrawingTool');
+    const action: SetDrawingToolAction = createSetDrawingToolAction(toolType);
+    this.executeAction(action);
   }
 
   setColor(selection: ColorSelection) {
-    const action: SetColorAction = { type: TsPaintActionType.SET_COLOR, renderIn: 'nowhere', selection: selection };
+    const action: SetColorAction = createSetColorAction(selection);
     this.executeAction(action);
   }
 
@@ -93,6 +96,9 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
         break;
       case TsPaintActionType.SET_COLOR:
         executor = new SetColorExecutor(() => this.state);
+        break;
+      case TsPaintActionType.SET_DRAWING_TOOL:
+        executor = new SetDrawingToolExecutor(() => this.state, this.getDrawingTool.bind(this));
         break;
       default:
         assertUnreachable(action.type);
