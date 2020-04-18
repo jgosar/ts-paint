@@ -1,7 +1,7 @@
 import { TsPaintAction } from './ts-paint-action';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { RectangleArea } from '../base/rectangle-area';
-import { cloneImage } from 'src/app/helpers/image.helpers';
+import { cloneImage, getAreaWidth, getAreaHeight } from 'src/app/helpers/image.helpers';
 import { TsPaintStatePatch } from 'src/app/services/ts-paint/ts-paint-state-patch';
 import { Path } from 'Object/Path';
 
@@ -15,12 +15,14 @@ export abstract class ActionExecutor<T extends TsPaintAction>{
   protected abstract executeInternal(action: T, image: ImageData): ImageData;
 
   protected getAffectedArea(action: T): RectangleArea {
-    return undefined;
+    return { start: { w: 0, h: 0 }, end: { w: 0, h: 0 } };
   }
 
   protected cropAction(action: T, offsetW: number, offsetH: number): T {
     return action;
   }
+
+  protected abstract getUndoActions(action: T): TsPaintAction[];
 
   protected addPatch<P1 extends keyof Path<TsPaintStoreState, []>>(
     value: Path<TsPaintStoreState, [P1]>,
@@ -34,9 +36,10 @@ export abstract class ActionExecutor<T extends TsPaintAction>{
     const state: TsPaintStoreState = this.getState();
 
     const affectedArea: RectangleArea = this.getAffectedArea(action);
+    action.undoActions = this.getUndoActions(action);
     let image: ImageData;
     if (action.renderIn === 'preview') {
-      image = new ImageData(this.getAreaWidth(affectedArea), this.getAreaHeight(affectedArea));
+      image = new ImageData(getAreaWidth(affectedArea), getAreaHeight(affectedArea));
       action = this.cropAction(action, affectedArea.start.w, affectedArea.start.h);
 
       this.addPatch(affectedArea.start.w, 'previewOffsetW');
@@ -48,20 +51,19 @@ export abstract class ActionExecutor<T extends TsPaintAction>{
     image = this.executeInternal(action, image);
 
     if (action.renderIn === 'preview') {
-      this.addPatch(image, 'previewImage');
+      this.addPatch(image, 'previewImage');;
     } else if (action.renderIn === 'image') {
       this.addPatch(image, 'image');
       this.addPatch(new ImageData(1, 1), 'previewImage');
     }
 
+    if (action.renderIn === 'preview') {
+      this.addPatch(action, 'previewAction');
+    } else if (action.renderIn === 'image') {
+      this.addPatch(undefined, 'previewAction');
+      this.addPatch(state.actions.concat(action), 'actions');
+    }
+
     return this._patches;
-  }
-
-  private getAreaWidth(area: RectangleArea) {
-    return 1 + Math.abs(area.end.w - area.start.w);
-  }
-
-  private getAreaHeight(area: RectangleArea) {
-    return 1 + Math.abs(area.end.h - area.start.h);
   }
 }

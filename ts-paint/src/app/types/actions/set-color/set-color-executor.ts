@@ -1,8 +1,9 @@
 
-import { SetColorAction } from './set-color-action';
+import { SetColorAction, createSetColorAction } from './set-color-action';
 import { ActionExecutor } from '../action-executor';
-import { TsPaintStatePatch } from 'src/app/services/ts-paint/ts-paint-state-patch';
 import { ColorSelection } from '../../base/color-selection';
+import { TsPaintAction } from '../ts-paint-action';
+import { Color } from '../../base/color';
 
 export class SetColorExecutor extends ActionExecutor<SetColorAction>{
   protected executeInternal(action: SetColorAction, image: ImageData): ImageData {
@@ -15,5 +16,15 @@ export class SetColorExecutor extends ActionExecutor<SetColorAction>{
     }
 
     return image;
+  }
+
+  protected getUndoActions(action: SetColorAction): TsPaintAction[] {
+    var previousColor: Color;
+    if (action.selection.primary) {
+      previousColor = this.getState().primaryColor;
+    } else {
+      previousColor = this.getState().secondaryColor;
+    }
+    return [createSetColorAction({ color: previousColor, primary: action.selection.primary })];
   }
 }

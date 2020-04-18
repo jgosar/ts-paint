@@ -4,7 +4,7 @@ import { Point } from '../base/point';
 import { DrawingToolType } from './drawing-tool-type';
 import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
-import { DrawingToolAction } from '../actions/drawing-tool-action';
+import { DrawingToolAction } from '../actions/drawing-tool-actions/drawing-tool-action';
 import { TsPaintActionType } from '../actions/ts-paint-action-type';
 
 export class DrawingTool {

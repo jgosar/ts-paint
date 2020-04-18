@@ -1,14 +1,11 @@
-import { ActionExecutor } from './action-executor';
-import { TsPaintAction } from './ts-paint-action';
+import { ActionExecutor } from '../action-executor';
+import { TsPaintAction } from '../ts-paint-action';
 import { DrawingToolAction } from './drawing-tool-action';
-import { RectangleArea } from '../base/rectangle-area';
-import { Color } from '../base/color';
+import { RectangleArea } from '../../base/rectangle-area';
+import { Color } from '../../base/color';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
-import { DrawingToolType } from '../drawing-tools/drawing-tool-type';
-import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
-import { drawLines, drawLine } from 'src/app/helpers/drawing.helpers';
-import { TsPaintStatePatch } from 'src/app/services/ts-paint/ts-paint-state-patch';
-import { Point } from '../base/point';
+import { Point } from '../../base/point';
+import { getImagePart } from 'src/app/helpers/image.helpers';
 
 export abstract class DrawingToolActionExecutor<T extends DrawingToolAction> extends ActionExecutor<T>{
   protected abstract draw(points: Point[], color1: Color, color2: Color, image: ImageData);
@@ -37,5 +34,15 @@ export abstract class DrawingToolActionExecutor<T extends DrawingToolAction> ext
     this.draw(action.points, color1, color2, image);
 
     return image;
+  }
+
+  protected getUndoActions(action: T): TsPaintAction[] {
+    const affectedArea: RectangleArea = this.getAffectedArea(action);
+    const undoImage: ImageData = getImagePart(affectedArea, this.getState().image);
+
+    return [
+      //createPasteImageAction({image: undoImage}),
+      //createMoveSelectionAction({w: affectedArea.start.w, h: affectedArea.start.h})
+    ];
   }
 }

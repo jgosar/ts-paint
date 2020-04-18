@@ -58,3 +58,33 @@ export function calculateLocation(subpixelOffset: number, image: ImageData): Poi
 export function getPixelOffset(point: Point, image: ImageData): number {
   return 4 * (point.w + image.width * point.h);
 }
+
+export function getImagePart(area: RectangleArea, image: ImageData): ImageData {
+  const imagePart: ImageData = new ImageData(getAreaWidth(area), getAreaHeight(area));
+
+  const subpixelsPerRow: number = 4 * imagePart.width;
+
+  let hMin: number = Math.min(area.start.h, area.end.h);
+  let wMin: number = Math.min(area.start.w, area.end.w);
+
+  let oldPixelOffset: number;
+  let newPixelOffset: number = 0;
+
+  for (var h = 0; h < imagePart.height; h++) {
+    oldPixelOffset = getPixelOffset({ w: wMin, h: hMin }, image);
+    for (var spw = 0; spw < subpixelsPerRow; spw++) {
+      imagePart.data[newPixelOffset] = image.data[oldPixelOffset];
+      newPixelOffset++;
+    }
+  }
+
+  return imagePart;
+}
+
+export function getAreaWidth(area: RectangleArea): number {
+  return 1 + Math.abs(area.end.w - area.start.w);
+}
+
+export function getAreaHeight(area: RectangleArea): number {
+  return 1 + Math.abs(area.end.h - area.start.h);
+}

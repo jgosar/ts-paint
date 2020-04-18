@@ -9,9 +9,9 @@ import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
 import { ColorSelection } from 'src/app/types/base/color-selection';
-import { DrawLineExecutor } from 'src/app/types/actions/draw-line/draw-line-executor';
+import { DrawLineExecutor } from 'src/app/types/actions/drawing-tool-actions/draw-line/draw-line-executor';
 import { TsPaintStatePatch } from './ts-paint-state-patch';
-import { DrawPencilExecutor } from 'src/app/types/actions/draw-pencil/draw-pencil-executor';
+import { DrawPencilExecutor } from 'src/app/types/actions/drawing-tool-actions/draw-pencil/draw-pencil-executor';
 import { ActionExecutor } from 'src/app/types/actions/action-executor';
 import { TsPaintActionType } from 'src/app/types/actions/ts-paint-action-type';
 import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
@@ -30,6 +30,18 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     super(new TsPaintStoreState());
   }
 
+  processMouseDown(event: MouseButtonEvent) {
+    this.state.selectedDrawingTool?.mouseDown(event);
+  }
+
+  processMouseUp(point: Point) {
+    this.state.selectedDrawingTool?.mouseUp(point);
+  }
+
+  processMouseMove(point: Point) {
+    this.state.selectedDrawingTool?.mouseMove(point);
+  }
+
   executeMenuAction(menuAction: MenuActionType) {
     const menuActionFunction: () => void = this.getMenuActionFunction(menuAction);
     menuActionFunction();
@@ -43,18 +55,6 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   setColor(selection: ColorSelection) {
     const action: SetColorAction = createSetColorAction(selection);
     this.executeAction(action);
-  }
-
-  processMouseDown(event: MouseButtonEvent) {
-    this.state.selectedDrawingTool?.mouseDown(event);
-  }
-
-  processMouseUp(point: Point) {
-    this.state.selectedDrawingTool?.mouseUp(point);
-  }
-
-  processMouseMove(point: Point) {
-    this.state.selectedDrawingTool?.mouseMove(point);
   }
 
   processMouseScroll(event: MouseWheelEvent) {
@@ -73,36 +73,26 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     assertUnreachable(menuAction);
   }
 
+  private getActionExecutor(actionType: TsPaintActionType) {
+    switch (actionType) {
+      case TsPaintActionType.DRAW_PENCIL: return new DrawPencilExecutor(() => this.state);
+      case TsPaintActionType.DRAW_LINE: return new DrawLineExecutor(() => this.state);
+      case TsPaintActionType.SET_COLOR: return new SetColorExecutor(() => this.state);
+      case TsPaintActionType.SET_DRAWING_TOOL: return new SetDrawingToolExecutor(() => this.state, this.getDrawingTool.bind(this));
+      case TsPaintActionType.OPEN_FILE: return new OpenFileExecutor(() => this.state);
+      case TsPaintActionType.CLEAR_IMAGE: return new ClearImageExecutor(() => this.state);
+    }
+
+    assertUnreachable(actionType);
+  }
+
   private getDrawingTool(toolType: DrawingToolType): DrawingTool {
     return new DrawingTool(toolType, this.executeAction.bind(this));
   }
 
   private executeAction(action: TsPaintAction) {
     let patches: TsPaintStatePatch<any>[];
-    let executor: ActionExecutor<any>;
-
-    switch (action.type) {
-      case TsPaintActionType.DRAW_PENCIL:
-        executor = new DrawPencilExecutor(() => this.state);
-        break;
-      case TsPaintActionType.DRAW_LINE:
-        executor = new DrawLineExecutor(() => this.state);
-        break;
-      case TsPaintActionType.SET_COLOR:
-        executor = new SetColorExecutor(() => this.state);
-        break;
-      case TsPaintActionType.SET_DRAWING_TOOL:
-        executor = new SetDrawingToolExecutor(() => this.state, this.getDrawingTool.bind(this));
-        break;
-      case TsPaintActionType.OPEN_FILE:
-        executor = new OpenFileExecutor(() => this.state);
-        break;
-      case TsPaintActionType.CLEAR_IMAGE:
-        executor = new ClearImageExecutor(() => this.state);
-        break;
-      default:
-        assertUnreachable(action.type);
-    }
+    let executor: ActionExecutor<any> = this.getActionExecutor(action.type);
 
     patches = executor.execute(action);
     patches.forEach(patch => {
