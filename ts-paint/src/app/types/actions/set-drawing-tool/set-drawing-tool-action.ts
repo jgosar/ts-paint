@@ -1,11 +1,22 @@
 import { TsPaintAction } from '../ts-paint-action';
-import { TsPaintActionType } from '../ts-paint-action-type';
 import { DrawingToolType } from '../../drawing-tools/drawing-tool-type';
+import { DrawingTool } from '../../drawing-tools/drawing-tool';
+import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 
-export interface SetDrawingToolAction extends TsPaintAction {
-  toolType: DrawingToolType
-}
+export class SetDrawingToolAction extends TsPaintAction {
+  constructor(public toolType: DrawingToolType, private getDrawingTool: (toolType: DrawingToolType) => DrawingTool) {
+    super('nowhere');
+  }
 
-export function createSetDrawingToolAction(toolType: DrawingToolType): SetDrawingToolAction {
-  return { type: TsPaintActionType.SET_DRAWING_TOOL, renderIn: 'nowhere', toolType };
+  protected addPatchesAndDraw(state: TsPaintStoreState): ImageData | undefined {
+    this.addPatch(this.getDrawingTool(this.toolType), 'selectedDrawingTool');
+
+    return undefined;
+  }
+
+  protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
+    return [
+      new SetDrawingToolAction(state.selectedDrawingTool?.type, this.getDrawingTool)
+    ];
+  }
 }

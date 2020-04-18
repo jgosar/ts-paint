@@ -1,9 +1,22 @@
 import { TsPaintAction } from '../ts-paint-action';
-import { TsPaintActionType } from '../ts-paint-action-type';
+import { Color } from '../../base/color';
+import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
+import { fillImage } from 'src/app/helpers/image.helpers';
 
-export interface ClearImageAction extends TsPaintAction {
-}
+export class ClearImageAction extends TsPaintAction {
+  constructor() {
+    super('image');
+  }
 
-export function createClearImageAction(): ClearImageAction {
-  return { type: TsPaintActionType.CLEAR_IMAGE, renderIn: 'image' };
+  protected addPatchesAndDraw(state: TsPaintStoreState): ImageData {
+    const backgroundColor: Color = state.secondaryColor;
+
+    return fillImage(new ImageData(state.image.width, state.image.height), backgroundColor);
+  }
+
+  protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
+    return [
+      //new PasteImageAction({image: state.image})
+    ];
+  }
 }

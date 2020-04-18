@@ -1,12 +1,18 @@
 import { TsPaintAction } from '../ts-paint-action';
-import { TsPaintActionType } from '../ts-paint-action-type';
 import { ImageFileData } from '../../base/image-file-data';
+import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 
-export interface OpenFileAction extends TsPaintAction {
-  image: ImageData,
-  fileName: string
-}
+export class OpenFileAction extends TsPaintAction {
+  constructor(public fileData: ImageFileData) {
+    super('image');
+  }
 
-export function createOpenFileAction(fileData: ImageFileData): OpenFileAction {
-  return { type: TsPaintActionType.OPEN_FILE, renderIn: 'image', image: fileData.imageData, fileName: fileData.fileName };
+  protected addPatchesAndDraw(state: TsPaintStoreState): ImageData {
+    this.addPatch(this.fileData.fileName, 'fileName');
+    return this.fileData.imageData;
+  }
+
+  protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
+    return [new OpenFileAction({ imageData: state.image, fileName: state.fileName })];
+  }
 }
