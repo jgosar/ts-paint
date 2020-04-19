@@ -66,10 +66,6 @@ export class DrawingTool {
       case DrawingToolType.roundedRectangle:
         this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
         this._maxPoints = 2;
-        return;
-      case DrawingToolType.moveSelection:
-        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        this._maxPoints = 2;
         return;*/
     }
 

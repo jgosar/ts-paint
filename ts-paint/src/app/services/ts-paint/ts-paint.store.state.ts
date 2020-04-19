@@ -6,6 +6,7 @@ import { Color } from 'src/app/types/base/color';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
 import { Point } from 'src/app/types/base/point';
+import { MoveSelectionTool } from 'src/app/types/drawing-tools/move-selection-tool';
 
 export class TsPaintStoreState {
   zoom: number = 1;
@@ -14,6 +15,7 @@ export class TsPaintStoreState {
   previewOffset: Point = { w: 0, h: 0 };
   selectionImage: ImageData;
   selectionOffset: Point = { w: 0, h: 0 };
+  moveSelectionTool: MoveSelectionTool;
   fileName: string;
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = { r: 255, g: 255, b: 255 };

@@ -14,6 +14,5 @@ export enum DrawingToolType {
   rectangle,
   polygon,
   ellipse,
-  roundedRectangle,
-  moveSelection,*/
+  roundedRectangle,*/
 }

@@ -7,6 +7,7 @@ import { PartialActionResult } from './partial-action-result';
 export class SetDrawingToolAction extends TsPaintAction {
   constructor(public toolType: DrawingToolType, private getDrawingTool: (toolType: DrawingToolType) => DrawingTool) {
     super('nowhere');
+    this._deselectsSelection = true;
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {

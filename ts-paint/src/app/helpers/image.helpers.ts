@@ -73,7 +73,7 @@ export function getImagePart(area: RectangleArea, image: ImageData): ImageData {
   for (var h = 0; h < imagePart.height; h++) {
     imagePixelOffset = getPixelOffset({ w: wMin, h: hMin + h }, image);
     for (var spw = 0; spw < subpixelsPerRow; spw++) {
-      imagePart.data[partPixelOffset] = image.data[imagePixelOffset];
+      imagePart.data[partPixelOffset] = image.data[imagePixelOffset + spw];
       partPixelOffset++;
     }
   }
@@ -101,7 +101,7 @@ export function pasteImagePart(location: Point, imagePart: ImageData, image: Ima
   for (var h = 0; h < imagePart.height; h++) {
     imagePixelOffset = getPixelOffset({ w: wMin, h: hMin + h }, image);
     for (var spw = 0; spw < subpixelsPerRow; spw++) {
-      image.data[imagePixelOffset] = imagePart.data[partPixelOffset];
+      image.data[imagePixelOffset + spw] = imagePart.data[partPixelOffset];
       partPixelOffset++;
     }
   }

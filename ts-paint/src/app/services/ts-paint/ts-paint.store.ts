@@ -16,6 +16,10 @@ import { OpenFileAction } from 'src/app/types/actions/open-file-action';
 import { ClearImageAction } from 'src/app/types/actions/clear-image-action';
 import { Object as TsObject } from 'ts-toolbelt';
 import { PasteImageAction } from 'src/app/types/actions/paste-image-action';
+import { RectangleArea } from 'src/app/types/base/rectangle-area';
+import { isPointInRectangle } from 'src/app/helpers/image.helpers';
+import { DeselectSelectionAction } from 'src/app/types/actions/deselect-selection-action';
+import { MoveSelectionTool } from 'src/app/types/drawing-tools/move-selection-tool';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -24,15 +28,36 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   processMouseDown(event: MouseButtonEvent) {
-    this.state.selectedDrawingTool?.mouseDown(event);
+    if (this.state.selectionImage !== undefined) {
+      if (this.isPointInSelection(event.point)) {
+        if (!this.state.moveSelectionTool) {
+          this.patchState(new MoveSelectionTool(this.state.selectionOffset, this.executeAction.bind(this)), 'moveSelectionTool');
+        }
+        this.state.moveSelectionTool.mouseDown(event);
+      } else {
+        const action: DeselectSelectionAction = new DeselectSelectionAction();
+        this.executeAction(action);
+        this.state.selectedDrawingTool?.mouseDown(event);
+      }
+    } else {
+      this.state.selectedDrawingTool?.mouseDown(event);
+    }
   }
 
   processMouseUp(point: Point) {
-    this.state.selectedDrawingTool?.mouseUp(point);
+    if (this.state.moveSelectionTool !== undefined) {
+      this.state.moveSelectionTool.mouseUp(point);
+    } else {
+      this.state.selectedDrawingTool?.mouseUp(point);
+    }
   }
 
   processMouseMove(point: Point) {
-    this.state.selectedDrawingTool?.mouseMove(point);
+    if (this.state.moveSelectionTool !== undefined) {
+      this.state.moveSelectionTool.mouseMove(point);
+    } else {
+      this.state.selectedDrawingTool?.mouseMove(point);
+    }
   }
 
   executeMenuAction(menuAction: MenuActionType) {
@@ -60,6 +85,10 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   private executeAction(action: TsPaintAction) {
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state);
+
+    if (this.state.selectionImage !== undefined && action.deselectsSelection) {
+      this.executeAction(new DeselectSelectionAction());
+    }
 
     Object.keys(patches).forEach(key => {
       const key2 = key as keyof TsObject.Path<TsPaintStoreState, []>;
@@ -110,5 +139,20 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   private clearImage() {
     const action: ClearImageAction = new ClearImageAction();
     this.executeAction(action);
+  }
+
+  private isPointInSelection(point: Point): boolean {
+    const selectionRectangleWith3pxBorder: RectangleArea = {
+      start: {
+        w: this.state.selectionOffset.w - 3,
+        h: this.state.selectionOffset.h - 3
+      },
+      end: {
+        w: this.state.selectionOffset.w + this.state.selectionImage.width - 1 + 3,
+        h: this.state.selectionOffset.h + this.state.selectionImage.height - 1 + 3
+      }
+    };
+
+    return isPointInRectangle(point, selectionRectangleWith3pxBorder);
   }
 }

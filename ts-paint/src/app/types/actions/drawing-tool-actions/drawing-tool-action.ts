@@ -11,6 +11,7 @@ import { MoveSelectionAction } from '../move-selection-action';
 export abstract class DrawingToolAction extends TsPaintAction {
   constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {
     super(renderIn);
+    this._deselectsSelection = true;
   }
 
   protected abstract draw(points: Point[], color1: Color, color2: Color, image: ImageData);

@@ -22,6 +22,7 @@ export class DeselectSelectionAction extends TsPaintAction {
 
       patches.selectionImage = undefined;
       patches.selectionOffset = { w: 0, h: 0 };
+      patches.moveSelectionTool = undefined;
     }
 
     return { image, patches };

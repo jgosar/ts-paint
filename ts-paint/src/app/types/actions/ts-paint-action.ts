@@ -3,12 +3,20 @@ import { RectangleArea } from '../base/rectangle-area';
 import { Point } from '../base/point';
 import { getAreaWidth, getAreaHeight, cloneImage } from 'src/app/helpers/image.helpers';
 import { PartialActionResult } from './partial-action-result';
+import { DeselectSelectionAction } from './deselect-selection-action';
+import { lastElement, isEmpty } from 'src/app/helpers/typescript.helpers';
 
 export abstract class TsPaintAction {
   public undoActions: TsPaintAction[] = [];
   protected _previewOffset: Point = { h: 0, w: 0 };
+  protected _deselectsSelection: boolean = false;
+  protected _overridesPreviousActionOfSameType: boolean = false;
 
   constructor(public renderIn: 'image' | 'preview' | 'nowhere') {
+  }
+
+  public get deselectsSelection() {
+    return this._deselectsSelection;
   }
 
   public getStatePatches(state: TsPaintStoreState): Partial<TsPaintStoreState> {
@@ -40,9 +48,14 @@ export abstract class TsPaintAction {
 
     if (this.renderIn === 'preview') {
       patches.previewAction = this;
-    } else if (this.renderIn === 'image') {
+    } else {
       patches.previewAction = undefined;
-      patches.actions = state.actions.concat(this);
+      const actions: TsPaintAction[] = patches.actions || state.actions.map(x => x);
+      if (this._overridesPreviousActionOfSameType && !isEmpty(actions) && lastElement(actions).constructor === this.constructor) {
+        patches.actions = { ...actions, [actions.length - 1]: this };
+      } else {
+        patches.actions = actions.concat(this);
+      }
     }
 
     return patches;
