@@ -9,12 +9,12 @@ import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
 import { ColorSelection } from 'src/app/types/base/color-selection';
-import { TsPaintStatePatch } from './ts-paint-state-patch';
 import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
 import { SetColorAction } from 'src/app/types/actions/set-color/set-color-action';
 import { SetDrawingToolAction } from 'src/app/types/actions/set-drawing-tool/set-drawing-tool-action';
 import { OpenFileAction } from 'src/app/types/actions/open-file/open-file-action';
 import { ClearImageAction } from 'src/app/types/actions/clear-image/clear-image-action';
+import { Object as TsObject } from 'ts-toolbelt';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -70,9 +70,11 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private executeAction(action: TsPaintAction) {
-    let patches: TsPaintStatePatch<any>[] = action.getStatePatches(this.state);
-    patches.forEach(patch => {
-      this.patchState(patch.value, patch.property);
+    const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state);
+
+    Object.keys(patches).forEach(key => {
+      const key2 = key as keyof TsObject.Path<TsPaintStoreState, []>;
+      this.patchState(patches[key], key2);
     });
   }
 

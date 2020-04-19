@@ -4,6 +4,7 @@ import { Color } from '../../base/color';
 import { RectangleArea } from '../../base/rectangle-area';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { getImagePart } from 'src/app/helpers/image.helpers';
+import { PartialActionResult } from '../partial-action-result';
 
 export abstract class DrawingToolAction extends TsPaintAction {
   constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {
@@ -21,14 +22,14 @@ export abstract class DrawingToolAction extends TsPaintAction {
     return { start: { w: minW, h: minH }, end: { w: maxW, h: maxH } };
   }
 
-  protected addPatchesAndDraw(state: TsPaintStoreState): ImageData {
+  protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
     const color1: Color = this.swapColors ? state.secondaryColor : state.primaryColor;
     const color2: Color = this.swapColors ? state.primaryColor : state.secondaryColor;
 
     const image: ImageData = this.getWorkingImage(state);
     this.draw(this.getOffsetPoints(), color1, color2, image);
 
-    return image;
+    return { image };
   }
 
   private getOffsetPoints(): Point[] {

@@ -2,22 +2,24 @@ import { TsPaintAction } from '../ts-paint-action';
 import { ColorSelection } from '../../base/color-selection';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { Color } from '../../base/color';
+import { PartialActionResult } from '../partial-action-result';
 
 export class SetColorAction extends TsPaintAction {
   constructor(public selection: ColorSelection) {
     super('nowhere');
   }
 
-  protected addPatchesAndDraw(state: TsPaintStoreState): ImageData | undefined {
+  protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
     const selection: ColorSelection = this.selection;
+    const patches: Partial<TsPaintStoreState> = {};
 
     if (selection.primary) {
-      this.addPatch(selection.color, 'primaryColor');
+      patches.primaryColor = selection.color;
     } else {
-      this.addPatch(selection.color, 'secondaryColor');
+      patches.secondaryColor = selection.color;
     }
 
-    return undefined;
+    return { patches };
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {

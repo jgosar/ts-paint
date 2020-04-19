@@ -1,20 +1,18 @@
-import { TsPaintStatePatch } from 'src/app/services/ts-paint/ts-paint-state-patch';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { RectangleArea } from '../base/rectangle-area';
-import { Path } from 'Object/Path';
 import { Point } from '../base/point';
 import { getAreaWidth, getAreaHeight, cloneImage } from 'src/app/helpers/image.helpers';
+import { PartialActionResult } from './partial-action-result';
 
 export abstract class TsPaintAction {
   public undoActions: TsPaintAction[] = [];
-  private _patches: TsPaintStatePatch<any>[];
   protected _previewOffset: Point = { h: 0, w: 0 };
 
   constructor(public renderIn: 'image' | 'preview' | 'nowhere') {
   }
 
-  public getStatePatches(state: TsPaintStoreState): TsPaintStatePatch<any>[] {
-    this._patches = [];
+  public getStatePatches(state: TsPaintStoreState): Partial<TsPaintStoreState> {
+    let patches: Partial<TsPaintStoreState> = {};
 
     this.undoActions = this.getUndoActions(state);
 
@@ -22,29 +20,35 @@ export abstract class TsPaintAction {
       this._previewOffset = this.getPreviewOffset();
     }
 
-    let image: ImageData | undefined = this.addPatchesAndDraw(state);
+    let partialResult: PartialActionResult = this.addPatchesAndDraw(state);
+    if (partialResult.patches !== undefined) {
+      patches = {
+        ...patches,
+        ...partialResult.patches
+      };
+    }
 
-    if (image !== undefined) {
+    if (partialResult.image !== undefined) {
       if (this.renderIn === 'preview') {
-        this.addPatch(image, 'previewImage');
-        this.addPatch(this._previewOffset, 'previewOffset');
+        patches.previewImage = partialResult.image;
+        patches.previewOffset = this._previewOffset;
       } else if (this.renderIn === 'image') {
-        this.addPatch(image, 'image');
-        this.addPatch(new ImageData(1, 1), 'previewImage');
+        patches.image = partialResult.image;
+        patches.previewImage = new ImageData(1, 1);
       }
     }
 
     if (this.renderIn === 'preview') {
-      this.addPatch(this, 'previewAction');
+      patches.previewAction = this;
     } else if (this.renderIn === 'image') {
-      this.addPatch(undefined, 'previewAction');
-      this.addPatch(state.actions.concat(this), 'actions');
+      patches.previewAction = undefined;
+      patches.actions = state.actions.concat(this);
     }
 
-    return this._patches;
+    return patches;
   }
 
-  protected abstract addPatchesAndDraw(state: TsPaintStoreState): ImageData | undefined; // TODO: return patches from the function?
+  protected abstract addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult;
   protected abstract getUndoActions(state: TsPaintStoreState): TsPaintAction[];
 
   protected getAffectedArea(): RectangleArea {
@@ -68,12 +72,5 @@ export abstract class TsPaintAction {
     }
 
     return workingImage;
-  }
-
-  protected addPatch<P1 extends keyof Path<TsPaintStoreState, []>>(
-    value: Path<TsPaintStoreState, [P1]>,
-    property: P1
-  ) {
-    this._patches.push({ value, property });
   }
 }
