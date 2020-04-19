@@ -12,6 +12,8 @@ export class TsPaintStoreState {
   image: ImageData = createImage(300, 200);
   previewImage: ImageData;
   previewOffset: Point = { w: 0, h: 0 };
+  selectionImage: ImageData;
+  selectionOffset: Point = { w: 0, h: 0 };
   fileName: string;
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = { r: 255, g: 255, b: 255 };

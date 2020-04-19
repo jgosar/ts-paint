@@ -67,14 +67,14 @@ export function getImagePart(area: RectangleArea, image: ImageData): ImageData {
   let hMin: number = Math.min(area.start.h, area.end.h);
   let wMin: number = Math.min(area.start.w, area.end.w);
 
-  let oldPixelOffset: number;
-  let newPixelOffset: number = 0;
+  let imagePixelOffset: number;
+  let partPixelOffset: number = 0;
 
   for (var h = 0; h < imagePart.height; h++) {
-    oldPixelOffset = getPixelOffset({ w: wMin, h: hMin }, image);
+    imagePixelOffset = getPixelOffset({ w: wMin, h: hMin + h }, image);
     for (var spw = 0; spw < subpixelsPerRow; spw++) {
-      imagePart.data[newPixelOffset] = image.data[oldPixelOffset];
-      newPixelOffset++;
+      imagePart.data[partPixelOffset] = image.data[imagePixelOffset];
+      partPixelOffset++;
     }
   }
 
@@ -87,4 +87,24 @@ export function getAreaWidth(area: RectangleArea): number {
 
 export function getAreaHeight(area: RectangleArea): number {
   return 1 + Math.abs(area.end.h - area.start.h);
+}
+
+export function pasteImagePart(location: Point, imagePart: ImageData, image: ImageData) {
+  const subpixelsPerRow: number = 4 * imagePart.width;
+
+  let hMin: number = location.h;
+  let wMin: number = location.w;
+
+  let partPixelOffset: number = 0;
+  let imagePixelOffset: number;
+
+  for (var h = 0; h < imagePart.height; h++) {
+    imagePixelOffset = getPixelOffset({ w: wMin, h: hMin + h }, image);
+    for (var spw = 0; spw < subpixelsPerRow; spw++) {
+      image.data[imagePixelOffset] = imagePart.data[partPixelOffset];
+      partPixelOffset++;
+    }
+  }
+
+  return imagePart;
 }

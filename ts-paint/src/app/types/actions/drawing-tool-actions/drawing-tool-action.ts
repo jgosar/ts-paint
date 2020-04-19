@@ -5,6 +5,8 @@ import { RectangleArea } from '../../base/rectangle-area';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { getImagePart } from 'src/app/helpers/image.helpers';
 import { PartialActionResult } from '../partial-action-result';
+import { PasteImageAction } from '../paste-image-action';
+import { MoveSelectionAction } from '../move-selection-action';
 
 export abstract class DrawingToolAction extends TsPaintAction {
   constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {
@@ -41,8 +43,8 @@ export abstract class DrawingToolAction extends TsPaintAction {
     const undoImage: ImageData = getImagePart(affectedArea, state.image);
 
     return [
-      //new PasteImageAction({image: undoImage}),
-      //new MoveSelectionAction({w: affectedArea.start.w, h: affectedArea.start.h})
+      new PasteImageAction(undoImage),
+      new MoveSelectionAction({ w: affectedArea.start.w, h: affectedArea.start.h })
     ];
   }
 }

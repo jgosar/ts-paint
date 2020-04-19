@@ -3,6 +3,8 @@ import { Color } from '../base/color';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { fillImage } from 'src/app/helpers/image.helpers';
 import { PartialActionResult } from './partial-action-result';
+import { PasteImageAction } from './paste-image-action';
+import { DeselectSelectionAction } from './deselect-selection-action';
 
 export class ClearImageAction extends TsPaintAction {
   constructor() {
@@ -18,7 +20,8 @@ export class ClearImageAction extends TsPaintAction {
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
     return [
-      //new PasteImageAction({image: state.image})
+      new PasteImageAction(state.image),
+      new DeselectSelectionAction()
     ];
   }
 }
