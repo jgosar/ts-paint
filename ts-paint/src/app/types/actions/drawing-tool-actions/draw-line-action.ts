@@ -1,4 +1,4 @@
-import { DrawingToolAction } from '../drawing-tool-action';
+import { DrawingToolAction } from './drawing-tool-action';
 import { drawLine } from 'src/app/helpers/drawing.helpers';
 import { Point } from 'src/app/types/base/point';
 import { Color } from 'src/app/types/base/color';
