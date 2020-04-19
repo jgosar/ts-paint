@@ -14,6 +14,8 @@
       <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
       <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.previewImage"
         [offset]="store.state.previewOffset"></tsp-zoomable-canvas>
+      <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.selectionImage"
+        [offset]="store.state.selectionOffset"></tsp-zoomable-canvas>
       <tsp-mouse-tracker [zoom]="store.state.zoom" [image]="store.state.image"
         (mouseMove)="store.processMouseMove($event)" (mouseDown)="store.processMouseDown($event)"
         (mouseUp)="store.processMouseUp($event)" (mouseScroll)="store.processMouseScroll($event)"></tsp-mouse-tracker>

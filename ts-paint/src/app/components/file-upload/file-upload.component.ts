@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { TsPaintService } from 'src/app/services/ts-paint/ts-paint.service';
 import { PromiseParams } from 'src/app/types/async/promise-params';
+import { PasteFileParams } from 'src/app/types/async/paste-file-params';
 
 @Component({
   selector: 'tsp-file-upload',
@@ -17,17 +18,31 @@ export class FileUploadComponent implements OnDestroy {
   hiddenCanvas: ElementRef;
 
   private _ngUnsubscribe: Subject<undefined> = new Subject();
-  private _promise: PromiseParams<ImageFileData>;
+  private _openFilePromise: PromiseParams<ImageFileData>;
+  private _pasteFilePromise: PasteFileParams;
 
   constructor(private tsPaintService: TsPaintService) {
     tsPaintService.openFileSubject
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe((openFilePromise) => {
-        if (this._promise) {
-          this._promise.reject();
+        if (this._openFilePromise) {
+          this._openFilePromise.reject();
         }
-        this._promise = openFilePromise;
+        this._openFilePromise = openFilePromise;
         this.openFileDialog();
+      });
+
+    tsPaintService.pasteFileSubject
+      .pipe(takeUntil(this._ngUnsubscribe))
+      .subscribe((pasteFilePromise) => {
+        if (this._pasteFilePromise) {
+          this._pasteFilePromise.reject();
+        }
+        this._pasteFilePromise = pasteFilePromise;
+
+        this.getImageDataFromUpload(pasteFilePromise.pastedFile).subscribe(imageData => {
+          this._pasteFilePromise.resolve(imageData);
+        });
       });
   }
 
@@ -47,7 +62,7 @@ export class FileUploadComponent implements OnDestroy {
     this.getImageDataFromUpload(uploadedFile)
       .pipe(takeUntil(this._ngUnsubscribe))
       .subscribe(imageData => {
-        this._promise.resolve({ imageData, fileName });
+        this._openFilePromise.resolve({ imageData, fileName });
       });
   }
 

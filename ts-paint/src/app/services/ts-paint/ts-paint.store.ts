@@ -15,6 +15,7 @@ import { SetDrawingToolAction } from 'src/app/types/actions/set-drawing-tool-act
 import { OpenFileAction } from 'src/app/types/actions/open-file-action';
 import { ClearImageAction } from 'src/app/types/actions/clear-image-action';
 import { Object as TsObject } from 'ts-toolbelt';
+import { PasteImageAction } from 'src/app/types/actions/paste-image-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -83,6 +84,15 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       const action: OpenFileAction = new OpenFileAction(value);
       this.executeAction(action);
     });
+  }
+
+  pasteFile(pastedFile: File) {
+    if (pastedFile !== null) {
+      this.tsPaintService.pasteFile(pastedFile).then(pastedImage => {
+        const action: PasteImageAction = new PasteImageAction(pastedImage);
+        this.executeAction(action);
+      });
+    }
   }
 
   private saveFile() {

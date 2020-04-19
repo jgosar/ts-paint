@@ -16,12 +16,9 @@ export class TsPaintComponent implements OnInit {
   }
 
   onPaste(event: any) {
-    /*const pastedFile: File = event.clipboardData.items[0].getAsFile();
-    if (pastedFile !== null) {
-      this.fileUpload.getImageDataFromUpload(pastedFile).subscribe(imageData => {
-        this.putAndSelectImagePart(imageData, new Point([0, 0]));
-      });
-    }*/
+    const pastedFile: File = event.clipboardData.items[0].getAsFile();
+
+    this.store.pasteFile(pastedFile);
   }
 
   onCopy() {
