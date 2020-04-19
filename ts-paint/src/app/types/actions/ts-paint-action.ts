@@ -27,8 +27,7 @@ export abstract class TsPaintAction {
     if (image !== undefined) {
       if (this.renderIn === 'preview') {
         this.addPatch(image, 'previewImage');
-        this.addPatch(this._previewOffset.w, 'previewOffsetW'); // TODO: merge these two into one variable
-        this.addPatch(this._previewOffset.h, 'previewOffsetH');
+        this.addPatch(this._previewOffset, 'previewOffset');
       } else if (this.renderIn === 'image') {
         this.addPatch(image, 'image');
         this.addPatch(new ImageData(1, 1), 'previewImage');

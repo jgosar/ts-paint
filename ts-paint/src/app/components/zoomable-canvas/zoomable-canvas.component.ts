@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { loadImageToCanvas } from 'src/app/helpers/canvas.helpers';
+import { Point } from 'src/app/types/base/point';
 
 @Component({
   selector: 'tsp-zoomable-canvas',
@@ -13,9 +14,7 @@ export class ZoomableCanvasComponent implements OnChanges {
   @Input()
   image: ImageData;
   @Input()
-  offsetW: number = 0;
-  @Input()
-  offsetH: number = 0;
+  offset: Point = { w: 0, h: 0 };
   @ViewChild('imageCanvas', { static: true })
   imageCanvas: ElementRef;
 

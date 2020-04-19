@@ -5,13 +5,13 @@ import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
 import { Color } from 'src/app/types/base/color';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
+import { Point } from 'src/app/types/base/point';
 
 export class TsPaintStoreState {
   zoom: number = 1;
   image: ImageData = createImage(300, 200);
   previewImage: ImageData;
-  previewOffsetW: number = 0;
-  previewOffsetH: number = 0;
+  previewOffset: Point = { w: 0, h: 0 };
   fileName: string;
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = { r: 255, g: 255, b: 255 };
