@@ -5,8 +5,7 @@ import { DrawingToolType } from './drawing-tool-type';
 import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
 import { DrawingToolAction } from '../actions/drawing-tool-actions/drawing-tool-action';
-import { DrawPencilAction } from '../actions/drawing-tool-actions/draw-pencil/draw-pencil-action';
-import { DrawLineAction } from '../actions/drawing-tool-actions/draw-line/draw-line-action';
+import { createDrawingToolAction } from '../actions/drawing-tool-actions/create-drawing-tool-action';
 
 export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
@@ -118,25 +117,13 @@ export class DrawingTool {
   }
 
   private addPreviewAction(points: Point[]) {
-    switch (this.type) {
-      case DrawingToolType.pencil:
-        this.addAction(new DrawPencilAction(points, this._swapColors, 'preview')); //TODO: fix this somehow
-        return;
-      case DrawingToolType.line:
-        this.addAction(new DrawLineAction(points, this._swapColors, 'preview'));
-        return;
-    }
-
-    assertUnreachable(this.type);
+    const action: DrawingToolAction = createDrawingToolAction(this.type, points, this._swapColors, 'preview');
+    this.addAction(action);
   }
 
   private addFinalAction(points: Point[]) {
-    switch (this.type) {
-      case DrawingToolType.pencil:
-        this.addAction(new DrawPencilAction(points, this._swapColors, 'image'));
-      case DrawingToolType.line:
-        this.addAction(new DrawLineAction(points, this._swapColors, 'image'));
-    }
+    const action: DrawingToolAction = createDrawingToolAction(this.type, points, this._swapColors, 'image');
+    this.addAction(action);
     this.clearData();
   }
 
