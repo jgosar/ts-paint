@@ -7,6 +7,7 @@ import { resizeImage } from 'src/app/helpers/image.helpers';
 export class PasteImageAction extends TsPaintAction {
   constructor(private imagePart: ImageData) {
     super('image');
+    this._deselectsSelection = true;
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
