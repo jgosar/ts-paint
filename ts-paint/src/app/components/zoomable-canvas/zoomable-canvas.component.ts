@@ -20,10 +20,14 @@ export class ZoomableCanvasComponent implements OnChanges {
 
   zoomedWidth: number = 0;
   zoomedHeight: number = 0;
+  zoomedOffsetW: number = 0;
+  zoomedOffsetH: number = 0;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.zoomedWidth = (this.image?.width ?? 0) * this.zoom;
     this.zoomedHeight = (this.image?.height ?? 0) * this.zoom;
+    this.zoomedOffsetW = (this.offset?.w ?? 0) * this.zoom;
+    this.zoomedOffsetH = (this.offset?.h ?? 0) * this.zoom;
 
     if (changes.image && this.image && this.imageCanvas) {
       loadImageToCanvas(this.image, this.imageCanvas.nativeElement);
