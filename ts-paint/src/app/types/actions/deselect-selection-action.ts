@@ -13,19 +13,19 @@ export class DeselectSelectionAction extends TsPaintAction {
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
-    const patches: Partial<TsPaintStoreState> = {};
-    const image: ImageData = this.getWorkingImage(state);
-
     if (state.selectionImage !== undefined) {
+      const patches: Partial<TsPaintStoreState> = {};
       const selectionOffset: Point = state.selectionOffset;
-      pasteImagePart(selectionOffset, state.selectionImage, image);
+      const image: ImageData = pasteImagePart(selectionOffset, state.selectionImage, state.image);
 
       patches.selectionImage = undefined;
       patches.selectionOffset = { w: 0, h: 0 };
       patches.moveSelectionTool = undefined;
+
+      return { image, patches };
     }
 
-    return { image, patches };
+    return {};
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {

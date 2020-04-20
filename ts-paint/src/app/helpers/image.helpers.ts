@@ -1,6 +1,7 @@
 import { Color } from '../types/base/color';
 import { Point } from '../types/base/point';
 import { RectangleArea } from '../types/base/rectangle-area';
+import { loadImageToCanvas } from './canvas.helpers';
 
 export function createImage(width: number, height: number, color: Color = { r: 255, g: 255, b: 255 }): ImageData {
   const image: ImageData = new ImageData(width, height);
@@ -90,21 +91,19 @@ export function getAreaHeight(area: RectangleArea): number {
 }
 
 export function pasteImagePart(location: Point, imagePart: ImageData, image: ImageData) {
-  const subpixelsPerRow: number = 4 * imagePart.width;
+  const canvas: HTMLCanvasElement = document.createElement("canvas");
+  const context: CanvasRenderingContext2D = canvas.getContext('2d');
+  loadImageToCanvas(image, canvas);
+  context.putImageData(imagePart, location.w, location.h);
+  const result: ImageData = context.getImageData(0, 0, image.width, image.height);
 
-  let hMin: number = location.h;
-  let wMin: number = location.w;
+  return result;
+}
 
-  let partPixelOffset: number = 0;
-  let imagePixelOffset: number;
+export function resizeImage(image: ImageData, newWidth: number, newHeight: number, backgroundColor: Color): ImageData {
+  let resized: ImageData = new ImageData(newWidth, newHeight);
+  resized = fillImage(resized, backgroundColor);
+  resized = pasteImagePart({ w: 0, h: 0 }, image, resized);
 
-  for (var h = 0; h < imagePart.height; h++) {
-    imagePixelOffset = getPixelOffset({ w: wMin, h: hMin + h }, image);
-    for (var spw = 0; spw < subpixelsPerRow; spw++) {
-      image.data[imagePixelOffset + spw] = imagePart.data[partPixelOffset];
-      partPixelOffset++;
-    }
-  }
-
-  return imagePart;
+  return resized;
 }

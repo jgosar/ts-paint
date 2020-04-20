@@ -2,11 +2,11 @@ import { TsPaintAction } from './ts-paint-action';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { PartialActionResult } from './partial-action-result';
 import { MoveSelectionAction } from './move-selection-action';
-import { MoveSelectionTool } from '../drawing-tools/move-selection-tool';
+import { resizeImage } from 'src/app/helpers/image.helpers';
 
 export class PasteImageAction extends TsPaintAction {
   constructor(private imagePart: ImageData) {
-    super('nowhere');
+    super('image');
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
@@ -15,7 +15,12 @@ export class PasteImageAction extends TsPaintAction {
     patches.selectionImage = this.imagePart;
     patches.moveSelectionTool = undefined; // It will get initialized if needed
 
-    return { patches };
+    if (this.imagePart.width > state.image.width || this.imagePart.height > state.image.height) {
+      const image: ImageData = resizeImage(state.image, Math.max(this.imagePart.width, state.image.width), Math.max(this.imagePart.height, state.image.height), state.secondaryColor);
+      return { image, patches };
+    } else {
+      return { patches };
+    }
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {

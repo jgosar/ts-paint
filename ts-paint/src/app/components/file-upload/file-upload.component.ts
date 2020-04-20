@@ -87,7 +87,7 @@ export class FileUploadComponent implements OnDestroy {
         image.onload = (e: Event) => {
           canvas.width = image.width;
           canvas.height = image.height;
-          const context = canvas.getContext('2d');
+          const context: CanvasRenderingContext2D = canvas.getContext('2d');
           context.drawImage(image, 0, 0);
 
           var imageData: ImageData = context.getImageData(0, 0, image.width, image.height);

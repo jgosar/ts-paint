@@ -32,7 +32,7 @@ export class FileDownloadComponent implements OnDestroy {
   }
 
   downloadImage(fileData: ImageFileData) {
-    loadImageToCanvas(fileData.imageData, this.hiddenCanvas);
+    loadImageToCanvas(fileData.imageData, this.hiddenCanvas.nativeElement);
     const hiddenDownloadElement = this.hiddenDownload.nativeElement;
     hiddenDownloadElement.href = this.hiddenCanvas.nativeElement.toDataURL("image/png");
     hiddenDownloadElement.download = fileData.fileName + '.png';

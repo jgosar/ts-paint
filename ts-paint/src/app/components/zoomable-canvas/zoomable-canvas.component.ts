@@ -26,7 +26,7 @@ export class ZoomableCanvasComponent implements OnChanges {
     this.zoomedHeight = (this.image?.height ?? 0) * this.zoom;
 
     if (changes.image && this.image && this.imageCanvas) {
-      loadImageToCanvas(this.image, this.imageCanvas);
+      loadImageToCanvas(this.image, this.imageCanvas.nativeElement);
     }
   }
 }
