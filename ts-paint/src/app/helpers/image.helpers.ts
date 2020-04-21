@@ -56,17 +56,20 @@ export function calculateLocation(subpixelOffset: number, image: ImageData): Poi
   return { w, h };
 }
 
-export function getPixelOffset(point: Point, image: ImageData): number {
-  return 4 * (point.w + image.width * point.h);
+export function getPixelOffset(point: Point, image: ImageData): number | undefined {
+  if (isPointInRectangle(point, { start: { w: 0, h: 0 }, end: { w: image.width - 1, h: image.height - 1 } })) {
+    return 4 * (point.w + image.width * point.h);
+  }
 }
 
 export function getImagePart(area: RectangleArea, image: ImageData): ImageData {
-  const imagePart: ImageData = new ImageData(getAreaWidth(area), getAreaHeight(area));
+  const areaInImage: RectangleArea = getAreaInImage(area, image);
+  const imagePart: ImageData = new ImageData(getAreaWidth(areaInImage), getAreaHeight(areaInImage));
 
   const subpixelsPerRow: number = 4 * imagePart.width;
 
-  let hMin: number = Math.min(area.start.h, area.end.h);
-  let wMin: number = Math.min(area.start.w, area.end.w);
+  let hMin: number = areaInImage.start.h;
+  let wMin: number = areaInImage.start.w;
 
   let imagePixelOffset: number;
   let partPixelOffset: number = 0;
@@ -80,6 +83,15 @@ export function getImagePart(area: RectangleArea, image: ImageData): ImageData {
   }
 
   return imagePart;
+}
+
+export function getAreaInImage(area: RectangleArea, image: ImageData): RectangleArea {
+  const startW: number = Math.max(0, Math.min(area.start.w, area.end.w));
+  const startH: number = Math.max(0, Math.min(area.start.h, area.end.h));
+  const endW: number = Math.min(image.width - 1, Math.max(area.start.w, area.end.w));
+  const endH: number = Math.min(image.height - 1, Math.max(area.start.h, area.end.h));
+
+  return { start: { w: startW, h: startH }, end: { w: endW, h: endH } };
 }
 
 export function getAreaWidth(area: RectangleArea): number {
