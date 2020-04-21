@@ -52,6 +52,7 @@ export class MouseTrackerComponent implements OnChanges {
   }
 
   onMouseOut(event: MouseEvent) {
+    this.onMouseMove(event);
     this._lastMouseOut = event;
   }
 

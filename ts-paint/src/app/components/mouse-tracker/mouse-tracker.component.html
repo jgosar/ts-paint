@@ -1,11 +1,4 @@
-<div class="tsp-mouse-tracker__main-div" style="display: flex; flex-direction: column;"
-  [ngStyle]="{'width': 'max(100%, '+zoomedWidth+'px)', 'height': 'max(100%, '+zoomedHeight+'px)'}">
-  <div class="tsp-horizontal-bar">
-    <div [ngStyle]="{'width': zoomedWidth+'px', 'height': zoomedHeight+'px'}" (mousemove)="onMouseMove($event)"
-      (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)" (mouseover)="onMouseIn($event)"
-      (mouseout)="onMouseOut($event)" (selectstart)="onSelectStart()" (wheel)="onMouseScroll($event)"
-      (contextmenu)="$event.preventDefault()"></div>
-    <div class="tsp-mouse-tracker__space-filler"></div>
-  </div>
-  <div class="tsp-mouse-tracker__space-filler"></div>
-</div>
+<div class="tsp-mouse-tracker__div" [ngStyle]="{'width': zoomedWidth+'px', 'height': zoomedHeight+'px'}"
+  (mousemove)="onMouseMove($event)" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)"
+  (mouseover)="onMouseIn($event)" (mouseout)="onMouseOut($event)" (selectstart)="onSelectStart()"
+  (wheel)="onMouseScroll($event)" (contextmenu)="$event.preventDefault()"></div>
