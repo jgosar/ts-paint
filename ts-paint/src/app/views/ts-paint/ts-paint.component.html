@@ -12,25 +12,17 @@
         </tsp-toolbox>
       </div>
       <div class="tsp-depressed-item-container tsp-vertical-bar tsp-can-grow">
-        <div class="tsp-depressed-item tsp-can-grow tsp-ts-paint__canvas-container">
-          <div class="tsp-vertical-bar tsp-can-grow tsp-ts-paint__space-filler-container">
-            <div class="tsp-horizontal-bar tsp-ts-paint__space-filler" style="height: 3px;"></div>
-            <div class="tsp-horizontal-bar">
-              <div class="tsp-vertical-bar tsp-ts-paint__space-filler" style="width: 3px;"></div>
-              <div class="tsp-vertical-bar">
-                <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
-                <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.previewImage"
-                  [offset]="store.state.previewOffset"></tsp-zoomable-canvas>
-                <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.selectionImage"
-                  [offset]="store.state.selectionOffset"></tsp-zoomable-canvas>
-                <tsp-mouse-tracker [zoom]="store.state.zoom" [image]="store.state.image"
-                  (mouseMove)="store.processMouseMove($event)" (mouseDown)="store.processMouseDown($event)"
-                  (mouseUp)="store.processMouseUp($event)" (mouseScroll)="store.processMouseScroll($event)">
-                </tsp-mouse-tracker>
-              </div>
-              <div class="tsp-vertical-bar tsp-ts-paint__space-filler tsp-can-grow" style="min-width: 3px;"></div>
-            </div>
-            <div class="tsp-horizontal-bar tsp-ts-paint__space-filler tsp-can-grow" style="min-height: 3px;"></div>
+        <div class="tsp-depressed-item tsp-can-grow tsp-ts-paint__image_scroller">
+          <div class="tsp-ts-paint__image-padding">
+            <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
+            <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.previewImage"
+              [parentImage]="store.state.image" [offset]="store.state.previewOffset"></tsp-zoomable-canvas>
+            <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.selectionImage"
+              [parentImage]="store.state.image" [offset]="store.state.selectionOffset"></tsp-zoomable-canvas>
+            <tsp-mouse-tracker [zoom]="store.state.zoom" [image]="store.state.image"
+              (mouseMove)="store.processMouseMove($event)" (mouseDown)="store.processMouseDown($event)"
+              (mouseUp)="store.processMouseUp($event)" (mouseScroll)="store.processMouseScroll($event)">
+            </tsp-mouse-tracker>
           </div>
         </div>
       </div>
