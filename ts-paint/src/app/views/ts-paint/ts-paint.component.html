@@ -19,6 +19,9 @@
               [parentImage]="store.state.image" [offset]="store.state.previewOffset"></tsp-zoomable-canvas>
             <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.selectionImage"
               [parentImage]="store.state.image" [offset]="store.state.selectionOffset"></tsp-zoomable-canvas>
+            <tsp-selection-frame [ngStyle]="{'display': store.state.selectionImage?'block':'none'}"
+              [zoom]="store.state.zoom" [image]="store.state.selectionImage" [parentImage]="store.state.image"
+              [offset]="store.state.selectionOffset"></tsp-selection-frame>
             <tsp-mouse-tracker [zoom]="store.state.zoom" [image]="store.state.image"
               (mouseMove)="store.processMouseMove($event)" (mouseDown)="store.processMouseDown($event)"
               (mouseUp)="store.processMouseUp($event)" (mouseScroll)="store.processMouseScroll($event)">

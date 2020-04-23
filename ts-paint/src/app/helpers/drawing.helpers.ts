@@ -13,10 +13,35 @@ export function drawLines(points: Point[], color: Color, image: ImageData) {
   }
 }
 
-function setPixel(point: Point, color: Color, image: ImageData) {
+export function setPixel(point: Point, color: Color, image: ImageData) {
   const pixelOffset = getPixelOffset(point, image);
   if (pixelOffset !== undefined) {
     [image.data[pixelOffset], image.data[pixelOffset + 1], image.data[pixelOffset + 2], image.data[pixelOffset + 3]] = [color.r, color.g, color.b, 255];
+  }
+}
+
+export function drawDashedFrame(image: ImageData) {
+  const white: Color = { r: 255, g: 255, b: 255 };
+  const blueish: Color = { r: 0, g: 120, b: 215 };
+  let color: Color;
+
+  for (var w = 0; w < image.width; w++) {
+    if (Math.floor((w + 1) / 4) % 2 === 0) {
+      color = white;
+    } else {
+      color = blueish;
+    }
+    setPixel({ w, h: 0 }, color, image);
+    setPixel({ w, h: image.height - 1 }, color, image);
+  }
+  for (var h = 0; h < image.height; h++) {
+    if (Math.floor((h + 1) / 4) % 2 === 0) {
+      color = white;
+    } else {
+      color = blueish;
+    }
+    setPixel({ w: 0, h }, color, image);
+    setPixel({ w: image.width - 1, h }, color, image);
   }
 }
 

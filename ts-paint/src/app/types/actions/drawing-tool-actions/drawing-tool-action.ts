@@ -16,7 +16,7 @@ export abstract class DrawingToolAction extends TsPaintAction {
 
   protected abstract draw(points: Point[], color1: Color, color2: Color, image: ImageData);
 
-  protected getAffectedArea(): RectangleArea {
+  protected getAffectedArea(state: TsPaintStoreState): RectangleArea {
     const minW: number = Math.min(...this.points.map(x => x.w));
     const maxW: number = Math.max(...this.points.map(x => x.w));
     const minH: number = Math.min(...this.points.map(x => x.h));
@@ -40,7 +40,7 @@ export abstract class DrawingToolAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    const affectedArea: RectangleArea = this.getAffectedArea();
+    const affectedArea: RectangleArea = this.getAffectedArea(state);
     const undoImage: ImageData = getImagePart(affectedArea, state.image);
 
     return [

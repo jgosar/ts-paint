@@ -42,7 +42,6 @@ export class ZoomableCanvasComponent implements OnChanges {
         this.zoomedOffsetW = Math.max((this.offset?.w ?? 0), 0) * this.zoom;
         this.zoomedOffsetH = Math.max((this.offset?.h ?? 0), 0) * this.zoom;
 
-        //loadImageToCanvas(this.image, this.imageCanvas.nativeElement);
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
         context.putImageData(this.image, Math.min(this.offset.w, 0), Math.min(this.offset.h, 0));

@@ -12,6 +12,7 @@ import { FileDownloadComponent } from './components/file-download/file-download.
 import { MouseTrackerComponent } from './components/mouse-tracker/mouse-tracker.component';
 import { ToolboxComponent } from './components/toolbox/toolbox.component';
 import { PaletteComponent } from './components/palette/palette.component';
+import { SelectionFrameComponent } from './components/selection-frame/selection-frame.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { PaletteComponent } from './components/palette/palette.component';
     FileDownloadComponent,
     MouseTrackerComponent,
     ToolboxComponent,
-    PaletteComponent
+    PaletteComponent,
+    SelectionFrameComponent
   ],
   imports: [
     BrowserModule
