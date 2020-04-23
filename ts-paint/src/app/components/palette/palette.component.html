@@ -1,18 +1,20 @@
-<div class="colorSelector">
+<div class="tsp-palette__color-selector">
   <div class="tsp-depressed-item-container">
-    <div class="tsp-depressed-item selectedColorsDiv">
-      <div class="raisedItemContainer colorSampleContainer" style="bottom: 3px; right: 3px">
-        <div class="raisedItem colorSample" [style.background-color]="getRgb(selectedSecondaryColor)">
+    <div class="tsp-depressed-item tsp-palette__selected-colors-parent">
+      <div class="tsp-raised-item tsp-palette__color-sample-container" style="bottom: 3px; right: 3px">
+        <div class="tsp-palette__selected-color-container tsp-palette__color-sample"
+          [style.background-color]="getRgb(selectedSecondaryColor)">
         </div>
       </div>
-      <div class="raisedItemContainer colorSampleContainer" style="top: 3px; left: 2px">
-        <div class="raisedItem colorSample" [style.background-color]="getRgb(selectedPrimaryColor)">
+      <div class="tsp-raised-item tsp-palette__color-sample-container" style="top: 3px; left: 2px">
+        <div class="tsp-palette__selected-color-container tsp-palette__color-sample"
+          [style.background-color]="getRgb(selectedPrimaryColor)">
         </div>
       </div>
     </div>
   </div>
   <div *ngFor="let color of availableColors" class="tsp-depressed-item-container">
-    <div class="tsp-depressed-item paletteButton" [style.background-color]="getRgb(color)"
+    <div class="tsp-depressed-item tsp-palette__color-button" [style.background-color]="getRgb(color)"
       (click)="selectColor($event, color)" (contextmenu)="selectColor($event, color)">
     </div>
   </div>

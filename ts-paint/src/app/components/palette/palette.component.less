@@ -1,4 +1,6 @@
-.colorSelector{
+@import 'variables';
+
+.tsp-palette__color-selector{
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
@@ -6,36 +8,31 @@
   margin: 9px 4px 9px;
 }
 
-.raisedItemContainer{
-  border: 1px solid;
-  border-color: #FFFFFF #868B8E #868B8E #FFFFFF;
-}
-
-.raisedItem{
+.tsp-palette__selected-color-container{
   border: 1px solid #C3C7CB;
 }
 
-.paletteButton{
+.tsp-palette__color-button{
   width: 12px;
   height: 12px;
   padding: 0px;
 }
 
-.colorSample{
+.tsp-palette__color-sample{
   width: 11px;
   height: 11px;
 }
 
-.colorSampleContainer{
+.tsp-palette__color-sample-container{
   width: 13px;
   height: 13px;
   position: absolute;
 }
 
-.selectedColorsDiv{
+.tsp-palette__selected-colors-parent{
   width: 27px;
   height: 28px;
   padding: 0px;
-  background-color: #E1E3E5;
+  background-color: @color--lightest-grey;
   position: relative;
 }
