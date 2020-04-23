@@ -21,7 +21,9 @@ export abstract class TsPaintAction {
   public getStatePatches(state: TsPaintStoreState): Partial<TsPaintStoreState> {
     let patches: Partial<TsPaintStoreState> = {};
 
-    this.undoActions = this.getUndoActions(state);
+    if (this.renderIn !== 'preview') {
+      this.undoActions = this.getUndoActions(state);
+    }
 
     if (this.renderIn === 'preview') {
       this._previewOffset = this.getPreviewOffset(state);

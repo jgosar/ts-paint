@@ -14,7 +14,7 @@ export abstract class DrawingToolAction extends TsPaintAction {
     this._deselectsSelection = true;
   }
 
-  protected abstract draw(points: Point[], color1: Color, color2: Color, image: ImageData);
+  protected abstract draw(points: Point[], color1: Color, color2: Color, image: ImageData, state: TsPaintStoreState);
 
   protected getAffectedArea(state: TsPaintStoreState): RectangleArea {
     const minW: number = Math.min(...this.points.map(x => x.w));
@@ -29,14 +29,20 @@ export abstract class DrawingToolAction extends TsPaintAction {
     const color1: Color = this.swapColors ? state.secondaryColor : state.primaryColor;
     const color2: Color = this.swapColors ? state.primaryColor : state.secondaryColor;
 
+    const patches: Partial<TsPaintStoreState> = this.addPatches(state);
     const image: ImageData = this.getWorkingImage(state);
-    this.draw(this.getOffsetPoints(), color1, color2, image);
+    this.draw(this.getOffsetPoints(), color1, color2, image, state);
 
-    return { image };
+    return { patches, image };
   }
 
   private getOffsetPoints(): Point[] {
     return this.points.map(point => { return { w: point.w - this._previewOffset.w, h: point.h - this._previewOffset.h }; });
+  }
+
+  protected addPatches(state: TsPaintStoreState): Partial<TsPaintStoreState> {
+    // Override this if necessary
+    return {};
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {

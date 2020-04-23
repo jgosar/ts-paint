@@ -22,6 +22,14 @@ export function fillImage(image: ImageData, color: Color): ImageData {
   return fillArea(image, color, { start: { w: 0, h: 0 }, end: { w: image.width - 1, h: image.height - 1 } });
 }
 
+export function fillAreaInOriginalImage(image: ImageData, color: Color, area: RectangleArea) {
+  for (var i = 0; i < image.data.length; i += 4) {
+    if (isSubpixelInRectangle(i, area, image)) {
+      [image.data[i], image.data[i + 1], image.data[i + 2], image.data[i + 3]] = [color.r, color.g, color.b, color.a ?? 255];
+    }
+  }
+}
+
 export function fillArea(image: ImageData, color: Color, area: RectangleArea): ImageData {
   const newImage: ImageData = new ImageData(image.width, image.height);
   const newImageData: Uint8ClampedArray = newImage.data;
@@ -29,6 +37,8 @@ export function fillArea(image: ImageData, color: Color, area: RectangleArea): I
   for (var i = 0; i < newImageData.length; i += 4) {
     if (isSubpixelInRectangle(i, area, image)) {
       [newImageData[i], newImageData[i + 1], newImageData[i + 2], newImageData[i + 3]] = [color.r, color.g, color.b, color.a ?? 255];
+    } else {
+      [newImageData[i], newImageData[i + 1], newImageData[i + 2], newImageData[i + 3]] = [image.data[i], image.data[i + 1], image.data[i + 2], color.a ?? 255];
     }
   }
 

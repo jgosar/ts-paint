@@ -6,21 +6,22 @@ import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
 import { DrawingToolAction } from '../actions/drawing-tool-actions/drawing-tool-action';
 import { createDrawingToolAction } from '../actions/drawing-tool-actions/create-drawing-tool-action';
+import { TsPaintAction } from '../actions/ts-paint-action';
 
 export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
   private readonly _maxPoints: number;
 
-  constructor(public type: DrawingToolType, private addAction: (action: DrawingToolAction) => void) {
+  constructor(public type: DrawingToolType, private addAction: (action: TsPaintAction) => void) {
     switch (type) {
       /*case DrawingToolType.freeFormSelect:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
-        return;
+        return;*/
       case DrawingToolType.rectangleSelect:
         this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
         this._maxPoints = 2;
         return;
-      case DrawingToolType.eraser:
+      /*case DrawingToolType.eraser:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
         return;
       case DrawingToolType.colorFiller:
@@ -113,12 +114,12 @@ export class DrawingTool {
   }
 
   private addPreviewAction(points: Point[]) {
-    const action: DrawingToolAction = createDrawingToolAction(this.type, points, this._swapColors, 'preview');
+    const action: TsPaintAction = createDrawingToolAction(this.type, points, this._swapColors, 'preview');
     this.addAction(action);
   }
 
   private addFinalAction(points: Point[]) {
-    const action: DrawingToolAction = createDrawingToolAction(this.type, points, this._swapColors, 'image');
+    const action: TsPaintAction = createDrawingToolAction(this.type, points, this._swapColors, 'image');
     this.addAction(action);
     this.clearData();
   }

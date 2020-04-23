@@ -1,7 +1,7 @@
 export enum DrawingToolType {
-  /*freeFormSelect,
+  /*freeFormSelect,*/
   rectangleSelect,
-  eraser,
+  /*eraser,
   colorFiller,
   colorPicker,
   magnifier,*/
