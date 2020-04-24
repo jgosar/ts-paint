@@ -122,6 +122,17 @@ export function pasteImagePart(location: Point, imagePart: ImageData, image: Ima
   return result;
 }
 
+export function copyImagePart(imagePart: ImageData) {
+  const canvas: HTMLCanvasElement = document.createElement("canvas");
+  loadImageToCanvas(imagePart, canvas);
+  canvas.toBlob(function (blob) {
+    // @ts-ignore
+    const item = new ClipboardItem({ "image/png": blob });
+    // @ts-ignore
+    navigator.clipboard.write([item]);
+  });
+}
+
 export function resizeImage(image: ImageData, newWidth: number, newHeight: number, backgroundColor: Color): ImageData {
   let resized: ImageData = new ImageData(newWidth, newHeight);
   resized = fillImage(resized, backgroundColor);

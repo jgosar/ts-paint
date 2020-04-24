@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { TsPaintStore } from 'src/app/services/ts-paint/ts-paint.store';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
+import { copyImagePart } from 'src/app/helpers/image.helpers';
 
 @Component({
   selector: 'tsp-ts-paint',
@@ -22,11 +23,9 @@ export class TsPaintComponent implements OnInit {
   }
 
   onCopy() {
-    /*if (this.selectedDrawingTool && this.selectedDrawingTool instanceof MoveSelectionTool) {
-      const selection: ImageData = this.selectedDrawingTool.imageSelection;
-
-      this.selectionCopy.copySelectionToClipboard(selection);
-    }*/
+    if (this.store.state.selectionImage) {
+      copyImagePart(this.store.state.selectionImage);
+    }
   }
 
 }
