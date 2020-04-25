@@ -30,8 +30,8 @@ export class MouseTrackerComponent implements OnChanges {
   private _lastMouseOut: MouseEvent;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.zoomedWidth = (this.image?.width ?? 0) * this.zoom;
-    this.zoomedHeight = (this.image?.height ?? 0) * this.zoom;
+    this.zoomedWidth = (this.image?.width ?? 1) * this.zoom;
+    this.zoomedHeight = (this.image?.height ?? 1) * this.zoom;
   }
 
   onSelectStart(): boolean {
@@ -39,7 +39,7 @@ export class MouseTrackerComponent implements OnChanges {
   }
 
   onMouseMove(event: MouseEvent) {
-    this.mouseMove.emit(this.getUnzoomedPoint(event));
+    this.mouseMove.emit(this.getEventPoint(event));
   }
 
   onMouseIn(event: MouseEvent) {
@@ -58,25 +58,31 @@ export class MouseTrackerComponent implements OnChanges {
 
   onMouseUp(event: MouseEvent) {
     this._mouseIsDown = false;
-    this.mouseUp.emit(this.getUnzoomedPoint(event));
+    this.mouseUp.emit(this.getEventPoint(event));
   }
 
   onMouseDown(event: MouseEvent) {
     this._mouseIsDown = true;
-    this.mouseDown.emit({ point: this.getUnzoomedPoint(event), button: event.button });
+    this.mouseDown.emit({ point: this.getEventPoint(event), button: event.button });
   }
 
   onMouseScroll(event: WheelEvent) {
     const wheelDelta: number = event.deltaY !== undefined ? event.deltaY / (-100) : event.detail / (-3);
-    this.mouseScroll.emit({ point: this.getUnzoomedPoint(event), wheelDelta: wheelDelta });
+    this.mouseScroll.emit({ point: this.getEventPoint(event), wheelDelta: wheelDelta });
   }
 
-  private getUnzoomedPoint(event: MouseEvent | WheelEvent) {
+  private getEventPoint(event: MouseEvent | WheelEvent) {
     //@ts-ignore
-    return this.unzoomPoint({ w: event.layerX, h: event.layerY });
+    return this.constrainPointToImage(this.unzoomPoint({ w: event.layerX, h: event.layerY }));
   }
 
   private unzoomPoint(zoomedPoint: Point): Point {
     return { w: Math.floor(zoomedPoint.w / this.zoom), h: Math.floor(zoomedPoint.h / this.zoom) };
+  }
+
+  private constrainPointToImage(point: Point): Point {
+    const w: number = Math.min(Math.max(0, point.w), (this.image?.width ?? 1) - 1);
+    const h: number = Math.min(Math.max(0, point.h), (this.image?.height ?? 1) - 1);
+    return { w, h };
   }
 }
