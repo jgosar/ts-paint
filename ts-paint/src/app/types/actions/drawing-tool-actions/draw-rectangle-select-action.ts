@@ -7,6 +7,11 @@ import { RectangleArea } from '../../base/rectangle-area';
 import { getImagePart, fillAreaInOriginalImage } from 'src/app/helpers/image.helpers';
 
 export class DrawRectangleSelectAction extends DrawingToolAction {
+  constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {
+    super(points, swapColors, renderIn);
+    this._needsPreviewPixels = true;
+  }
+
   protected draw(points: Point[], color1: Color, color2: Color, image: ImageData, state: TsPaintStoreState) {
     if (this.renderIn === 'preview') {
       const corners: Point[] = [
@@ -38,12 +43,11 @@ export class DrawRectangleSelectAction extends DrawingToolAction {
   }
 
   private paintDashInvertedLine(start: Point, end: Point, state: TsPaintStoreState, image: ImageData) {
-    const imageToInvert: ImageData = getImagePart(this.getAffectedArea(state), state.image);
     const dashLength: number = Math.ceil(4 / state.zoom)
     const pointsToPaint: Point[] = getLinePoints(start, end);
     pointsToPaint.forEach((point, index) => {
       if (Math.floor(index / dashLength) % 2 === 0) {
-        setPixel(point, invertColor(getPixel(point, imageToInvert)), image);
+        setPixel(point, invertColor(getPixel(point, image)), image);
       }
     });
   }

@@ -1,7 +1,7 @@
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { RectangleArea } from '../base/rectangle-area';
 import { Point } from '../base/point';
-import { getAreaWidth, getAreaHeight, cloneImage } from 'src/app/helpers/image.helpers';
+import { getAreaWidth, getAreaHeight, cloneImage, getImagePart } from 'src/app/helpers/image.helpers';
 import { PartialActionResult } from './partial-action-result';
 import { lastElement, isEmpty } from 'src/app/helpers/typescript.helpers';
 
@@ -10,6 +10,7 @@ export abstract class TsPaintAction {
   protected _previewOffset: Point = { h: 0, w: 0 };
   protected _deselectsSelection: boolean = false;
   protected _overridesPreviousActionOfSameType: boolean = false;
+  protected _needsPreviewPixels: boolean = false;
 
   constructor(public renderIn: 'image' | 'preview' | 'nowhere') {
   }
@@ -80,7 +81,11 @@ export abstract class TsPaintAction {
     if (this.renderIn === 'preview') {
       const affectedArea: RectangleArea = this.getAffectedArea(state);
       this._previewOffset = affectedArea.start;
-      workingImage = new ImageData(getAreaWidth(affectedArea), getAreaHeight(affectedArea));
+      if (this._needsPreviewPixels) {
+        workingImage = getImagePart(affectedArea, state.image);
+      } else {
+        workingImage = new ImageData(getAreaWidth(affectedArea), getAreaHeight(affectedArea));
+      }
     } else if (this.renderIn === 'image') {
       workingImage = cloneImage(state.image);
     }
