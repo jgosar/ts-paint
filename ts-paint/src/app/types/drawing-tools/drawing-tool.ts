@@ -26,11 +26,11 @@ export class DrawingTool {
         return;
       case DrawingToolType.colorFiller:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
-        return;
+        return;*/
       case DrawingToolType.colorPicker:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
         return;
-      case DrawingToolType.magnifier:
+      /*case DrawingToolType.magnifier:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
         return;*/
       case DrawingToolType.pencil:
@@ -96,6 +96,9 @@ export class DrawingTool {
       this.addFinalAction([this._mouseDownPoint, point]);
     } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
       this._mousePoints.push(point);
+      this.addFinalAction(this._mousePoints);
+    } else if (this._behaviour == DrawingToolBehaviour.SINGLE_POINT) {
+      this._mousePoints = [point];
       this.addFinalAction(this._mousePoints);
     }
   }
