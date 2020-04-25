@@ -6,7 +6,7 @@ import { getPixel } from 'src/app/helpers/drawing.helpers';
 import { SetColorAction } from '../set-color-action';
 import { TsPaintAction } from '../ts-paint-action';
 
-export class DrawColorPickerAction extends DrawingToolAction {
+export class ColorPickerAction extends DrawingToolAction {
   protected draw(points: Point[], color1: Color, color2: Color, image: ImageData) {
   }
 

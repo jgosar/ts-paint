@@ -6,7 +6,7 @@ import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.stat
 import { RectangleArea } from '../../base/rectangle-area';
 import { getImagePart, fillAreaInOriginalImage } from 'src/app/helpers/image.helpers';
 
-export class DrawRectangleSelectAction extends DrawingToolAction {
+export class RectangleSelectAction extends DrawingToolAction {
   constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {
     super(points, swapColors, renderIn);
     this._needsPreviewPixels = true;
