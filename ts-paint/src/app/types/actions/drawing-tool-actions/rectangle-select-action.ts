@@ -1,5 +1,5 @@
 import { DrawingToolAction } from './drawing-tool-action';
-import { drawLines, getLinePoints, setPixel, invertColor, getPixel } from 'src/app/helpers/drawing.helpers';
+import { drawLines, getLinePoints, setPixelInOriginalImage, invertColor, getPixel } from 'src/app/helpers/drawing.helpers';
 import { Point } from 'src/app/types/base/point';
 import { Color } from 'src/app/types/base/color';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
@@ -47,7 +47,7 @@ export class RectangleSelectAction extends DrawingToolAction {
     const pointsToPaint: Point[] = getLinePoints(start, end);
     pointsToPaint.forEach((point, index) => {
       if (Math.floor(index / dashLength) % 2 === 0) {
-        setPixel(point, invertColor(getPixel(point, image)), image);
+        setPixelInOriginalImage(point, invertColor(getPixel(point, image)), image);
       }
     });
   }

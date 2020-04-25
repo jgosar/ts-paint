@@ -23,10 +23,10 @@ export class DrawingTool {
         return;
       /*case DrawingToolType.eraser:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
-        return;
+        return;*/
       case DrawingToolType.colorFiller:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
-        return;*/
+        return;
       case DrawingToolType.colorPicker:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
         return;

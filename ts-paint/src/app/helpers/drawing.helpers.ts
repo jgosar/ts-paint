@@ -4,7 +4,7 @@ import { getPixelOffset } from './image.helpers';
 
 export function drawLine(start: Point, end: Point, color: Color, image: ImageData) {
   const [x0, y0, x1, y1]: number[] = [start.w, start.h, end.w, end.h];
-  bresenhamLinePlot([x0, y0, x1, y1], (x, y) => setPixel({ w: x, h: y }, color, image));
+  bresenhamLinePlot([x0, y0, x1, y1], (x, y) => setPixelInOriginalImage({ w: x, h: y }, color, image));
 }
 
 export function drawLines(points: Point[], color: Color, image: ImageData) {
@@ -13,7 +13,7 @@ export function drawLines(points: Point[], color: Color, image: ImageData) {
   }
 }
 
-export function setPixel(point: Point, color: Color, image: ImageData) {
+export function setPixelInOriginalImage(point: Point, color: Color, image: ImageData) {
   const pixelOffset = getPixelOffset(point, image);
   if (pixelOffset !== undefined) {
     [image.data[pixelOffset], image.data[pixelOffset + 1], image.data[pixelOffset + 2], image.data[pixelOffset + 3]] = [color.r, color.g, color.b, 255];
@@ -45,8 +45,8 @@ export function drawDashedFrame(image: ImageData) {
     } else {
       color = blueish;
     }
-    setPixel({ w, h: 0 }, color, image);
-    setPixel({ w, h: image.height - 1 }, color, image);
+    setPixelInOriginalImage({ w, h: 0 }, color, image);
+    setPixelInOriginalImage({ w, h: image.height - 1 }, color, image);
   }
   for (var h = 0; h < image.height; h++) {
     if (Math.floor((h + 1) / 4) % 2 === 0) {
@@ -54,8 +54,8 @@ export function drawDashedFrame(image: ImageData) {
     } else {
       color = blueish;
     }
-    setPixel({ w: 0, h }, color, image);
-    setPixel({ w: image.width - 1, h }, color, image);
+    setPixelInOriginalImage({ w: 0, h }, color, image);
+    setPixelInOriginalImage({ w: image.width - 1, h }, color, image);
   }
 }
 
