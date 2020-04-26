@@ -4,27 +4,35 @@ import { Point } from 'src/app/types/base/point';
 import { Color } from 'src/app/types/base/color';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { RectangleArea } from '../../base/rectangle-area';
-import { min, max } from 'src/app/helpers/typescript.helpers';
+import { min, max, isEmpty } from 'src/app/helpers/typescript.helpers';
+import { PointSet } from 'src/app/utils/point-set';
+import { isPointInRectangle } from 'src/app/helpers/image.helpers';
 
 export class ColorFillerAction extends DrawingToolAction {
+  private _sameColorPixels: Point[] = [];
+
   constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {
     super(points, swapColors, renderIn);
     this._needsPreviewPixels = true;
   }
 
   protected getAffectedArea(state: TsPaintStoreState): RectangleArea {
-    const sameColorPixels: Point[] = this.getSameColorPixels(this.points[0], state.image);
-    const minW: number = min(sameColorPixels.map(w => w.w));
-    const maxW: number = max(sameColorPixels.map(w => w.w));
-    const minH: number = min(sameColorPixels.map(w => w.h));
-    const maxH: number = max(sameColorPixels.map(w => w.h));
+    if (isEmpty(this._sameColorPixels)) {
+      this._sameColorPixels = this.getSameColorPixels(this.points[0], state.image);
+    }
+    const minW: number = min(this._sameColorPixels.map(w => w.w));
+    const maxW: number = max(this._sameColorPixels.map(w => w.w));
+    const minH: number = min(this._sameColorPixels.map(w => w.h));
+    const maxH: number = max(this._sameColorPixels.map(w => w.h));
 
     return { start: { w: minW, h: minH }, end: { w: maxW, h: maxH } };
   }
 
   protected draw(points: Point[], color1: Color, color2: Color, image: ImageData) {
-    const sameColorPixels: Point[] = this.getSameColorPixels(this.points[0], image);
-    sameColorPixels.forEach(pixel => {
+    if (isEmpty(this._sameColorPixels)) {
+      this._sameColorPixels = this.getSameColorPixels(this.points[0], image);
+    }
+    this._sameColorPixels.forEach(pixel => {
       setPixelInOriginalImage(pixel, color1, image);
     });
   }
@@ -33,42 +41,39 @@ export class ColorFillerAction extends DrawingToolAction {
     const sameColorPixels: Point[] = [];
     const color: Color = getPixel(point, imageData);
 
-    const finishedPixels: Set<string> = new Set<string>();
-    const pendingPixels: Set<string> = new Set<string>();
+    const finishedPixels: PointSet = new PointSet(imageData.width);
+    const pendingPixels: PointSet = new PointSet(imageData.width);
 
-    pendingPixels.add(point.w + '_' + point.h);
+    pendingPixels.add(point);
 
     while (pendingPixels.size > 0) {
-      pendingPixels.forEach(coords => {
-        const w: number = parseInt(coords.split('_')[0]);
-        const h: number = parseInt(coords.split('_')[1]);
+      pendingPixels.forEach(pixel => {
+        const w: number = pixel.w;
+        const h: number = pixel.h;
 
-        this.addPointIfSameColor(imageData, color, w - 1, h, pendingPixels, finishedPixels);
-        this.addPointIfSameColor(imageData, color, w + 1, h, pendingPixels, finishedPixels);
-        this.addPointIfSameColor(imageData, color, w, h - 1, pendingPixels, finishedPixels);
-        this.addPointIfSameColor(imageData, color, w, h + 1, pendingPixels, finishedPixels);
-        pendingPixels.delete(coords);
-        finishedPixels.add(coords);
+        this.addPointIfSameColor(imageData, color, { w: w - 1, h: h }, pendingPixels, finishedPixels);
+        this.addPointIfSameColor(imageData, color, { w: w + 1, h: h }, pendingPixels, finishedPixels);
+        this.addPointIfSameColor(imageData, color, { w: w, h: h - 1 }, pendingPixels, finishedPixels);
+        this.addPointIfSameColor(imageData, color, { w: w, h: h + 1 }, pendingPixels, finishedPixels);
+        pendingPixels.delete(pixel);
+        finishedPixels.add(pixel);
       });
     }
 
-    finishedPixels.forEach(coords => {
-      const w: number = parseInt(coords.split('_')[0]);
-      const h: number = parseInt(coords.split('_')[1]);
-
-      sameColorPixels.push({ w, h });
+    finishedPixels.forEach(pixel => {
+      sameColorPixels.push(pixel);
     });
 
     return sameColorPixels;
   }
 
-  private addPointIfSameColor(imageData: ImageData, color: Color, w: number, h: number, pendingPixels: Set<string>, finishedPixels: Set<string>) {
-    if (w < 0 || h < 0 || w > imageData.width || h > imageData.height || pendingPixels.has(w + '_' + h) || finishedPixels.has(w + '_' + h)) {
+  private addPointIfSameColor(image: ImageData, color: Color, point: Point, pendingPixels: PointSet, finishedPixels: PointSet) {
+    if (!isPointInRectangle(point, { start: { w: 0, h: 0 }, end: { w: image.width - 1, h: image.height - 1 } }) || pendingPixels.has(point) || finishedPixels.has(point)) {
       return;
     }
-    const colorOfPixel: Color = getPixel({ w, h }, imageData);
+    const colorOfPixel: Color = getPixel(point, image);
     if (colorOfPixel.r === color.r && colorOfPixel.g === color.g && colorOfPixel.b === color.b) {
-      pendingPixels.add(w + '_' + h);
+      pendingPixels.add(point);
     }
   }
 }
