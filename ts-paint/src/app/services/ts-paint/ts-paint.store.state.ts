@@ -24,7 +24,7 @@ export class TsPaintStoreState {
   actions: TsPaintAction[] = [];
   selectedDrawingTool: DrawingTool;
   availableDrawingTools: DrawingToolType[] = [
-    DrawingToolType.rectangleSelect, DrawingToolType.colorFiller, DrawingToolType.colorPicker, DrawingToolType.pencil, DrawingToolType.line
+    DrawingToolType.rectangleSelect, DrawingToolType.colorFiller, DrawingToolType.colorPicker, DrawingToolType.pencil, DrawingToolType.line, DrawingToolType.rectangle
   ];
   menuStructure: MenuItem[] = [
     {

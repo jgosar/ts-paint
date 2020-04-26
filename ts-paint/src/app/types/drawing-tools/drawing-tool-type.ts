@@ -10,9 +10,9 @@ export enum DrawingToolType {
   airbrush,
   text,*/
   line,
-  /*curve,
+  /*curve,*/
   rectangle,
-  polygon,
+  /*polygon,
   ellipse,
   roundedRectangle,*/
 }
