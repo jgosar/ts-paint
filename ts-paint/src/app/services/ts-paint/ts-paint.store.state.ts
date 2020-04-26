@@ -26,6 +26,7 @@ export class TsPaintStoreState {
   availableDrawingTools: DrawingToolType[] = [
     DrawingToolType.rectangleSelect, DrawingToolType.colorFiller, DrawingToolType.colorPicker, DrawingToolType.pencil, DrawingToolType.line, DrawingToolType.rectangle
   ];
+  undoPointer: number = -1;
   menuStructure: MenuItem[] = [
     {
       name: 'File',

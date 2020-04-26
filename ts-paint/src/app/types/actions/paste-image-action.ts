@@ -3,6 +3,7 @@ import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.stat
 import { PartialActionResult } from './partial-action-result';
 import { MoveSelectionAction } from './move-selection-action';
 import { resizeImage } from 'src/app/helpers/image.helpers';
+import { DeselectSelectionAction } from './deselect-selection-action';
 
 export class PasteImageAction extends TsPaintAction {
   constructor(private imagePart: ImageData) {
@@ -26,8 +27,10 @@ export class PasteImageAction extends TsPaintAction {
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
     return [
+      //TODO: This is wrong?
       new PasteImageAction(state.selectionImage),
-      new MoveSelectionAction(state.selectionOffset)
+      new MoveSelectionAction(state.selectionOffset),
+      new DeselectSelectionAction()
     ];
   }
 }

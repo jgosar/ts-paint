@@ -83,11 +83,11 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     return new DrawingTool(toolType, this.executeAction.bind(this));
   }
 
-  private executeAction(action: TsPaintAction) {
-    const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state);
+  private executeAction(action: TsPaintAction, logToHistory: boolean = true) {
+    const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
 
     if (this.state.selectionImage !== undefined && action.deselectsSelection) {
-      this.executeAction(new DeselectSelectionAction());
+      this.executeAction(new DeselectSelectionAction(), false);
     }
 
     Object.keys(patches).forEach(key => {
@@ -129,11 +129,18 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private undo() {
+    if (this.state.undoPointer >= 0) {
+      const undoPointer: number = this.state.undoPointer;
+      const actionToUndo: TsPaintAction = this.state.actions[undoPointer];
+      actionToUndo.undoActions.forEach(undoAction => {
+        this.executeAction(undoAction, false);
+      });
 
+      this.patchState(undoPointer - 1, 'undoPointer');
+    }
   }
 
   private repeat() {
-
   }
 
   private clearImage() {

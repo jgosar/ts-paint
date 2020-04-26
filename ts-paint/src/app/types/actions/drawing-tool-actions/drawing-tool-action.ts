@@ -7,6 +7,7 @@ import { getImagePart } from 'src/app/helpers/image.helpers';
 import { PartialActionResult } from '../partial-action-result';
 import { PasteImageAction } from '../paste-image-action';
 import { MoveSelectionAction } from '../move-selection-action';
+import { DeselectSelectionAction } from '../deselect-selection-action';
 
 export abstract class DrawingToolAction extends TsPaintAction {
   constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {
@@ -51,7 +52,8 @@ export abstract class DrawingToolAction extends TsPaintAction {
 
     return [
       new PasteImageAction(undoImage),
-      new MoveSelectionAction({ w: affectedArea.start.w, h: affectedArea.start.h })
+      new MoveSelectionAction({ w: affectedArea.start.w, h: affectedArea.start.h }),
+      new DeselectSelectionAction()
     ];
   }
 }

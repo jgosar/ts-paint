@@ -35,7 +35,8 @@ export class DeselectSelectionAction extends TsPaintAction {
       new PasteImageAction(oldImagePart),
       new DeselectSelectionAction(),
       new PasteImageAction(state.selectionImage),
-      new MoveSelectionAction(state.selectionOffset)
+      new MoveSelectionAction(state.selectionOffset),
+      new DeselectSelectionAction(),
     ];
   }
 }

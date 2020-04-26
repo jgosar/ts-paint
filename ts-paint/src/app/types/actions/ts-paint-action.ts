@@ -9,7 +9,6 @@ export abstract class TsPaintAction {
   public undoActions: TsPaintAction[] = [];
   protected _previewOffset: Point = { h: 0, w: 0 };
   protected _deselectsSelection: boolean = false;
-  protected _overridesPreviousActionOfSameType: boolean = false;
   protected _needsPreviewPixels: boolean = false;
 
   constructor(public renderIn: 'image' | 'preview' | 'nowhere') {
@@ -19,7 +18,7 @@ export abstract class TsPaintAction {
     return this._deselectsSelection;
   }
 
-  public getStatePatches(state: TsPaintStoreState): Partial<TsPaintStoreState> {
+  public getStatePatches(state: TsPaintStoreState, logToHistory: boolean = true): Partial<TsPaintStoreState> {
     let patches: Partial<TsPaintStoreState> = {};
 
     if (this.renderIn !== 'preview') {
@@ -52,11 +51,10 @@ export abstract class TsPaintAction {
       patches.previewAction = this;
     } else {
       patches.previewAction = undefined;
-      const actions: TsPaintAction[] = patches.actions || state.actions.map(x => x);
-      if (this._overridesPreviousActionOfSameType && !isEmpty(actions) && lastElement(actions).constructor === this.constructor) {
-        patches.actions = { ...actions, [actions.length - 1]: this };
-      } else {
-        patches.actions = actions.concat(this);
+      if (logToHistory) {
+        const actions: TsPaintAction[] = patches.actions || state.actions.map(x => x);
+        patches.undoPointer = state.undoPointer + 1;
+        patches.actions = actions.slice(0, patches.undoPointer).concat(this);
       }
     }
 
