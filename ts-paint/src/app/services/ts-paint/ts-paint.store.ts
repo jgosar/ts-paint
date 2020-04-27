@@ -141,6 +141,12 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private repeat() {
+    if (this.state.undoPointer < this.state.actions.length - 1) {
+      const undoPointer: number = this.state.undoPointer;
+      const actionToRepeat: TsPaintAction = this.state.actions[undoPointer + 1];
+      this.executeAction(actionToRepeat, false);
+      this.patchState(undoPointer + 1, 'undoPointer');
+    }
   }
 
   private clearImage() {

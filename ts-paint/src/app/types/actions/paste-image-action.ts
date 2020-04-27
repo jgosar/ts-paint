@@ -27,10 +27,9 @@ export class PasteImageAction extends TsPaintAction {
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
     return [
-      //TODO: This is wrong?
-      new PasteImageAction(state.selectionImage),
-      new MoveSelectionAction(state.selectionOffset),
-      new DeselectSelectionAction()
+      //TODO: Implement this
+      //new DeleteSelectionAction()
+      //new ResizeImageAction(state.image.width, state.image.height)
     ];
   }
 }
