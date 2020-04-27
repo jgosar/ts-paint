@@ -3,6 +3,7 @@ import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.stat
 import { PartialActionResult } from './partial-action-result';
 import { resizeImage } from 'src/app/helpers/image.helpers';
 
+/** This action exists only  to avoid a circular dependency in DeleteSelectionAction */
 export class PasteImageUndoAction extends TsPaintAction {
   constructor(private imagePart: ImageData) {
     super('image');
