@@ -2,10 +2,8 @@ import { TsPaintAction } from './ts-paint-action';
 import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
 import { PartialActionResult } from './partial-action-result';
 import { resizeImage } from 'src/app/helpers/image.helpers';
-import { ResizeImageAction } from './resize-image-action';
-import { DeleteSelectionAction } from './delete-selection-action';
 
-export class PasteImageAction extends TsPaintAction {
+export class PasteImageUndoAction extends TsPaintAction {
   constructor(private imagePart: ImageData) {
     super('image');
     this._deselectsSelection = true;
@@ -26,9 +24,6 @@ export class PasteImageAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [
-      new DeleteSelectionAction(),
-      new ResizeImageAction(state.image.width, state.image.height)
-    ];
+    return [];
   }
 }

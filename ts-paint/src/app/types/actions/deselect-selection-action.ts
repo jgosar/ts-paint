@@ -33,10 +33,10 @@ export class DeselectSelectionAction extends TsPaintAction {
     const oldImagePart: ImageData = getImagePart(pasteArea, state.image);
     return [
       new PasteImageAction(oldImagePart),
-      new DeselectSelectionAction(),
-      new PasteImageAction(state.selectionImage),
       new MoveSelectionAction(state.selectionOffset),
       new DeselectSelectionAction(),
+      new PasteImageAction(state.selectionImage),
+      new MoveSelectionAction(state.selectionOffset)
     ];
   }
 }

@@ -10,6 +10,7 @@ export abstract class TsPaintAction {
   protected _previewOffset: Point = { h: 0, w: 0 };
   protected _deselectsSelection: boolean = false;
   protected _needsPreviewPixels: boolean = false;
+  protected _overridesPreviousActionOfSameType: boolean = false;
 
   constructor(public renderIn: 'image' | 'preview' | 'nowhere') {
   }
@@ -51,14 +52,23 @@ export abstract class TsPaintAction {
       patches.previewAction = this;
     } else {
       patches.previewAction = undefined;
+
       if (logToHistory) {
         const actions: TsPaintAction[] = patches.actions || state.actions.map(x => x);
-        patches.undoPointer = state.undoPointer + 1;
+        if (this.shouldOverridePreviousAction(actions)) {
+          patches.undoPointer = state.undoPointer;
+        } else {
+          patches.undoPointer = state.undoPointer + 1;
+        }
         patches.actions = actions.slice(0, patches.undoPointer).concat(this);
       }
     }
 
     return patches;
+  }
+
+  private shouldOverridePreviousAction(actions: TsPaintAction[]) {
+    return this._overridesPreviousActionOfSameType && !isEmpty(actions) && lastElement(actions).constructor === this.constructor;
   }
 
   protected abstract addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult;

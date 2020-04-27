@@ -6,6 +6,7 @@ import { Point } from '../base/point';
 export class MoveSelectionAction extends TsPaintAction {
   constructor(private newLocation: Point) {
     super('nowhere');
+    this._overridesPreviousActionOfSameType = true;
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
