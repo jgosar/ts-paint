@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ElementRef } from '@angular/core';
 import { MenuItem } from 'src/app/types/menu/menu-item';
 
 @Component({
@@ -12,4 +12,12 @@ export class MenuComponent {
   menuStructure: MenuItem[];
   @Output()
   itemSelected: EventEmitter<MenuItem> = new EventEmitter<MenuItem>();
+
+  constructor(private element: ElementRef) {
+    element.nativeElement.setAttribute('tabindex', '-1'); // This makes the menu parent focusable
+  }
+
+  focusMenu() {
+    this.element.nativeElement.focus();
+  }
 }

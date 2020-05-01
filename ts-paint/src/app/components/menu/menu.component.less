@@ -3,6 +3,7 @@
 :host(tsp-menu){
   display: flex;
   cursor: default;
+  outline: none;
 }
 
 .tsp-menu__menu-level-1{
@@ -27,7 +28,7 @@
   top: 19px;
 }
 
-.tsp-menu__menu-level-1:hover .tsp-menu__menu-level-2-container{
+:host(tsp-menu:focus) .tsp-menu__menu-level-1:hover .tsp-menu__menu-level-2-container{
   display: block;
 }
 
