@@ -86,14 +86,20 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   private executeAction(action: TsPaintAction, logToHistory: boolean = true) {
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
 
-    if (this.state.selectionImage !== undefined && action.deselectsSelection) {
-      this.executeAction(new DeselectSelectionAction(), false);
+    if (action.deselectsSelection) {
+      this.deselectIfSelected();
     }
 
     Object.keys(patches).forEach(key => {
       const key2 = key as keyof TsObject.Path<TsPaintStoreState, []>;
       this.patchState(patches[key], key2);
     });
+  }
+
+  private deselectIfSelected() {
+    if (this.state.selectionImage !== undefined) {
+      this.executeAction(new DeselectSelectionAction(), false);
+    }
   }
 
   private getMenuActionFunction(menuAction: MenuActionType): () => void {
@@ -125,6 +131,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private saveFile() {
+    this.deselectIfSelected();
     this.tsPaintService.saveFile({ imageData: this.state.image, fileName: this.state.fileName });
   }
 
