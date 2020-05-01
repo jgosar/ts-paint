@@ -16,7 +16,7 @@ export class TsPaintStoreState {
   selectionImage: ImageData;
   selectionOffset: Point = { w: 0, h: 0 };
   moveSelectionTool: MoveSelectionTool;
-  fileName: string;
+  fileName: string = 'untitled';
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = { r: 255, g: 255, b: 255 };
   availableColors: Color[] = [{ r: 0, g: 0, b: 0 }, { r: 255, g: 255, b: 255 }, { r: 128, g: 128, b: 128 }, { r: 196, g: 196, b: 196 }, { r: 128, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 128, g: 128, b: 0 }, { r: 255, g: 255, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 255 }, { r: 0, g: 0, b: 128 }, { r: 0, g: 0, b: 255 }, { r: 128, g: 0, b: 128 }, { r: 255, g: 0, b: 255 }];

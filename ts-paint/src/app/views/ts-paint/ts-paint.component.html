@@ -1,4 +1,5 @@
-<tsp-modal-window [title]="'Paint'" [fullscreen]="true" (paste)="onPaste($event)" (copy)="onCopy()">
+<tsp-modal-window [title]="store.state.fileName + ' - Paint'" [fullscreen]="true" [icon]="'paint'"
+  (paste)="onPaste($event)" (copy)="onCopy()">
   <div class="tsp-vertical-bar">
     <div class="tsp-horizontal-bar">
       <tsp-menu [menuStructure]="store.state.menuStructure" (itemSelected)="store.executeMenuAction($event.action)">
