@@ -1,0 +1,50 @@
+@import 'variables';
+
+:host(tsp-modal-window){
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+.tsp-modal-window__container{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0px); // https://stackoverflow.com/questions/27385126/chrome-font-appears-blurry#answer-27464561
+  background-color: @color--lighter-grey;
+}
+
+.tsp-modal-window__container--fullscreen{
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: border-box;
+  transform: none;
+}
+
+.tsp-modal-window__inner-container{
+  padding: 1px;
+  min-width: 200px;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+}
+
+.tsp-modal-window__container--fullscreen .tsp-modal-window__inner-container{
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.tsp-modal-window__title-bar{
+  width: 100%;
+  height: 18px;
+  background-color: @color--dark-blue;
+  text-shadow: 0px 0px white, 1px 0px white;
+  color: transparent;
+  letter-spacing: 1px;
+  padding: 2px;
+  box-sizing: border-box;
+}

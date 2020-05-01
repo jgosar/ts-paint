@@ -1,0 +1,9 @@
+<div class="tsp-modal-window__container tsp-raised-item-container"
+  [ngClass]="{'tsp-modal-window__container--fullscreen': fullscreen}">
+  <div class="tsp-modal-window__inner-container tsp-raised-item">
+    <div class="tsp-modal-window__title-bar">
+      {{title}}
+    </div>
+    <ng-content></ng-content>
+  </div>
+</div>

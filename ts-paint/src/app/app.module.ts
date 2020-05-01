@@ -10,6 +10,7 @@ import { MouseTrackerComponent } from './components/mouse-tracker/mouse-tracker.
 import { ToolboxComponent } from './components/toolbox/toolbox.component';
 import { PaletteComponent } from './components/palette/palette.component';
 import { SelectionFrameComponent } from './components/selection-frame/selection-frame.component';
+import { ModalWindowComponent } from './components/modal-window/modal-window.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { SelectionFrameComponent } from './components/selection-frame/selection-
     MouseTrackerComponent,
     ToolboxComponent,
     PaletteComponent,
-    SelectionFrameComponent
+    SelectionFrameComponent,
+    ModalWindowComponent
   ],
   imports: [
     BrowserModule

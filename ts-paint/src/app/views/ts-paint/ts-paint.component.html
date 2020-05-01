@@ -1,12 +1,12 @@
-<div class="tsp-ts-paint__container tsp-raised-item-container" (paste)="onPaste($event)" (copy)="onCopy()">
-  <div class="tsp-ts-paint__inner-container tsp-raised-item">
+<tsp-modal-window [title]="'Paint'" [fullscreen]="true" (paste)="onPaste($event)" (copy)="onCopy()">
+  <div class="tsp-vertical-bar">
     <div class="tsp-horizontal-bar">
       <tsp-menu [menuStructure]="store.state.menuStructure" (itemSelected)="store.executeMenuAction($event.action)">
       </tsp-menu>
     </div>
 
     <div class="tsp-horizontal-bar tsp-can-grow">
-      <div class="tsp-vertical-bar" style="margin-left: 8px; margin-right: 4px">
+      <div class="tsp-vertical-bar">
         <tsp-toolbox [availableTools]="store.state.availableDrawingTools"
           [selectedTool]="store.state.selectedDrawingTool?.type" (selectedToolChange)="store.setDrawingTool($event)">
         </tsp-toolbox>
@@ -42,4 +42,4 @@
       TODO: info
     </div>
   </div>
-</div>
+</tsp-modal-window>
