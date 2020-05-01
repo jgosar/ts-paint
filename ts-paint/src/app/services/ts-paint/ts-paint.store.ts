@@ -4,7 +4,6 @@ import { Store } from 'rxjs-observable-store';
 import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
 import { Point } from 'src/app/types/base/point';
-import { TsPaintService } from './ts-paint.service';
 import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
@@ -20,11 +19,11 @@ import { RectangleArea } from 'src/app/types/base/rectangle-area';
 import { isPointInRectangle } from 'src/app/helpers/image.helpers';
 import { DeselectSelectionAction } from 'src/app/types/actions/deselect-selection-action';
 import { MoveSelectionTool } from 'src/app/types/drawing-tools/move-selection-tool';
-import { downloadImage } from 'src/app/helpers/image-file.helpers';
+import { saveFile, openFile, pasteFile } from 'src/app/helpers/image-file.helpers';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
-  constructor(private tsPaintService: TsPaintService) {
+  constructor() {
     super(new TsPaintStoreState());
   }
 
@@ -116,7 +115,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private openFile() {
-    this.tsPaintService.openFile().then(value => {
+    openFile().then(value => {
       const action: OpenFileAction = new OpenFileAction(value);
       this.executeAction(action);
     });
@@ -124,7 +123,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   pasteFile(pastedFile: File) {
     if (pastedFile !== null) {
-      this.tsPaintService.pasteFile(pastedFile).then(pastedImage => {
+      pasteFile(pastedFile).then(pastedImage => {
         const action: PasteImageAction = new PasteImageAction(pastedImage);
         this.executeAction(action);
       });
@@ -133,7 +132,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   private saveFile() {
     this.deselectIfSelected();
-    downloadImage({ imageData: this.state.image, fileName: this.state.fileName });
+    saveFile({ imageData: this.state.image, fileName: this.state.fileName });
   }
 
   private undo() {

@@ -6,8 +6,6 @@ import { TsPaintComponent } from './views/ts-paint/ts-paint.component';
 import { TsPaintStore } from './services/ts-paint/ts-paint.store';
 import { MenuComponent } from './components/menu/menu.component';
 import { ZoomableCanvasComponent } from './components/zoomable-canvas/zoomable-canvas.component';
-import { FileUploadComponent } from './components/file-upload/file-upload.component';
-import { TsPaintService } from './services/ts-paint/ts-paint.service';
 import { MouseTrackerComponent } from './components/mouse-tracker/mouse-tracker.component';
 import { ToolboxComponent } from './components/toolbox/toolbox.component';
 import { PaletteComponent } from './components/palette/palette.component';
@@ -19,7 +17,6 @@ import { SelectionFrameComponent } from './components/selection-frame/selection-
     TsPaintComponent,
     MenuComponent,
     ZoomableCanvasComponent,
-    FileUploadComponent,
     MouseTrackerComponent,
     ToolboxComponent,
     PaletteComponent,
@@ -28,7 +25,7 @@ import { SelectionFrameComponent } from './components/selection-frame/selection-
   imports: [
     BrowserModule
   ],
-  providers: [TsPaintStore, TsPaintService],
+  providers: [TsPaintStore],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
