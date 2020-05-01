@@ -52,6 +52,32 @@ body{
 
 .tsp-button{
   &:extend(.tsp-raised-item);
-  outline: 1px solid black;
+  position: relative;
   background-color: @color--lighter-grey;
+  margin: 0px 1px 1px 0px;
+}
+
+.tsp-button::before {
+  content: " ";
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: -2px;
+  bottom: -2px;
+  border: solid black;
+  border-width: 0px 1px 1px 0px;
+}
+
+.tsp-button:active{
+  background-position: calc(50% + 2px) calc(50% + 2px) !important;
+  border-color: @color--grey @color--lighter-grey @color--lighter-grey @color--grey;
+}
+
+.tsp-button:active::before {
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-width: 1px;
+  border-color: black white white black;
 }
