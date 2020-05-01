@@ -20,6 +20,7 @@ import { RectangleArea } from 'src/app/types/base/rectangle-area';
 import { isPointInRectangle } from 'src/app/helpers/image.helpers';
 import { DeselectSelectionAction } from 'src/app/types/actions/deselect-selection-action';
 import { MoveSelectionTool } from 'src/app/types/drawing-tools/move-selection-tool';
+import { downloadImage } from 'src/app/helpers/image-file.helpers';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -132,7 +133,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   private saveFile() {
     this.deselectIfSelected();
-    this.tsPaintService.saveFile({ imageData: this.state.image, fileName: this.state.fileName });
+    downloadImage({ imageData: this.state.image, fileName: this.state.fileName });
   }
 
   private undo() {

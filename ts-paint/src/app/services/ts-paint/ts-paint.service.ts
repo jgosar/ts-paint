@@ -8,7 +8,6 @@ import { PasteFileParams } from 'src/app/types/async/paste-file-params';
 export class TsPaintService {
   openFileSubject: Subject<PromiseParams<ImageFileData>> = new Subject<PromiseParams<ImageFileData>>();
   pasteFileSubject: Subject<PasteFileParams> = new Subject<PasteFileParams>();
-  saveFileSubject: Subject<ImageFileData> = new Subject<ImageFileData>();
 
   openFile(): Promise<ImageFileData> {
     return new Promise<ImageFileData>((resolve, reject) => {
@@ -20,9 +19,5 @@ export class TsPaintService {
     return new Promise<ImageData>((resolve, reject) => {
       this.pasteFileSubject.next({ resolve, reject, pastedFile });
     });
-  }
-
-  saveFile(fileData: ImageFileData) {
-    this.saveFileSubject.next(fileData);
   }
 }
