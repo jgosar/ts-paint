@@ -3,7 +3,10 @@
   <div class="tsp-modal-window__inner-container tsp-raised-item">
     <div class="tsp-modal-window__title-bar tsp-horizontal-bar">
       <div class="tsp-modal-window__title-bar-icon" *ngIf="this.icon" [ngClass]="iconClass"></div>
-      {{title}}
+      <div class="tsp-can-grow">
+        {{title}}
+      </div>
+      <button *ngIf="closable" class="tsp-button tsp-modal-window__close-button"></button>
     </div>
     <ng-content></ng-content>
   </div>

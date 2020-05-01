@@ -12,6 +12,8 @@ export class ModalWindowComponent implements OnChanges {
   @Input()
   fullscreen: boolean = false;
   @Input()
+  closable: boolean = false;
+  @Input()
   icon: 'paint' | undefined;
 
   iconClass: any;
