@@ -3,5 +3,6 @@ export enum MenuActionType {
   SAVE_FILE,
   UNDO,
   REPEAT,
-  CLEAR_IMAGE
+  CLEAR_IMAGE,
+  OPEN_ATTRIBUTES_WINDOW
 }

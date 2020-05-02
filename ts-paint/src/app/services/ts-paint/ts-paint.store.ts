@@ -20,6 +20,7 @@ import { isPointInRectangle } from 'src/app/helpers/image.helpers';
 import { DeselectSelectionAction } from 'src/app/types/actions/deselect-selection-action';
 import { MoveSelectionTool } from 'src/app/types/drawing-tools/move-selection-tool';
 import { saveFile, openFile, pasteFile } from 'src/app/helpers/image-file.helpers';
+import { ResizeImageAction } from 'src/app/types/actions/resize-image-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -79,6 +80,16 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     //TODO: Zooming
   }
 
+  changeAttributes(dimensions: Point) {
+    this.closeAttributesWindow();
+    const action: ResizeImageAction = new ResizeImageAction(dimensions.w, dimensions.h);
+    this.executeAction(action);
+  }
+
+  closeAttributesWindow() {
+    this.patchState(false, 'attributesWindowOpen');
+  }
+
   private getDrawingTool(toolType: DrawingToolType): DrawingTool {
     return new DrawingTool(toolType, this.executeAction.bind(this));
   }
@@ -109,6 +120,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       case MenuActionType.UNDO: return this.undo.bind(this);
       case MenuActionType.REPEAT: return this.repeat.bind(this);
       case MenuActionType.CLEAR_IMAGE: return this.clearImage.bind(this);
+      case MenuActionType.OPEN_ATTRIBUTES_WINDOW: return this.openAttributesWindow.bind(this);
     }
 
     assertUnreachable(menuAction);
@@ -159,6 +171,10 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   private clearImage() {
     const action: ClearImageAction = new ClearImageAction();
     this.executeAction(action);
+  }
+
+  private openAttributesWindow() {
+    this.patchState(true, 'attributesWindowOpen');
   }
 
   private isPointInSelection(point: Point): boolean {

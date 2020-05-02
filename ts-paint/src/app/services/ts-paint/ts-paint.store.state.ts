@@ -27,6 +27,7 @@ export class TsPaintStoreState {
     DrawingToolType.rectangleSelect, DrawingToolType.colorFiller, DrawingToolType.colorPicker, DrawingToolType.pencil, DrawingToolType.line, DrawingToolType.rectangle
   ];
   undoPointer: number = -1;
+  attributesWindowOpen: boolean = false;
   menuStructure: MenuItem[] = [
     {
       name: 'File',
@@ -196,7 +197,7 @@ export class TsPaintStoreState {
         },
         {
           name: 'Attributes',
-          disabled: true
+          action: MenuActionType.OPEN_ATTRIBUTES_WINDOW
         },
         {
           name: 'Clear Image',

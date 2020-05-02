@@ -44,3 +44,7 @@
     </div>
   </div>
 </tsp-modal-window>
+
+<tsp-attributes-window *ngIf="store.state.attributesWindowOpen" [image]="store.state.image"
+  (saveChanges)="this.store.changeAttributes($event)" (cancel)="this.store.closeAttributesWindow()">
+</tsp-attributes-window>

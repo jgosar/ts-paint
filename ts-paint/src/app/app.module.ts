@@ -11,6 +11,8 @@ import { ToolboxComponent } from './components/toolbox/toolbox.component';
 import { PaletteComponent } from './components/palette/palette.component';
 import { SelectionFrameComponent } from './components/selection-frame/selection-frame.component';
 import { ModalWindowComponent } from './components/modal-window/modal-window.component';
+import { AttributesWindowComponent } from './components/attributes-window/attributes-window.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -22,10 +24,12 @@ import { ModalWindowComponent } from './components/modal-window/modal-window.com
     ToolboxComponent,
     PaletteComponent,
     SelectionFrameComponent,
-    ModalWindowComponent
+    ModalWindowComponent,
+    AttributesWindowComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    FormsModule
   ],
   providers: [TsPaintStore],
   bootstrap: [AppComponent]
