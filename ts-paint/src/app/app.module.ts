@@ -13,6 +13,7 @@ import { SelectionFrameComponent } from './components/selection-frame/selection-
 import { ModalWindowComponent } from './components/modal-window/modal-window.component';
 import { AttributesWindowComponent } from './components/attributes-window/attributes-window.component';
 import { FormsModule } from '@angular/forms';
+import { IntegerInputComponent } from './components/inputs/integer-input/integer-input.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { FormsModule } from '@angular/forms';
     PaletteComponent,
     SelectionFrameComponent,
     ModalWindowComponent,
-    AttributesWindowComponent
+    AttributesWindowComponent,
+    IntegerInputComponent // TODO: make a separate inputs module
   ],
   imports: [
     BrowserModule,

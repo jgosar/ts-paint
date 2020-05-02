@@ -15,15 +15,15 @@ export class AttributesWindowComponent implements OnChanges {
   @Output()
   cancel: EventEmitter<void> = new EventEmitter<void>();
 
-  width: string;
-  height: string;
+  width: number;
+  height: number;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.width = this.image.width + '';
-    this.height = this.image.height + '';
+    this.width = this.image.width;
+    this.height = this.image.height;
   }
 
   okClicked() {
-    this.saveChanges.emit({ w: Number.parseInt(this.width), h: Number.parseInt(this.height) });
+    this.saveChanges.emit({ w: this.width, h: this.height });
   }
 }

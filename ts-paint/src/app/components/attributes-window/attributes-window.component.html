@@ -2,18 +2,12 @@
   <div class="tsp-horizontal-bar tsp-attributes-window__container">
     <div class="tsp-vertical-bar">
       <div class="tsp-horizontal-bar">
-        <label class="tsp-input-label" for="attributes-width">Width:</label>
-        <div class="tsp-depressed-item-container">
-          <input id="attributes-width" type="text"
-            class="tsp-text-input tsp-depressed-item tsp-attributes-window__dimension_input" [(ngModel)]="width"
-            #ctrl="ngModel">
-        </div>
-        <label class="tsp-input-label" for="attributes-height">Height:</label>
-        <div class="tsp-depressed-item-container">
-          <input id="attributes-height" type="text"
-            class="tsp-text-input tsp-depressed-item tsp-attributes-window__dimension_input" [(ngModel)]="height"
-            #ctrl="ngModel">
-        </div>
+        <tsp-integer-input class="tsp-attributes-window__dimension_input" [label]="'Width:'" [maxValue]="99999"
+          [(value)]="width">
+        </tsp-integer-input>
+        <tsp-integer-input class="tsp-attributes-window__dimension_input" [label]="'Height:'" [maxValue]="99999"
+          [(value)]="height">
+        </tsp-integer-input>
       </div>
     </div>
     <div class="tsp-vertical-bar">

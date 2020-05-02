@@ -1,0 +1,5 @@
+<label class="tsp-input-label">{{label}}</label>
+<div class="tsp-depressed-item-container">
+  <input type="text" class="tsp-text-input tsp-depressed-item" [(ngModel)]="model" (paste)="onPaste($event)"
+    (keydown)="onKeydown($event)">
+</div>
