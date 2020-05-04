@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
-import { loadImageToCanvas } from 'src/app/helpers/canvas.helpers';
-import { Point } from 'src/app/types/base/point';
-import { drawDashedFrame } from 'src/app/helpers/drawing.helpers';
+import { loadImageToCanvas } from '../../helpers/canvas.helpers';
+import { Point } from '../../types/base/point';
+import { drawDashedFrame } from '../../helpers/drawing.helpers';
 
 @Component({
   selector: 'tsp-selection-frame',

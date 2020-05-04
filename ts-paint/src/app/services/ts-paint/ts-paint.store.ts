@@ -1,26 +1,26 @@
 import { Injectable } from '@angular/core';
 import { TsPaintStoreState } from './ts-paint.store.state';
 import { Store } from 'rxjs-observable-store';
-import { MenuActionType } from 'src/app/types/menu/menu-action-type';
-import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
-import { Point } from 'src/app/types/base/point';
-import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event';
-import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
-import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
-import { ColorSelection } from 'src/app/types/base/color-selection';
-import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
-import { SetColorAction } from 'src/app/types/actions/set-color-action';
-import { SetDrawingToolAction } from 'src/app/types/actions/set-drawing-tool-action';
-import { OpenFileAction } from 'src/app/types/actions/open-file-action';
-import { ClearImageAction } from 'src/app/types/actions/clear-image-action';
+import { MenuActionType } from '../../types/menu/menu-action-type';
+import { assertUnreachable } from '../../helpers/typescript.helpers';
+import { Point } from '../../types/base/point';
+import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
+import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
+import { DrawingTool } from '../../types/drawing-tools/drawing-tool';
+import { ColorSelection } from '../../types/base/color-selection';
+import { TsPaintAction } from '../../types/actions/ts-paint-action';
+import { SetColorAction } from '../../types/actions/set-color-action';
+import { SetDrawingToolAction } from '../../types/actions/set-drawing-tool-action';
+import { OpenFileAction } from '../../types/actions/open-file-action';
+import { ClearImageAction } from '../../types/actions/clear-image-action';
 import { Object as TsObject } from 'ts-toolbelt';
-import { PasteImageAction } from 'src/app/types/actions/paste-image-action';
-import { RectangleArea } from 'src/app/types/base/rectangle-area';
-import { isPointInRectangle } from 'src/app/helpers/image.helpers';
-import { DeselectSelectionAction } from 'src/app/types/actions/deselect-selection-action';
-import { MoveSelectionTool } from 'src/app/types/drawing-tools/move-selection-tool';
-import { saveFile, openFile, pasteFile } from 'src/app/helpers/image-file.helpers';
-import { ResizeImageAction } from 'src/app/types/actions/resize-image-action';
+import { PasteImageAction } from '../../types/actions/paste-image-action';
+import { RectangleArea } from '../../types/base/rectangle-area';
+import { isPointInRectangle } from '../../helpers/image.helpers';
+import { DeselectSelectionAction } from '../../types/actions/deselect-selection-action';
+import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
+import { saveFile, openFile, pasteFile } from '../../helpers/image-file.helpers';
+import { ResizeImageAction } from '../../types/actions/resize-image-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{

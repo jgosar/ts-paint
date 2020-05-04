@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { simulateTextChange } from 'src/app/helpers/text-input.helpers';
-import { validateMinMax } from 'src/app/helpers/numeric.helpers';
+import { simulateTextChange } from '../../../helpers/text-input.helpers';
+import { validateMinMax } from '../../../helpers/numeric.helpers';
 
 @Component({
   selector: 'tsp-integer-input',

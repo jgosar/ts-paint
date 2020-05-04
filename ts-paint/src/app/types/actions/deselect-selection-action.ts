@@ -1,8 +1,8 @@
 import { TsPaintAction } from './ts-paint-action';
-import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
+import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
 import { PartialActionResult } from './partial-action-result';
 import { Point } from '../base/point';
-import { pasteImagePart, getImagePart } from 'src/app/helpers/image.helpers';
+import { pasteImagePart, getImagePart } from '../../helpers/image.helpers';
 import { RectangleArea } from '../base/rectangle-area';
 import { PasteImageAction } from './paste-image-action';
 import { MoveSelectionAction } from './move-selection-action';

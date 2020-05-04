@@ -2,7 +2,7 @@ import { DrawingToolType } from '../../drawing-tools/drawing-tool-type';
 import { Point } from '../../base/point';
 import { PencilAction } from './pencil-action';
 import { LineAction } from './line-action';
-import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
+import { assertUnreachable } from '../../../helpers/typescript.helpers';
 import { RectangleSelectAction } from './rectangle-select-action';
 import { DrawingToolAction } from './drawing-tool-action';
 import { ColorPickerAction } from './color-picker-action';

@@ -1,10 +1,10 @@
 import { DrawingToolAction } from './drawing-tool-action';
-import { drawLines, getLinePoints, setPixelInOriginalImage, invertColor, getPixel } from 'src/app/helpers/drawing.helpers';
-import { Point } from 'src/app/types/base/point';
-import { Color } from 'src/app/types/base/color';
-import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
+import { drawLines, getLinePoints, setPixelInOriginalImage, invertColor, getPixel } from '../../../helpers/drawing.helpers';
+import { Point } from '../../../types/base/point';
+import { Color } from '../../../types/base/color';
+import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
 import { RectangleArea } from '../../base/rectangle-area';
-import { getImagePart, fillAreaInOriginalImage } from 'src/app/helpers/image.helpers';
+import { getImagePart, fillAreaInOriginalImage } from '../../../helpers/image.helpers';
 
 export class RectangleSelectAction extends DrawingToolAction {
   constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {

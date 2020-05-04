@@ -1,5 +1,5 @@
 import { TsPaintAction } from './ts-paint-action';
-import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
+import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
 import { ResizeImageAction } from './resize-image-action';
 import { DeleteSelectionAction } from './delete-selection-action';
 import { PasteImageUndoAction } from './paste-image-undo-action';

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { TsPaintStore } from 'src/app/services/ts-paint/ts-paint.store';
-import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
-import { copyImagePart } from 'src/app/helpers/image.helpers';
+import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
+import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
+import { copyImagePart } from '../../helpers/image.helpers';
 
 @Component({
   selector: 'tsp-ts-paint',

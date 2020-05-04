@@ -1,12 +1,12 @@
-import { MenuActionType } from 'src/app/types/menu/menu-action-type';
-import { MenuItem } from 'src/app/types/menu/menu-item';
-import { createImage } from 'src/app/helpers/image.helpers';
-import { DrawingTool } from 'src/app/types/drawing-tools/drawing-tool';
-import { Color } from 'src/app/types/base/color';
-import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
-import { TsPaintAction } from 'src/app/types/actions/ts-paint-action';
-import { Point } from 'src/app/types/base/point';
-import { MoveSelectionTool } from 'src/app/types/drawing-tools/move-selection-tool';
+import { MenuActionType } from '../../types/menu/menu-action-type';
+import { MenuItem } from '../../types/menu/menu-item';
+import { createImage } from '../../helpers/image.helpers';
+import { DrawingTool } from '../../types/drawing-tools/drawing-tool';
+import { Color } from '../../types/base/color';
+import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
+import { TsPaintAction } from '../../types/actions/ts-paint-action';
+import { Point } from '../../types/base/point';
+import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
 
 export class TsPaintStoreState {
   zoom: number = 1;

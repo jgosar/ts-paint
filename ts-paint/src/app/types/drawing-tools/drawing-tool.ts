@@ -2,7 +2,7 @@ import { DrawingToolBehaviour } from './drawing-tool-behaviour';
 import { MouseButtonEvent } from '../mouse-tracker/mouse-button-event';
 import { Point } from '../base/point';
 import { DrawingToolType } from './drawing-tool-type';
-import { assertUnreachable } from 'src/app/helpers/typescript.helpers';
+import { assertUnreachable } from '../../helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
 import { DrawingToolAction } from '../actions/drawing-tool-actions/drawing-tool-action';
 import { createDrawingToolAction } from '../actions/drawing-tool-actions/create-drawing-tool-action';

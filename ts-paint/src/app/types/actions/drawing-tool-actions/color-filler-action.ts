@@ -1,11 +1,11 @@
 import { DrawingToolAction } from './drawing-tool-action';
-import { getPixel, setPixelInOriginalImage } from 'src/app/helpers/drawing.helpers';
-import { Point } from 'src/app/types/base/point';
-import { Color } from 'src/app/types/base/color';
-import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
+import { getPixel, setPixelInOriginalImage } from '../../../helpers/drawing.helpers';
+import { Point } from '../../../types/base/point';
+import { Color } from '../../../types/base/color';
+import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
 import { RectangleArea } from '../../base/rectangle-area';
-import { min, max, isEmpty } from 'src/app/helpers/typescript.helpers';
-import { isPointInRectangle } from 'src/app/helpers/image.helpers';
+import { min, max, isEmpty } from '../../../helpers/typescript.helpers';
+import { isPointInRectangle } from '../../../helpers/image.helpers';
 
 export class ColorFillerAction extends DrawingToolAction {
   private _sameColorPixels: Point[] = [];

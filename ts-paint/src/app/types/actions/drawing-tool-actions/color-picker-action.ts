@@ -1,8 +1,8 @@
 import { DrawingToolAction } from './drawing-tool-action';
-import { Point } from 'src/app/types/base/point';
-import { Color } from 'src/app/types/base/color';
-import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
-import { getPixel } from 'src/app/helpers/drawing.helpers';
+import { Point } from '../../../types/base/point';
+import { Color } from '../../../types/base/color';
+import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
+import { getPixel } from '../../../helpers/drawing.helpers';
 import { SetColorAction } from '../set-color-action';
 import { TsPaintAction } from '../ts-paint-action';
 

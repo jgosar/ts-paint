@@ -1,7 +1,7 @@
 import { TsPaintAction } from './ts-paint-action';
 import { DrawingToolType } from '../drawing-tools/drawing-tool-type';
 import { DrawingTool } from '../drawing-tools/drawing-tool';
-import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
+import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
 import { PartialActionResult } from './partial-action-result';
 
 export class SetDrawingToolAction extends TsPaintAction {

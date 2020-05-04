@@ -1,8 +1,8 @@
 import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { Point } from 'src/app/types/base/point';
-import { MouseButtonEvent } from 'src/app/types/mouse-tracker/mouse-button-event';
-import { MouseButton } from 'src/app/types/mouse-tracker/mouse-button';
-import { MouseWheelEvent } from 'src/app/types/mouse-tracker/mouse-wheel-event';
+import { Point } from '../../types/base/point';
+import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
+import { MouseButton } from '../../types/mouse-tracker/mouse-button';
+import { MouseWheelEvent } from '../../types/mouse-tracker/mouse-wheel-event';
 
 @Component({
   selector: 'tsp-mouse-tracker',

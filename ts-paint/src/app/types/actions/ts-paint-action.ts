@@ -1,9 +1,9 @@
-import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
+import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
 import { RectangleArea } from '../base/rectangle-area';
 import { Point } from '../base/point';
-import { getAreaWidth, getAreaHeight, cloneImage, getImagePart } from 'src/app/helpers/image.helpers';
+import { getAreaWidth, getAreaHeight, cloneImage, getImagePart } from '../../helpers/image.helpers';
 import { PartialActionResult } from './partial-action-result';
-import { lastElement, isEmpty } from 'src/app/helpers/typescript.helpers';
+import { lastElement, isEmpty } from '../../helpers/typescript.helpers';
 
 export abstract class TsPaintAction {
   public undoActions: TsPaintAction[] = [];

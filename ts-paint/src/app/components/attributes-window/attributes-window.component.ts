@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
-import { Point } from 'src/app/types/base/point';
+import { Point } from '../../types/base/point';
 
 @Component({
   selector: 'tsp-attributes-window',

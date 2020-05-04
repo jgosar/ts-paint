@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
-import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
+import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 
 @Component({
   selector: 'tsp-toolbox',

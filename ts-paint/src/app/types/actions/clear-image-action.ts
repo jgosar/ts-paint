@@ -1,7 +1,7 @@
 import { TsPaintAction } from './ts-paint-action';
 import { Color } from '../base/color';
-import { TsPaintStoreState } from 'src/app/services/ts-paint/ts-paint.store.state';
-import { fillImage } from 'src/app/helpers/image.helpers';
+import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
+import { fillImage } from '../../helpers/image.helpers';
 import { PartialActionResult } from './partial-action-result';
 import { PasteImageAction } from './paste-image-action';
 import { DeselectSelectionAction } from './deselect-selection-action';

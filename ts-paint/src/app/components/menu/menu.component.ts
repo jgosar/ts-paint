@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, ElementRef } from '@angular/core';
-import { MenuItem } from 'src/app/types/menu/menu-item';
+import { MenuItem } from '../../types/menu/menu-item';
 
 @Component({
   selector: 'tsp-menu',

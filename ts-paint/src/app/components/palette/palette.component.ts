@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
-import { Color } from 'src/app/types/base/color';
-import { ColorSelection } from 'src/app/types/base/color-selection';
+import { Color } from '../../types/base/color';
+import { ColorSelection } from '../../types/base/color-selection';
 
 @Component({
   selector: 'tsp-palette',
