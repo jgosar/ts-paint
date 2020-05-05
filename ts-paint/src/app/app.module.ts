@@ -14,6 +14,7 @@ import { ModalWindowComponent } from './components/modal-window/modal-window.com
 import { AttributesWindowComponent } from './components/attributes-window/attributes-window.component';
 import { FormsModule } from '@angular/forms';
 import { IntegerInputComponent } from './components/inputs/integer-input/integer-input.component';
+import { FooterInfoComponent } from './components/footer-info/footer-info.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { IntegerInputComponent } from './components/inputs/integer-input/integer
     SelectionFrameComponent,
     ModalWindowComponent,
     AttributesWindowComponent,
+    FooterInfoComponent,
     IntegerInputComponent // TODO: make a separate inputs module
   ],
   imports: [
