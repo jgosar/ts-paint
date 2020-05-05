@@ -40,7 +40,8 @@
     </div>
 
     <div class="tsp-horizontal-bar">
-      <tsp-footer-info></tsp-footer-info>
+      <tsp-footer-info [shapeStart]="store.state.selectedDrawingTool?.previewShapeStart || store.state.mousePosition"
+        [shapeDimensions]="store.state.selectedDrawingTool?.previewShapeDimensions"></tsp-footer-info>
     </div>
   </div>
 </tsp-modal-window>

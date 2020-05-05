@@ -73,6 +73,9 @@ export class DrawingTool {
     assertUnreachable(type);
   }
 
+  public previewShapeStart: Point;
+  public previewShapeDimensions: Point;
+
   private _mouseIsDown: boolean
   private _mouseDownPoint: Point;
   private _mousePoints: Point[] = [];
@@ -117,6 +120,8 @@ export class DrawingTool {
   }
 
   private addPreviewAction(points: Point[]) {
+    this.previewShapeStart = points[0];
+    this.previewShapeDimensions = this.calculateDimensions(points[0], points[points.length - 1]);
     const action: TsPaintAction = createDrawingToolAction(this.type, points, this._swapColors, 'preview');
     this.addAction(action);
   }
@@ -128,9 +133,28 @@ export class DrawingTool {
   }
 
   private clearData() {
+    this.previewShapeStart = undefined;
+    this.previewShapeDimensions = undefined;
     this._mouseIsDown = undefined;
     this._mouseDownPoint = undefined;
     this._mousePoints = [];
     this._swapColors = undefined;
+  }
+
+  private calculateDimensions(start: Point, end: Point): Point {
+    let dw: number = end.w - start.w;
+    if (dw >= 0) {
+      dw++;
+    } else {
+      dw--;
+    }
+    let dh: number = end.h - start.h;
+    if (dh >= 0) {
+      dh++;
+    } else {
+      dh--;
+    }
+
+    return { w: dw, h: dh };
   }
 }

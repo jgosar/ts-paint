@@ -54,6 +54,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   processMouseMove(point: Point) {
+    this.patchState(point, 'mousePosition');
     if (this.state.moveSelectionTool !== undefined) {
       this.state.moveSelectionTool.mouseMove(point);
     } else {

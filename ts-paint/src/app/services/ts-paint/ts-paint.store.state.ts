@@ -28,6 +28,7 @@ export class TsPaintStoreState {
   ];
   undoPointer: number = -1;
   attributesWindowOpen: boolean = false;
+  mousePosition: Point;
   menuStructure: MenuItem[] = [
     {
       name: 'File',
