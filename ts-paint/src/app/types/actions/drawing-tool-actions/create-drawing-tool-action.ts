@@ -8,6 +8,7 @@ import { DrawingToolAction } from './drawing-tool-action';
 import { ColorPickerAction } from './color-picker-action';
 import { ColorFillerAction } from './color-filler-action';
 import { RectangleAction } from './rectangle-action';
+import { MagnifierAction } from './magnifier-action';
 
 export function createDrawingToolAction(toolType: DrawingToolType, points: Point[], swapColors: boolean, renderIn: 'image' | 'preview'): DrawingToolAction {
   switch (toolType) {
@@ -17,6 +18,8 @@ export function createDrawingToolAction(toolType: DrawingToolType, points: Point
       return new ColorFillerAction(points, swapColors, renderIn);
     case DrawingToolType.colorPicker:
       return new ColorPickerAction(points, swapColors, renderIn);
+    case DrawingToolType.magnifier:
+      return new MagnifierAction(points, swapColors, renderIn);
     case DrawingToolType.pencil:
       return new PencilAction(points, swapColors, renderIn);
     case DrawingToolType.line:

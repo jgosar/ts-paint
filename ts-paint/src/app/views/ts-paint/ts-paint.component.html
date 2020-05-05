@@ -13,7 +13,8 @@
         </tsp-toolbox>
       </div>
       <div class="tsp-depressed-item-container tsp-vertical-bar tsp-can-grow">
-        <div class="tsp-depressed-item tsp-can-grow tsp-ts-paint__image_scroller">
+        <div class="tsp-depressed-item tsp-can-grow tsp-ts-paint__image_scroller"
+          (contextmenu)="$event.preventDefault()">
           <div class="tsp-ts-paint__image-padding">
             <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
             <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.previewImage"

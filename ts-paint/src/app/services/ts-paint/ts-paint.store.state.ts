@@ -24,7 +24,7 @@ export class TsPaintStoreState {
   actions: TsPaintAction[] = [];
   selectedDrawingTool: DrawingTool;
   availableDrawingTools: DrawingToolType[] = [
-    DrawingToolType.rectangleSelect, DrawingToolType.colorFiller, DrawingToolType.colorPicker, DrawingToolType.pencil, DrawingToolType.line, DrawingToolType.rectangle
+    DrawingToolType.rectangleSelect, DrawingToolType.colorFiller, DrawingToolType.colorPicker, DrawingToolType.magnifier, DrawingToolType.pencil, DrawingToolType.line, DrawingToolType.rectangle
   ];
   undoPointer: number = -1;
   attributesWindowOpen: boolean = false;

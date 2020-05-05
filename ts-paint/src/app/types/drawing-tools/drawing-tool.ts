@@ -30,9 +30,9 @@ export class DrawingTool {
       case DrawingToolType.colorPicker:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
         return;
-      /*case DrawingToolType.magnifier:
+      case DrawingToolType.magnifier:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
-        return;*/
+        return;
       case DrawingToolType.pencil:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
         return;
