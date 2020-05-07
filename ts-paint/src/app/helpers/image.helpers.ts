@@ -126,10 +126,14 @@ export function copyImagePart(imagePart: ImageData) {
   const canvas: HTMLCanvasElement = document.createElement("canvas");
   loadImageToCanvas(imagePart, canvas);
   canvas.toBlob(function (blob) {
-    // @ts-ignore
-    const item = new ClipboardItem({ "image/png": blob });
-    // @ts-ignore
-    navigator.clipboard.write([item]);
+    try {
+      // @ts-ignore
+      const item = new ClipboardItem({ "image/png": blob });
+      // @ts-ignore
+      navigator.clipboard.write([item]);
+    } catch (e) {
+      alert("Sorry, your browser does not support copying images to clipboard (Try Chrome ;))");
+    }
   });
 }
 
