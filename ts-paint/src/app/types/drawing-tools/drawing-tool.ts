@@ -32,6 +32,7 @@ export class DrawingTool {
         return;
       case DrawingToolType.magnifier:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
+        this.helpText = 'Changes the magnification: left click to zoom in, right click to zoom out.'
         return;
       case DrawingToolType.pencil:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
@@ -73,6 +74,7 @@ export class DrawingTool {
     assertUnreachable(type);
   }
 
+  public readonly helpText: string = '';
   public previewShapeStart: Point;
   public previewShapeDimensions: Point;
 
