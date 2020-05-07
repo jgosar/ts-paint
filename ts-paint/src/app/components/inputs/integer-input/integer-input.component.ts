@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 import { simulateTextChange } from '../../../helpers/text-input.helpers';
 import { validateMinMax } from '../../../helpers/numeric.helpers';
 
@@ -9,6 +9,9 @@ import { validateMinMax } from '../../../helpers/numeric.helpers';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class IntegerInputComponent implements OnChanges {
+  @ViewChild('inputElement', { static: true })
+  inputElement: ElementRef;
+
   @Input()
   label: string = '';
   @Input()
@@ -41,6 +44,12 @@ export class IntegerInputComponent implements OnChanges {
 
   onPaste(event: ClipboardEvent) {
     this.processInputEvent(event);
+  }
+
+  focus() {
+    setTimeout(() => {
+      this.inputElement.nativeElement.select();
+    });
   }
 
   private processInputEvent(event: KeyboardEvent | ClipboardEvent) {

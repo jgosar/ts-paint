@@ -1,5 +1,6 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { Point } from '../../types/base/point';
+import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
 
 @Component({
   selector: 'tsp-attributes-window',
@@ -7,7 +8,10 @@ import { Point } from '../../types/base/point';
   styleUrls: ['./attributes-window.component.less'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AttributesWindowComponent implements OnChanges {
+export class AttributesWindowComponent implements OnInit, OnChanges {
+  @ViewChild('widthInput', { static: true })
+  widthInput: IntegerInputComponent;
+
   @Input()
   image: ImageData;
   @Output()
@@ -17,6 +21,10 @@ export class AttributesWindowComponent implements OnChanges {
 
   width: number;
   height: number;
+
+  ngOnInit(): void {
+    this.widthInput.focus();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.width = this.image.width;

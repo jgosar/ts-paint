@@ -6,7 +6,7 @@
       <div class="tsp-can-grow">
         {{title}}
       </div>
-      <button *ngIf="closable" class="tsp-button tsp-modal-window__close-button"></button>
+      <button *ngIf="closable" class="tsp-button tsp-modal-window__close-button" (click)="close.emit()"></button>
     </div>
     <ng-content></ng-content>
   </div>
