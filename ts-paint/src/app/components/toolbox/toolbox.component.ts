@@ -15,9 +15,8 @@ export class ToolboxComponent {
   @Output()
   selectedToolChange: EventEmitter<DrawingToolType> = new EventEmitter<DrawingToolType>();
 
-  selectTool(tool: DrawingToolType, event: MouseEvent) {
+  selectTool(tool: DrawingToolType) {
     this.selectedToolChange.emit(tool);
-    (<any>event.target).blur(); // For some weird reason, pasting images does not work unless all toolbox buttons are blurred
   }
 
   getNgClass(tool: DrawingToolType) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef } from '@angular/core';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { copyImagePart } from '../../helpers/image.helpers';
@@ -10,10 +10,14 @@ import { copyImagePart } from '../../helpers/image.helpers';
 })
 export class TsPaintComponent implements OnInit {
 
-  constructor(public store: TsPaintStore) { }
+  constructor(public store: TsPaintStore,
+    private element: ElementRef) { }
 
   ngOnInit(): void {
     this.store.setDrawingTool(DrawingToolType.line);
+    setTimeout(() => {
+      this.element.nativeElement.click();
+    });
   }
 
   onPaste(event: any) {
