@@ -9,6 +9,7 @@ import { DeselectSelectionAction } from './deselect-selection-action';
 export class ClearImageAction extends TsPaintAction {
   constructor() {
     super('image');
+    this._deselectsSelection = true;
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
