@@ -9,6 +9,7 @@ import { ColorPickerAction } from './color-picker-action';
 import { ColorFillerAction } from './color-filler-action';
 import { RectangleAction } from './rectangle-action';
 import { MagnifierAction } from './magnifier-action';
+import { EllipseAction } from './ellipse-action';
 
 export function createDrawingToolAction(toolType: DrawingToolType, points: Point[], swapColors: boolean, renderIn: 'image' | 'preview'): DrawingToolAction {
   switch (toolType) {
@@ -26,6 +27,8 @@ export function createDrawingToolAction(toolType: DrawingToolType, points: Point
       return new LineAction(points, swapColors, renderIn);
     case DrawingToolType.rectangle:
       return new RectangleAction(points, swapColors, renderIn);
+    case DrawingToolType.ellipse:
+      return new EllipseAction(points, swapColors, renderIn);
   }
 
   assertUnreachable(toolType);

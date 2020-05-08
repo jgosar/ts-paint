@@ -60,12 +60,12 @@ export class DrawingTool {
         return;
       /*case DrawingToolType.polygon:
         this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        return;
+        return;*/
       case DrawingToolType.ellipse:
         this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
         this._maxPoints = 2;
         return;
-      case DrawingToolType.roundedRectangle:
+      /*case DrawingToolType.roundedRectangle:
         this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
         this._maxPoints = 2;
         return;*/

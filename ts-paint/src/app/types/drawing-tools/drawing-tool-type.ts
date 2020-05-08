@@ -12,7 +12,7 @@ export enum DrawingToolType {
   line,
   /*curve,*/
   rectangle,
-  /*polygon,
+  /*polygon,*/
   ellipse,
-  roundedRectangle,*/
+  /*roundedRectangle,*/
 }
