@@ -138,13 +138,14 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       case MenuActionType.OPEN_ATTRIBUTES_WINDOW: return this.openAttributesWindow.bind(this);
       case MenuActionType.SELECT_ALL: return this.selectAll.bind(this);
       case MenuActionType.CLEAR_SELECTION: return this.clearSelection.bind(this);
+      case MenuActionType.DESELECT: return this.deselectIfSelected.bind(this);
     }
 
     assertUnreachable(menuAction);
   }
 
   private getHotkeyActionFunction(event: KeyboardEvent): () => void | undefined {
-    const menuAction: MenuActionType = findMenuActionTypeByHotkeyEvent(this.state.menuStructure, event);
+    const menuAction: MenuActionType = findMenuActionTypeByHotkeyEvent([...this.state.menuStructure, ...this.state.hiddenHotkeyShortcuts], event);
     if (menuAction) {
       return this.getMenuActionFunction(menuAction);
     }

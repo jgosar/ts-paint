@@ -246,4 +246,11 @@ export class TsPaintStoreState {
       ]
     }
   ];
+  hiddenHotkeyShortcuts: MenuItem[] = [
+    {
+      name: 'Deselect',
+      hotkeys: ['Escape'],
+      action: MenuActionType.DESELECT
+    }
+  ];
 }
