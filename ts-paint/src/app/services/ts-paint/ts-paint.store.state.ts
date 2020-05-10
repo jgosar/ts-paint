@@ -113,11 +113,13 @@ export class TsPaintStoreState {
         },
         {
           name: 'Clear Selection',
-          disabled: true
+          hotkeys: ['Delete'],
+          action: MenuActionType.CLEAR_SELECTION
         },
         {
           name: 'Select All',
-          disabled: true
+          hotkeys: ['Ctrl', 'A'],
+          action: MenuActionType.SELECT_ALL
         },
         {},
         {

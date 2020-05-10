@@ -22,6 +22,8 @@ import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool
 import { saveFile, openFile, pasteFile } from '../../helpers/image-file.helpers';
 import { ResizeImageAction } from '../../types/actions/resize-image-action';
 import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.helpers';
+import { RectangleSelectAction } from 'src/app/types/actions/drawing-tool-actions/rectangle-select-action';
+import { DeleteSelectionAction } from 'src/app/types/actions/delete-selection-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -134,6 +136,8 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       case MenuActionType.REPEAT: return this.repeat.bind(this);
       case MenuActionType.CLEAR_IMAGE: return this.clearImage.bind(this);
       case MenuActionType.OPEN_ATTRIBUTES_WINDOW: return this.openAttributesWindow.bind(this);
+      case MenuActionType.SELECT_ALL: return this.selectAll.bind(this);
+      case MenuActionType.CLEAR_SELECTION: return this.clearSelection.bind(this);
     }
 
     assertUnreachable(menuAction);
@@ -190,6 +194,16 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   private clearImage() {
     const action: ClearImageAction = new ClearImageAction();
+    this.executeAction(action);
+  }
+
+  private selectAll() {
+    const action: RectangleSelectAction = new RectangleSelectAction([{ w: 0, h: 0 }, { w: this.state.image.width - 1, h: this.state.image.height - 1 }], false, 'image');
+    this.executeAction(action);
+  }
+
+  private clearSelection() {
+    const action: DeleteSelectionAction = new DeleteSelectionAction();
     this.executeAction(action);
   }
 
