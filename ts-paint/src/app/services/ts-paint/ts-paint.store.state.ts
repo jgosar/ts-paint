@@ -29,13 +29,15 @@ export class TsPaintStoreState {
   undoPointer: number = -1;
   attributesWindowOpen: boolean = false;
   mousePosition: Point;
+  unsavedChanges: boolean = false;
   menuStructure: MenuItem[] = [
     {
       name: 'File',
       menus: [
         {
           name: 'New',
-          disabled: true
+          hotkeys: ['Ctrl', 'N'],
+          action: MenuActionType.NEW
         },
         {
           name: 'Open...',
@@ -101,7 +103,8 @@ export class TsPaintStoreState {
         {},
         {
           name: 'Cut',
-          disabled: true
+          hotkeys: ['Ctrl', 'X'],
+          action: MenuActionType.CUT
         },
         {
           name: 'Copy',

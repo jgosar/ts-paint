@@ -1,8 +1,10 @@
 export enum MenuActionType {
+  NEW,
   OPEN_FILE,
   SAVE_FILE,
   UNDO,
   REPEAT,
+  CUT,
   COPY,
   CLEAR_IMAGE,
   OPEN_ATTRIBUTES_WINDOW,

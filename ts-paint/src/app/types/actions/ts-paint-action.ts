@@ -45,6 +45,7 @@ export abstract class TsPaintAction {
       } else if (this.renderIn === 'image') {
         patches.image = partialResult.image;
         patches.previewImage = new ImageData(1, 1);
+        patches.unsavedChanges = true;
       }
     }
 

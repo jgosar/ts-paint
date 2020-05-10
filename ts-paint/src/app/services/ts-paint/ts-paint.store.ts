@@ -130,11 +130,13 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   private getMenuActionFunction(menuAction: MenuActionType): () => void {
     switch (menuAction) {
+      case MenuActionType.NEW: return this.newFile.bind(this);
       case MenuActionType.OPEN_FILE: return this.openFile.bind(this);
       case MenuActionType.SAVE_FILE: return this.saveFile.bind(this);
       case MenuActionType.UNDO: return this.undo.bind(this);
       case MenuActionType.REPEAT: return this.repeat.bind(this);
       case MenuActionType.COPY: return this.copy.bind(this);
+      case MenuActionType.CUT: return this.cut.bind(this);
       case MenuActionType.CLEAR_IMAGE: return this.clearImage.bind(this);
       case MenuActionType.OPEN_ATTRIBUTES_WINDOW: return this.openAttributesWindow.bind(this);
       case MenuActionType.SELECT_ALL: return this.selectAll.bind(this);
@@ -150,6 +152,10 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     if (menuAction) {
       return this.getMenuActionFunction(menuAction);
     }
+  }
+
+  private newFile() {
+    location.reload();
   }
 
   private openFile() {
@@ -168,15 +174,21 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     }
   }
 
-  copy() {
+  private copy() {
     if (this.state.selectionImage) {
       copyImagePart(this.state.selectionImage);
     }
   }
 
+  private cut() {
+    this.copy();
+    this.clearSelection();
+  }
+
   private saveFile() {
     this.deselectIfSelected();
     saveFile({ imageData: this.state.image, fileName: this.state.fileName });
+    this.patchState(false, 'unsavedChanges');
   }
 
   private undo() {

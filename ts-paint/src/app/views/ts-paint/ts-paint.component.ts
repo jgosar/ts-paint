@@ -34,4 +34,11 @@ export class TsPaintComponent implements OnInit {
     }
   }
 
+  @HostListener('window:beforeunload', ['$event'])
+  beforeunload(event: any) {
+    if (this.store.state.unsavedChanges) {
+      event.returnValue = true;
+    }
+  }
+
 }
