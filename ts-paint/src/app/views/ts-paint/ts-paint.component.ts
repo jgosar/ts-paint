@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef } from '@angular/core';
+import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { copyImagePart } from '../../helpers/image.helpers';
@@ -29,6 +29,15 @@ export class TsPaintComponent implements OnInit {
   onCopy() {
     if (this.store.state.selectionImage) {
       copyImagePart(this.store.state.selectionImage);
+    }
+  }
+
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    const executed: boolean = this.store.executeHotkeyAction(event);
+    if (executed) {
+      event.preventDefault();
+      event.stopPropagation();
     }
   }
 

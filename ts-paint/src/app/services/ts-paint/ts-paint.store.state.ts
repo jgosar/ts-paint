@@ -39,12 +39,12 @@ export class TsPaintStoreState {
         },
         {
           name: 'Open...',
-          hotkeys: 'Ctrl+O',
+          hotkeys: ['Ctrl', 'O'],
           action: MenuActionType.OPEN_FILE
         },
         {
           name: 'Save',
-          hotkeys: 'Ctrl+S',
+          hotkeys: ['Ctrl', 'S'],
           action: MenuActionType.SAVE_FILE
         },
         {
@@ -90,10 +90,12 @@ export class TsPaintStoreState {
       menus: [
         {
           name: 'Undo',
+          hotkeys: ['Ctrl', 'Z'],
           action: MenuActionType.UNDO
         },
         {
           name: 'Repeat',
+          hotkeys: ['Ctrl', 'Y'],
           action: MenuActionType.REPEAT
         },
         {},
@@ -202,7 +204,6 @@ export class TsPaintStoreState {
         },
         {
           name: 'Clear Image',
-          hotkeys: 'Ctrl+Shft+N',
           action: MenuActionType.CLEAR_IMAGE
         },
       ]

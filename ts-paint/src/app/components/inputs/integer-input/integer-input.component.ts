@@ -61,6 +61,7 @@ export class IntegerInputComponent implements OnChanges {
     } else {
       event.preventDefault();
     }
+    event.stopPropagation();
   }
 
   private isInputValid(value: string): boolean {

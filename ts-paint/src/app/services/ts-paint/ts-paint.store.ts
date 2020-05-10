@@ -21,6 +21,7 @@ import { DeselectSelectionAction } from '../../types/actions/deselect-selection-
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
 import { saveFile, openFile, pasteFile } from '../../helpers/image-file.helpers';
 import { ResizeImageAction } from '../../types/actions/resize-image-action';
+import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.helpers';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -65,6 +66,17 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   executeMenuAction(menuAction: MenuActionType) {
     const menuActionFunction: () => void = this.getMenuActionFunction(menuAction);
     menuActionFunction();
+  }
+
+  executeHotkeyAction(event: KeyboardEvent): boolean {
+    const hotkeyActionFunction: () => void = this.getHotkeyActionFunction(event);
+
+    if (hotkeyActionFunction) {
+      hotkeyActionFunction();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   setDrawingTool(toolType: DrawingToolType) {
@@ -125,6 +137,13 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     }
 
     assertUnreachable(menuAction);
+  }
+
+  private getHotkeyActionFunction(event: KeyboardEvent): () => void | undefined {
+    const menuAction: MenuActionType = findMenuActionTypeByHotkeyEvent(this.state.menuStructure, event);
+    if (menuAction) {
+      return this.getMenuActionFunction(menuAction);
+    }
   }
 
   private openFile() {
