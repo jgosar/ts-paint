@@ -105,7 +105,8 @@ export class TsPaintStoreState {
         },
         {
           name: 'Copy',
-          disabled: true
+          hotkeys: ['Ctrl', 'C'],
+          action: MenuActionType.COPY
         },
         {
           name: 'Paste',

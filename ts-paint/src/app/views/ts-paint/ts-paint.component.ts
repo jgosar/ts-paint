@@ -1,7 +1,6 @@
 import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
-import { copyImagePart } from '../../helpers/image.helpers';
 
 @Component({
   selector: 'tsp-ts-paint',
@@ -24,12 +23,6 @@ export class TsPaintComponent implements OnInit {
     const pastedFile: File = event.clipboardData.items[0].getAsFile();
 
     this.store.pasteFile(pastedFile);
-  }
-
-  onCopy() {
-    if (this.store.state.selectionImage) {
-      copyImagePart(this.store.state.selectionImage);
-    }
   }
 
   @HostListener('window:keydown', ['$event'])

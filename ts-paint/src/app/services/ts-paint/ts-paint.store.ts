@@ -16,7 +16,7 @@ import { ClearImageAction } from '../../types/actions/clear-image-action';
 import { Object as TsObject } from 'ts-toolbelt';
 import { PasteImageAction } from '../../types/actions/paste-image-action';
 import { RectangleArea } from '../../types/base/rectangle-area';
-import { isPointInRectangle } from '../../helpers/image.helpers';
+import { isPointInRectangle, copyImagePart } from '../../helpers/image.helpers';
 import { DeselectSelectionAction } from '../../types/actions/deselect-selection-action';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
 import { saveFile, openFile, pasteFile } from '../../helpers/image-file.helpers';
@@ -134,6 +134,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       case MenuActionType.SAVE_FILE: return this.saveFile.bind(this);
       case MenuActionType.UNDO: return this.undo.bind(this);
       case MenuActionType.REPEAT: return this.repeat.bind(this);
+      case MenuActionType.COPY: return this.copy.bind(this);
       case MenuActionType.CLEAR_IMAGE: return this.clearImage.bind(this);
       case MenuActionType.OPEN_ATTRIBUTES_WINDOW: return this.openAttributesWindow.bind(this);
       case MenuActionType.SELECT_ALL: return this.selectAll.bind(this);
@@ -164,6 +165,12 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
         const action: PasteImageAction = new PasteImageAction(pastedImage);
         this.executeAction(action);
       });
+    }
+  }
+
+  copy() {
+    if (this.state.selectionImage) {
+      copyImagePart(this.state.selectionImage);
     }
   }
 
