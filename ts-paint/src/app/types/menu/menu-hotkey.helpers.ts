@@ -4,7 +4,7 @@ import { isEmpty } from 'src/app/helpers/typescript.helpers';
 import { isDefined } from '@angular/compiler/src/util';
 
 export function findMenuActionTypeByHotkeyEvent(menu: MenuItem[], event: KeyboardEvent): MenuActionType | undefined {
-  return findMenuActionTypeByHotkeys(menu, getEventHotkeys(event))
+  return findMenuActionTypeByHotkeys(menu, getEventHotkeys(event));
 }
 
 function getEventHotkeys(event: KeyboardEvent): string[] {
@@ -28,7 +28,7 @@ function getEventHotkeys(event: KeyboardEvent): string[] {
 }
 
 function findMenuActionTypeByHotkeys(menu: MenuItem[], hotkeys: string[]): MenuActionType | undefined {
-  for (let menuItem of menu) {
+  for (const menuItem of menu) {
     const actionType: MenuActionType = findMenuItemActionByHotkeys(menuItem, hotkeys);
     if (isDefined(actionType)) {
       return actionType;

@@ -44,7 +44,7 @@ export function drawDashedFrame(image: ImageData) {
   const blueish: Color = { r: 0, g: 120, b: 215 };
   let color: Color;
 
-  for (var w = 0; w < image.width; w++) {
+  for (let w = 0; w < image.width; w++) {
     if (Math.floor((w + 1) / 4) % 2 === 0) {
       color = white;
     } else {
@@ -53,7 +53,7 @@ export function drawDashedFrame(image: ImageData) {
     setPixelInOriginalImage({ w, h: 0 }, color, image);
     setPixelInOriginalImage({ w, h: image.height - 1 }, color, image);
   }
-  for (var h = 0; h < image.height; h++) {
+  for (let h = 0; h < image.height; h++) {
     if (Math.floor((h + 1) / 4) % 2 === 0) {
       color = white;
     } else {
@@ -88,7 +88,7 @@ function horizontalBresenhamLinePlot([x0, y0, x1, y1]: number[], plot: (x, y) =>
   const deltaerr: number = Math.abs(deltay / deltax);
   let error: number = 0.0;
   let y: number = y0;
-  for (var x = x0; x1 > x0 ? x <= x1 : x >= x1; x1 > x0 ? x++ : x--) {
+  for (let x = x0; x1 > x0 ? x <= x1 : x >= x1; x1 > x0 ? x++ : x--) {
     plot(x, y);
     error = error + deltaerr;
     if (error >= 0.5) {
@@ -104,25 +104,30 @@ function ellipsePlot([x0, y0, x1, y1]: number[], plot: (x, y) => void) {
   const ry: number = Math.abs(y0 - y1) / 2;
   const xc: number = (x0 + x1) / 2;
   const yc: number = (y0 + y1) / 2;
-  let dx, dy, d1, d2, x, y: number;
+  let dx: number;
+  let dy: number;
+  let d1: number;
+  let d2: number;
+  let x: number;
+  let y: number;
   x = rx - Math.floor(rx);
   y = ry;
 
-  // Initial decision parameter of region 1 
+  // Initial decision parameter of region 1
   d1 = (ry * ry) - (rx * rx * ry) + (0.25 * rx * rx);
   dx = 2 * ry * ry * x;
   dy = 2 * rx * rx * y;
 
-  // For region 1 
+  // For region 1
   while (dx < dy) {
-    // Plot points based on 4-way symmetry 
+    // Plot points based on 4-way symmetry
     plot(x + xc, y + yc);
     plot(-x + xc, y + yc);
     plot(x + xc, -y + yc);
     plot(-x + xc, -y + yc);
 
-    // Checking and updating value of 
-    // decision parameter based on algorithm 
+    // Checking and updating value of
+    // decision parameter based on algorithm
     if (d1 < 0) {
       x++;
       dx = dx + (2 * ry * ry);
@@ -137,21 +142,21 @@ function ellipsePlot([x0, y0, x1, y1]: number[], plot: (x, y) => void) {
     }
   }
 
-  // Decision parameter of region 2 
+  // Decision parameter of region 2
   d2 = ((ry * ry) * ((x + 0.5) * (x + 0.5)))
     + ((rx * rx) * ((y - 1) * (y - 1)))
     - (rx * rx * ry * ry);
 
-  // Plotting points of region 2 
+  // Plotting points of region 2
   while (y >= 0) {
-    // Plot points based on 4-way symmetry 
+    // Plot points based on 4-way symmetry
     plot(x + xc, y + yc);
     plot(-x + xc, y + yc);
     plot(x + xc, -y + yc);
     plot(-x + xc, -y + yc);
 
-    // Checking and updating parameter 
-    // value based on algorithm 
+    // Checking and updating parameter
+    // value based on algorithm
     if (d2 > 0) {
       y--;
       dy = dy - (2 * rx * rx);

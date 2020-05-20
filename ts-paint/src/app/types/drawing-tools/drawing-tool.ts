@@ -4,7 +4,6 @@ import { Point } from '../base/point';
 import { DrawingToolType } from './drawing-tool-type';
 import { assertUnreachable } from '../../helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
-import { DrawingToolAction } from '../actions/drawing-tool-actions/drawing-tool-action';
 import { createDrawingToolAction } from '../actions/drawing-tool-actions/create-drawing-tool-action';
 import { TsPaintAction } from '../actions/ts-paint-action';
 
@@ -12,7 +11,7 @@ export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
   private readonly _maxPoints: number;
 
-  constructor(public type: DrawingToolType, private addAction: (action: TsPaintAction) => void) {
+  constructor(public type: DrawingToolType, private _addAction: (action: TsPaintAction) => void) {
     switch (type) {
       /*case DrawingToolType.freeFormSelect:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
@@ -32,7 +31,7 @@ export class DrawingTool {
         return;
       case DrawingToolType.magnifier:
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
-        this.helpText = 'Changes the magnification: left click to zoom in, right click to zoom out.'
+        this.helpText = 'Changes the magnification: left click to zoom in, right click to zoom out.';
         return;
       case DrawingToolType.pencil:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
@@ -78,7 +77,7 @@ export class DrawingTool {
   public previewShapeStart: Point;
   public previewShapeDimensions: Point;
 
-  private _mouseIsDown: boolean
+  private _mouseIsDown: boolean;
   private _mouseDownPoint: Point;
   private _mousePoints: Point[] = [];
   private _swapColors: boolean;
@@ -87,9 +86,9 @@ export class DrawingTool {
     this._mouseIsDown = true;
     this._swapColors = event.button !== MouseButton.LEFT;
 
-    if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
+    if (this._behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
       this._mouseDownPoint = event.point;
-    } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
+    } else if (this._behaviour === DrawingToolBehaviour.FREE_DRAW) {
       this._mousePoints.push(event.point);
     }
   }
@@ -97,23 +96,27 @@ export class DrawingTool {
   mouseUp(point: Point) {
     this._mouseIsDown = false;
 
-    if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
-      this.addFinalAction([this._mouseDownPoint, point]);
-    } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
+    if (this._behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
+      if (this._maxPoints === 2) {
+        this.addFinalAction([this._mouseDownPoint, point]);
+      } else {
+        // TODO: Handle click & drag with multiple points
+      }
+    } else if (this._behaviour === DrawingToolBehaviour.FREE_DRAW) {
       this._mousePoints.push(point);
       this.addFinalAction(this._mousePoints);
-    } else if (this._behaviour == DrawingToolBehaviour.SINGLE_POINT) {
+    } else if (this._behaviour === DrawingToolBehaviour.SINGLE_POINT) {
       this._mousePoints = [point];
       this.addFinalAction(this._mousePoints);
     }
   }
 
   mouseMove(point: Point) {
-    if (this._behaviour == DrawingToolBehaviour.CLICK_AND_DRAG) {
+    if (this._behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
       if (this._mouseIsDown) {
         this.addPreviewAction([this._mouseDownPoint, point]);
       }
-    } else if (this._behaviour == DrawingToolBehaviour.FREE_DRAW) {
+    } else if (this._behaviour === DrawingToolBehaviour.FREE_DRAW) {
       if (this._mouseIsDown) {
         this._mousePoints.push(point);
         this.addPreviewAction(this._mousePoints);
@@ -125,12 +128,12 @@ export class DrawingTool {
     this.previewShapeStart = points[0];
     this.previewShapeDimensions = this.calculateDimensions(points[0], points[points.length - 1]);
     const action: TsPaintAction = createDrawingToolAction(this.type, points, this._swapColors, 'preview');
-    this.addAction(action);
+    this._addAction(action);
   }
 
   private addFinalAction(points: Point[]) {
     const action: TsPaintAction = createDrawingToolAction(this.type, points, this._swapColors, 'image');
-    this.addAction(action);
+    this._addAction(action);
     this.clearData();
   }
 

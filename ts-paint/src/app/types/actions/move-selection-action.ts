@@ -4,13 +4,13 @@ import { PartialActionResult } from './partial-action-result';
 import { Point } from '../base/point';
 
 export class MoveSelectionAction extends TsPaintAction {
-  constructor(private newLocation: Point) {
+  constructor(private _newLocation: Point) {
     super('nowhere');
     this._overridesPreviousActionOfSameType = true;
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
-    const patches: Partial<TsPaintStoreState> = { selectionOffset: this.newLocation };
+    const patches: Partial<TsPaintStoreState> = { selectionOffset: this._newLocation };
     return { patches };
   }
 

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { loadImageToCanvas } from '../../helpers/canvas.helpers';
 import { Point } from '../../types/base/point';
 import { drawDashedFrame } from '../../helpers/drawing.helpers';
@@ -29,7 +29,7 @@ export class SelectionFrameComponent implements OnChanges {
   zoomedOffsetW: number = 0;
   zoomedOffsetH: number = 0;
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this.image) {
       const parentWidth: number = (this.parentImage || this.image).width;
       const parentHeight: number = (this.parentImage || this.image).height;
@@ -43,7 +43,7 @@ export class SelectionFrameComponent implements OnChanges {
       this.zoomedOffsetH = Math.max((this.offset?.h ?? 0), 0) * this.zoom - this.SELECTION_PADDING;
 
       const dashedFrame: ImageData = new ImageData(this.zoomedWidth, this.zoomedHeight);
-      drawDashedFrame(dashedFrame)
+      drawDashedFrame(dashedFrame);
       loadImageToCanvas(dashedFrame, this.imageCanvas.nativeElement);
     }
   }

@@ -1,6 +1,6 @@
 import { Point } from './point';
 
 export interface RectangleArea {
-  start: Point,
-  end: Point
+  start: Point;
+  end: Point;
 }

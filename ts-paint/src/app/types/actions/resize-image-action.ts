@@ -4,13 +4,13 @@ import { PartialActionResult } from './partial-action-result';
 import { resizeImage } from '../../helpers/image.helpers';
 
 export class ResizeImageAction extends TsPaintAction {
-  constructor(private width: number, private height: number) {
+  constructor(private _width: number, private _height: number) {
     super('image');
     this._deselectsSelection = true;
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
-    const image: ImageData = resizeImage(state.image, this.width, this.height, state.secondaryColor);
+    const image: ImageData = resizeImage(state.image, this._width, this._height, state.secondaryColor);
     return { image };
   }
 

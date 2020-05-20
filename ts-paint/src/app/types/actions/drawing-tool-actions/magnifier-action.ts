@@ -9,7 +9,7 @@ export class MagnifierAction extends DrawingToolAction {
   }
 
   protected addPatches(state: TsPaintStoreState): Partial<TsPaintStoreState> {
-    const zoomMultiplier = this.swapColors ? 0.5 : 2; //right/left mouse button
+    const zoomMultiplier = this.swapColors ? 0.5 : 2; // right/left mouse button
 
     return { zoom: state.zoom * zoomMultiplier };
   }

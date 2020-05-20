@@ -25,15 +25,15 @@ export class IntegerInputComponent implements OnChanges {
 
   model: string;
 
-  private validInputRegex: RegExp = new RegExp(`^(\\d+)?$`);
-  private inputValidators: ((value: string) => boolean)[] = [
+  private _validInputRegex: RegExp = new RegExp(`^(\\d+)?$`);
+  private _inputValidators: ((value: string) => boolean)[] = [
     this.validateRegex.bind(this),
     this.validateMinMax.bind(this),
   ];
-  private isModelLocked: boolean = false;
+  private _isModelLocked: boolean = false;
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.value && !this.isModelLocked) {
+    if (changes.value && !this._isModelLocked) {
       this.model = this.value + '';
     }
   }
@@ -56,8 +56,8 @@ export class IntegerInputComponent implements OnChanges {
     const nextModel: string = simulateTextChange(this.model, event);
 
     if (this.isInputValid(nextModel)) {
-      this.isModelLocked = true;
-      this.valueChange.emit(parseInt(nextModel));
+      this._isModelLocked = true;
+      this.valueChange.emit(Number(nextModel));
     } else {
       event.preventDefault();
     }
@@ -65,16 +65,16 @@ export class IntegerInputComponent implements OnChanges {
   }
 
   private isInputValid(value: string): boolean {
-    return this.inputValidators.every(v => v(value));
+    return this._inputValidators.every(v => v(value));
   }
 
   private validateRegex(value: string): boolean {
-    return this.validInputRegex.test(value);
+    return this._validInputRegex.test(value);
   }
 
   private validateMinMax(value: string): boolean {
     return validateMinMax(
-      parseInt(value),
+      Number(value),
       this.minValue,
       this.maxValue
     );

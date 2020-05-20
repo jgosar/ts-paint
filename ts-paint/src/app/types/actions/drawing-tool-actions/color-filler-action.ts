@@ -46,7 +46,7 @@ export class ColorFillerAction extends DrawingToolAction {
 
     const pixelQueue: Point[] = [];
     const visitedPixels: boolean[][] = [];
-    for (var w = 0; w < imageData.width; w++) {
+    for (let w = 0; w < imageData.width; w++) {
       visitedPixels[w] = [];
     }
 
@@ -59,10 +59,10 @@ export class ColorFillerAction extends DrawingToolAction {
       const h: number = pixel.h;
       visitedPixels[w][h] = true;
 
-      this.addPointIfSameColor(imageData, color, { w: w - 1, h: h }, pixelQueue, visitedPixels);
-      this.addPointIfSameColor(imageData, color, { w: w + 1, h: h }, pixelQueue, visitedPixels);
-      this.addPointIfSameColor(imageData, color, { w: w, h: h - 1 }, pixelQueue, visitedPixels);
-      this.addPointIfSameColor(imageData, color, { w: w, h: h + 1 }, pixelQueue, visitedPixels);
+      this.addPointIfSameColor(imageData, color, { w: w - 1, h }, pixelQueue, visitedPixels);
+      this.addPointIfSameColor(imageData, color, { w: w + 1, h }, pixelQueue, visitedPixels);
+      this.addPointIfSameColor(imageData, color, { w, h: h - 1 }, pixelQueue, visitedPixels);
+      this.addPointIfSameColor(imageData, color, { w, h: h + 1 }, pixelQueue, visitedPixels);
 
       sameColorPixels.push(pixel);
     }

@@ -23,7 +23,7 @@ export function fillImage(image: ImageData, color: Color): ImageData {
 }
 
 export function fillAreaInOriginalImage(image: ImageData, color: Color, area: RectangleArea) {
-  for (var i = 0; i < image.data.length; i += 4) {
+  for (let i = 0; i < image.data.length; i += 4) {
     if (isSubpixelInRectangle(i, area, image)) {
       [image.data[i], image.data[i + 1], image.data[i + 2], image.data[i + 3]] = [color.r, color.g, color.b, color.a ?? 255];
     }
@@ -34,7 +34,7 @@ export function fillArea(image: ImageData, color: Color, area: RectangleArea): I
   const newImage: ImageData = new ImageData(image.width, image.height);
   const newImageData: Uint8ClampedArray = newImage.data;
 
-  for (var i = 0; i < newImageData.length; i += 4) {
+  for (let i = 0; i < newImageData.length; i += 4) {
     if (isSubpixelInRectangle(i, area, image)) {
       [newImageData[i], newImageData[i + 1], newImageData[i + 2], newImageData[i + 3]] = [color.r, color.g, color.b, color.a ?? 255];
     } else {
@@ -78,15 +78,15 @@ export function getImagePart(area: RectangleArea, image: ImageData): ImageData {
 
   const subpixelsPerRow: number = 4 * imagePart.width;
 
-  let hMin: number = areaInImage.start.h;
-  let wMin: number = areaInImage.start.w;
+  const hMin: number = areaInImage.start.h;
+  const wMin: number = areaInImage.start.w;
 
   let imagePixelOffset: number;
   let partPixelOffset: number = 0;
 
-  for (var h = 0; h < imagePart.height; h++) {
+  for (let h = 0; h < imagePart.height; h++) {
     imagePixelOffset = getPixelOffset({ w: wMin, h: hMin + h }, image);
-    for (var spw = 0; spw < subpixelsPerRow; spw++) {
+    for (let spw = 0; spw < subpixelsPerRow; spw++) {
       imagePart.data[partPixelOffset] = image.data[imagePixelOffset + spw];
       partPixelOffset++;
     }
@@ -113,7 +113,7 @@ export function getAreaHeight(area: RectangleArea): number {
 }
 
 export function pasteImagePart(location: Point, imagePart: ImageData, image: ImageData) {
-  const canvas: HTMLCanvasElement = document.createElement("canvas");
+  const canvas: HTMLCanvasElement = document.createElement('canvas');
   const context: CanvasRenderingContext2D = canvas.getContext('2d');
   loadImageToCanvas(image, canvas);
   context.putImageData(imagePart, location.w, location.h);
@@ -123,16 +123,16 @@ export function pasteImagePart(location: Point, imagePart: ImageData, image: Ima
 }
 
 export function copyImagePart(imagePart: ImageData) {
-  const canvas: HTMLCanvasElement = document.createElement("canvas");
+  const canvas: HTMLCanvasElement = document.createElement('canvas');
   loadImageToCanvas(imagePart, canvas);
-  canvas.toBlob(function (blob) {
+  canvas.toBlob((blob) => {
     try {
       // @ts-ignore
-      const item = new ClipboardItem({ "image/png": blob });
+      const item = new ClipboardItem({ 'image/png': blob });
       // @ts-ignore
       navigator.clipboard.write([item]);
     } catch (e) {
-      alert("Sorry, your browser does not support copying images to clipboard (Try Chrome ;))");
+      alert('Sorry, your browser does not support copying images to clipboard (Try Chrome ;))');
     }
   });
 }

@@ -4,8 +4,8 @@ export function simulateTextChange(
   oldText: string,
   event: KeyboardEvent | ClipboardEvent
 ): string {
-  let selectionStart: number = (<any>event.target).selectionStart;
-  let selectionEnd: number = (<any>event.target).selectionEnd;
+  let selectionStart: number = (event.target as any).selectionStart;
+  let selectionEnd: number = (event.target as any).selectionEnd;
   let valueToInsert: string;
   if (event instanceof KeyboardEvent) {
     if (event.key.length === 1) {

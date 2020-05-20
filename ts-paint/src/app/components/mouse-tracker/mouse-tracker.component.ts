@@ -1,7 +1,6 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { Point } from '../../types/base/point';
 import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
-import { MouseButton } from '../../types/mouse-tracker/mouse-button';
 import { MouseWheelEvent } from '../../types/mouse-tracker/mouse-wheel-event';
 
 @Component({
@@ -29,7 +28,7 @@ export class MouseTrackerComponent implements OnChanges {
   private _mouseIsDown: boolean = false;
   private _lastMouseOut: MouseEvent;
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.zoomedWidth = (this.image?.width ?? 1) * this.zoom;
     this.zoomedHeight = (this.image?.height ?? 1) * this.zoom;
   }
@@ -68,11 +67,11 @@ export class MouseTrackerComponent implements OnChanges {
 
   onMouseScroll(event: WheelEvent) {
     const wheelDelta: number = event.deltaY !== undefined ? event.deltaY / (-100) : event.detail / (-3);
-    this.mouseScroll.emit({ point: this.getEventPoint(event), wheelDelta: wheelDelta });
+    this.mouseScroll.emit({ point: this.getEventPoint(event), wheelDelta });
   }
 
   private getEventPoint(event: MouseEvent | WheelEvent) {
-    //@ts-ignore
+    // @ts-ignore
     return this.constrainPointToImage(this.unzoomPoint({ w: event.layerX, h: event.layerY }));
   }
 

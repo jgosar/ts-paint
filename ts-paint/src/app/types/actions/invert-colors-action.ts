@@ -1,10 +1,6 @@
 import { TsPaintAction } from './ts-paint-action';
-import { Color } from '../base/color';
 import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
-import { fillImage } from '../../helpers/image.helpers';
 import { PartialActionResult } from './partial-action-result';
-import { PasteImageAction } from './paste-image-action';
-import { DeselectSelectionAction } from './deselect-selection-action';
 import { isDefined } from 'src/app/helpers/typescript.helpers';
 
 export class InvertColorsAction extends TsPaintAction {

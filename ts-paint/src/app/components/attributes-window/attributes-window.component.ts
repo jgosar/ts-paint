@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
 import { Point } from '../../types/base/point';
 import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
 
@@ -26,7 +26,7 @@ export class AttributesWindowComponent implements OnInit, OnChanges {
     this.widthInput.focus();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.width = this.image.width;
     this.height = this.image.height;
   }

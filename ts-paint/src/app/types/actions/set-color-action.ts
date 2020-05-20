@@ -9,17 +9,6 @@ export class SetColorAction extends TsPaintAction {
     super('nowhere');
   }
 
-  protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
-    const selection: ColorSelection = this.selection;
-    const patches: Partial<TsPaintStoreState> = SetColorAction.getSetColorPatches(selection.primary, selection.color, state);
-
-    return { patches };
-  }
-
-  protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return SetColorAction.getSetColorUndoActions(this.selection.primary, state);
-  }
-
   public static getSetColorPatches(primary: boolean, color: Color, state: TsPaintStoreState): Partial<TsPaintStoreState> {
     const patches: Partial<TsPaintStoreState> = {};
 
@@ -29,16 +18,27 @@ export class SetColorAction extends TsPaintAction {
       patches.secondaryColor = color;
     }
 
-    return patches
+    return patches;
   }
 
   public static getSetColorUndoActions(primary: boolean, state: TsPaintStoreState): TsPaintAction[] {
-    var previousColor: Color;
+    let previousColor: Color;
     if (primary) {
       previousColor = state.primaryColor;
     } else {
       previousColor = state.secondaryColor;
     }
-    return [new SetColorAction({ color: previousColor, primary: primary })];
+    return [new SetColorAction({ color: previousColor, primary })];
+  }
+
+  protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
+    const selection: ColorSelection = this.selection;
+    const patches: Partial<TsPaintStoreState> = SetColorAction.getSetColorPatches(selection.primary, selection.color, state);
+
+    return { patches };
+  }
+
+  protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
+    return SetColorAction.getSetColorUndoActions(this.selection.primary, state);
   }
 }

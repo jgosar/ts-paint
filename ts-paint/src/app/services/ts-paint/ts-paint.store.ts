@@ -92,8 +92,8 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     this.executeAction(action);
   }
 
-  processMouseScroll(event: MouseWheelEvent) {
-    //TODO: Zooming
+  processMouseScroll(event: WheelEvent) {
+    // TODO: Zooming
   }
 
   changeAttributes(dimensions: Point) {

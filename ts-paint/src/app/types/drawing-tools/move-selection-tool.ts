@@ -4,11 +4,11 @@ import { MoveSelectionAction } from '../actions/move-selection-action';
 
 export class MoveSelectionTool {
 
-  constructor(private startingPosition: Point, private addAction: (action: MoveSelectionAction) => void) {
+  constructor(startingPosition: Point, private _addAction: (action: MoveSelectionAction) => void) {
     this._currentPosition = startingPosition;
   }
 
-  private _mouseIsDown: boolean
+  private _mouseIsDown: boolean;
   private _mouseDownPoint: Point;
   private _currentPosition: Point;
 
@@ -19,7 +19,7 @@ export class MoveSelectionTool {
 
   mouseUp(point: Point) {
     const position: Point = this.calculateNewSelectionPosition(point);
-    this.addAction(new MoveSelectionAction(position));
+    this._addAction(new MoveSelectionAction(position));
 
     this._mouseIsDown = false;
     this._mouseDownPoint = undefined;
@@ -29,7 +29,7 @@ export class MoveSelectionTool {
   mouseMove(point: Point) {
     if (this._mouseIsDown) {
       const position: Point = this.calculateNewSelectionPosition(point);
-      this.addAction(new MoveSelectionAction(position));
+      this._addAction(new MoveSelectionAction(position));
     }
   }
 

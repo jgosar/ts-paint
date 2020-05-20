@@ -1,5 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
-import { loadImageToCanvas } from '../../helpers/canvas.helpers';
+import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { Point } from '../../types/base/point';
 
 @Component({
@@ -25,7 +24,7 @@ export class ZoomableCanvasComponent implements OnChanges {
   zoomedOffsetW: number = 0;
   zoomedOffsetH: number = 0;
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this.imageCanvas) {
       const canvas = this.imageCanvas.nativeElement;
       const context: CanvasRenderingContext2D = canvas.getContext('2d');

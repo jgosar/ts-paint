@@ -1,4 +1,4 @@
-<tsp-modal-window [title]="'Attributes'" [closable]="true" (close)="cancel.emit()" (keyup.enter)="okClicked()"
+<tsp-modal-window [title]="'Attributes'" [closable]="true" (closeClicked)="cancel.emit()" (keyup.enter)="okClicked()"
   (keyup.escape)="cancel.emit()">
   <div class="tsp-horizontal-bar tsp-attributes-window__container">
     <div class="tsp-vertical-bar">

@@ -1,3 +1,4 @@
+// @ts-ignore
 export function assertUnreachable(x: never) {
 
 }
@@ -17,23 +18,23 @@ export function lastElement<T>(array: T[]): T | undefined {
 }
 
 export function min(numbers: number[]): number {
-  let min: number = numbers[0];
-  numbers.forEach(number => {
-    if (number < min) {
-      min = number;
+  let minNumber: number = numbers[0];
+  numbers.forEach(num => {
+    if (num < minNumber) {
+      minNumber = num;
     }
   });
 
-  return min;
+  return minNumber;
 }
 
 export function max(numbers: number[]): number {
-  let max: number = numbers[0];
-  numbers.forEach(number => {
-    if (number > max) {
-      max = number;
+  let maxNumber: number = numbers[0];
+  numbers.forEach(num => {
+    if (num > maxNumber) {
+      maxNumber = num;
     }
   });
 
-  return max;
+  return maxNumber;
 }

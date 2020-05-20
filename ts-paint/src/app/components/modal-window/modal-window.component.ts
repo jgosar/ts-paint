@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'tsp-modal-window',
@@ -16,11 +16,11 @@ export class ModalWindowComponent implements OnChanges {
   @Input()
   icon: 'paint' | undefined;
   @Output()
-  close: EventEmitter<void> = new EventEmitter<void>();
+  closeClicked: EventEmitter<void> = new EventEmitter<void>();
 
   iconClass: any;
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     if (this.icon === 'paint') {
       this.iconClass = { 'tsp-modal-window__title-bar-icon--paint': true };
     } else {

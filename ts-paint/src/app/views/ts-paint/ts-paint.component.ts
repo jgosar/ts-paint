@@ -9,13 +9,14 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 })
 export class TsPaintComponent implements OnInit {
 
-  constructor(public store: TsPaintStore,
-    private element: ElementRef) { }
+  constructor(public store: TsPaintStore, private _element: ElementRef) {
+
+  }
 
   ngOnInit(): void {
     this.store.setDrawingTool(DrawingToolType.line);
     setTimeout(() => {
-      this.element.nativeElement.click();
+      this._element.nativeElement.click();
     });
   }
 

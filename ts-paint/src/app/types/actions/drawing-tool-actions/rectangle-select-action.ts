@@ -1,5 +1,5 @@
 import { DrawingToolAction } from './drawing-tool-action';
-import { drawLines, getLinePoints, setPixelInOriginalImage, invertColor, getPixel } from '../../../helpers/drawing.helpers';
+import { getLinePoints, setPixelInOriginalImage, invertColor, getPixel } from '../../../helpers/drawing.helpers';
 import { Point } from '../../../types/base/point';
 import { Color } from '../../../types/base/color';
 import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
@@ -43,7 +43,7 @@ export class RectangleSelectAction extends DrawingToolAction {
   }
 
   private paintDashInvertedLine(start: Point, end: Point, state: TsPaintStoreState, image: ImageData) {
-    const dashLength: number = Math.ceil(4 / state.zoom)
+    const dashLength: number = Math.ceil(4 / state.zoom);
     const pointsToPaint: Point[] = getLinePoints(start, end);
     pointsToPaint.forEach((point, index) => {
       if (Math.floor(index / dashLength) % 2 === 0) {

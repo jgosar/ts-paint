@@ -25,7 +25,7 @@
     "component-selector": [
       true,
       "element",
-      "app",
+      "tsp",
       "kebab-case"
     ],
     "eofline": true,
@@ -41,8 +41,8 @@
     },
     "max-classes-per-file": false,
     "max-line-length": [
-      true,
-      140
+      false,
+      160
     ],
     "member-ordering": [
       true,
@@ -64,10 +64,6 @@
       "trace"
     ],
     "no-empty": false,
-    "no-inferrable-types": [
-      true,
-      "ignore-params"
-    ],
     "no-non-null-assertion": true,
     "no-redundant-jsdoc": true,
     "no-switch-case-fall-through": true,
@@ -116,9 +112,18 @@
       "options": [
         "ban-keywords",
         "check-format",
-        "allow-pascal-case"
+        "allow-pascal-case",
+        "allow-leading-underscore"
       ]
     },
+    "naming-convention": [
+      true,
+      {
+        "type": "property",
+        "modifiers": "private",
+        "leadingUnderscore": "require"
+      }
+    ],
     "whitespace": {
       "options": [
         "check-branch",
@@ -143,6 +148,7 @@
     "use-pipe-transform-interface": true
   },
   "rulesDirectory": [
-    "codelyzer"
+    "codelyzer",
+    "tslint-consistent-codestyle"
   ]
 }

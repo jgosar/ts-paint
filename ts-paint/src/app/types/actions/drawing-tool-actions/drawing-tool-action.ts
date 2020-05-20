@@ -38,7 +38,7 @@ export abstract class DrawingToolAction extends TsPaintAction {
   }
 
   private getOffsetPoints(): Point[] {
-    return this.points.map(point => { return { w: point.w - this._previewOffset.w, h: point.h - this._previewOffset.h }; });
+    return this.points.map(point => ({ w: point.w - this._previewOffset.w, h: point.h - this._previewOffset.h }));
   }
 
   protected addPatches(state: TsPaintStoreState): Partial<TsPaintStoreState> {

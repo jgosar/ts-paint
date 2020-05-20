@@ -13,11 +13,11 @@ export class MenuComponent {
   @Output()
   itemSelected: EventEmitter<MenuItem> = new EventEmitter<MenuItem>();
 
-  constructor(private element: ElementRef) {
-    element.nativeElement.setAttribute('tabindex', '-1'); // This makes the menu parent focusable
+  constructor(private _element: ElementRef) {
+    _element.nativeElement.setAttribute('tabindex', '-1'); // This makes the menu parent focusable
   }
 
   focusMenu() {
-    this.element.nativeElement.focus();
+    this._element.nativeElement.focus();
   }
 }

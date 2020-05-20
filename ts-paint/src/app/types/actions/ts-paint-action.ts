@@ -30,7 +30,7 @@ export abstract class TsPaintAction {
       this._previewOffset = this.getPreviewOffset(state);
     }
 
-    let partialResult: PartialActionResult = this.addPatchesAndDraw(state);
+    const partialResult: PartialActionResult = this.addPatchesAndDraw(state);
     if (partialResult.patches !== undefined) {
       patches = {
         ...patches,
