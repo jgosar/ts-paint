@@ -113,6 +113,7 @@ export class TsPaintStoreState {
         },
         {
           name: 'Paste',
+          hotkeys: ['Ctrl', 'V'],
           disabled: true
         },
         {

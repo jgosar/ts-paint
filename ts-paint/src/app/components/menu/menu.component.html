@@ -4,7 +4,8 @@
       <ng-container *ngFor="let menu2 of menu1.menus">
         <div *ngIf="menu2.name" class="tsp-menu__menu-level-2"
           [ngClass]="{'tsp-menu__menu-level-2--disabled': menu2.disabled}" (click)="itemSelected.emit(menu2)">
-          {{menu2.name}}
+          <div>{{menu2.name}}</div>
+          <div class="tsp-menu__menu-item-hotkeys" *ngIf="menu2.hotkeys">{{menu2.hotkeys.join('+')}}</div>
         </div>
         <hr *ngIf="!menu2.name" />
       </ng-container>
