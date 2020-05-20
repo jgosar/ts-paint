@@ -203,7 +203,8 @@ export class TsPaintStoreState {
         },
         {
           name: 'Invert Colors',
-          disabled: true
+          hotkeys: ['Ctrl', 'I'],
+          action: MenuActionType.INVERT_COLORS
         },
         {
           name: 'Attributes',

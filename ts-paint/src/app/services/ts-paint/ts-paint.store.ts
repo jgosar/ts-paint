@@ -24,6 +24,7 @@ import { ResizeImageAction } from '../../types/actions/resize-image-action';
 import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.helpers';
 import { RectangleSelectAction } from 'src/app/types/actions/drawing-tool-actions/rectangle-select-action';
 import { DeleteSelectionAction } from 'src/app/types/actions/delete-selection-action';
+import { InvertColorsAction } from 'src/app/types/actions/invert-colors-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState>{
@@ -138,6 +139,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       case MenuActionType.COPY: return this.copy.bind(this);
       case MenuActionType.CUT: return this.cut.bind(this);
       case MenuActionType.CLEAR_IMAGE: return this.clearImage.bind(this);
+      case MenuActionType.INVERT_COLORS: return this.invertColors.bind(this);
       case MenuActionType.OPEN_ATTRIBUTES_WINDOW: return this.openAttributesWindow.bind(this);
       case MenuActionType.SELECT_ALL: return this.selectAll.bind(this);
       case MenuActionType.CLEAR_SELECTION: return this.clearSelection.bind(this);
@@ -210,6 +212,11 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       this.executeAction(actionToRepeat, false);
       this.patchState(undoPointer + 1, 'undoPointer');
     }
+  }
+
+  private invertColors() {
+    const action: InvertColorsAction = new InvertColorsAction();
+    this.executeAction(action);
   }
 
   private clearImage() {

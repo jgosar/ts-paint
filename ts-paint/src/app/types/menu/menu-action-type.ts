@@ -7,6 +7,7 @@ export enum MenuActionType {
   CUT,
   COPY,
   CLEAR_IMAGE,
+  INVERT_COLORS,
   OPEN_ATTRIBUTES_WINDOW,
   SELECT_ALL,
   CLEAR_SELECTION,
