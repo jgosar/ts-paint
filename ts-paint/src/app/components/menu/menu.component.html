@@ -1,11 +1,16 @@
-<div class="tsp-menu__menu-level-1" *ngFor="let menu1 of menuStructure" (click)="focusMenu()">{{menu1.name}}
+<div class="tsp-menu__menu-level-1" *ngFor="let menu1 of menuStructure" (click)="focusMenu()">
+  {{ menu1.name }}
   <div class="tsp-raised-item-container tsp-menu__menu-level-2-container" *ngIf="menu1.menus">
     <div class="tsp-raised-item">
       <ng-container *ngFor="let menu2 of menu1.menus">
-        <div *ngIf="menu2.name" class="tsp-menu__menu-level-2"
-          [ngClass]="{'tsp-menu__menu-level-2--disabled': menu2.disabled}" (click)="itemSelected.emit(menu2)">
-          <div>{{menu2.name}}</div>
-          <div class="tsp-menu__menu-item-hotkeys" *ngIf="menu2.hotkeys">{{menu2.hotkeys.join('+')}}</div>
+        <div
+          *ngIf="menu2.name"
+          class="tsp-menu__menu-level-2"
+          [ngClass]="{ 'tsp-menu__menu-level-2--disabled': menu2.disabled }"
+          (click)="itemSelected.emit(menu2)"
+        >
+          <div>{{ menu2.name }}</div>
+          <div class="tsp-menu__menu-item-hotkeys" *ngIf="menu2.hotkeys">{{ menu2.hotkeys.join('+') }}</div>
         </div>
         <hr *ngIf="!menu2.name" />
       </ng-container>

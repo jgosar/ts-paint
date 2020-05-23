@@ -2,68 +2,67 @@
 
 @font-face {
   font-family: 'Windows95';
-  src: url('assets/fonts/win95.woff2') format('woff2'),
-      url('assets/fonts/win95.woff') format('woff');
+  src: url('assets/fonts/win95.woff2') format('woff2'), url('assets/fonts/win95.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
-body{
+body {
   font-family: Windows95;
   font-size: 8px;
   margin: 0px;
   color: black;
 }
 
-button{
+button {
   font: inherit;
 }
 
-input{
+input {
   font: inherit;
 }
 
-.tsp-can-grow{
+.tsp-can-grow {
   flex-grow: 1;
 }
 
-.tsp-horizontal-bar{
+.tsp-horizontal-bar {
   display: flex;
   width: 100%;
 }
 
-.tsp-vertical-bar{
+.tsp-vertical-bar {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.tsp-raised-item-container{
+.tsp-raised-item-container {
   border: 1px solid;
   border-color: @color--lighter-grey black black @color--lighter-grey;
 }
 
-.tsp-raised-item{
+.tsp-raised-item {
   border: 1px solid;
   border-color: white @color--grey @color--grey white;
 }
 
-.tsp-depressed-item-container{
+.tsp-depressed-item-container {
   border: 1px solid;
-  border-color: @color--grey white white  @color--grey;
+  border-color: @color--grey white white @color--grey;
 }
 
-.tsp-depressed-item{
+.tsp-depressed-item {
   border: 1px solid;
   border-color: black @color--lighter-grey @color--lighter-grey black;
 }
 
-hr{
+hr {
   border: 1px solid;
-  border-color: @color--grey white white  @color--grey;
+  border-color: @color--grey white white @color--grey;
 }
 
-.tsp-button{
+.tsp-button {
   &:extend(.tsp-raised-item);
   position: relative;
   background-color: @color--lighter-grey;
@@ -71,13 +70,13 @@ hr{
   outline: none;
 }
 
-div.tsp-button{
+div.tsp-button {
   margin: 0px 1px -1px 0px;
   box-sizing: border-box;
 }
 
 .tsp-button::before {
-  content: " ";
+  content: ' ';
   position: absolute;
   top: 0px;
   left: 0px;
@@ -87,7 +86,7 @@ div.tsp-button{
   border-width: 0px 1px 1px 0px;
 }
 
-.tsp-button:active{
+.tsp-button:active {
   background-position: calc(50% + 1px) calc(50% + 1px) !important;
   border-color: @color--grey @color--lighter-grey @color--lighter-grey @color--grey;
 }
@@ -101,18 +100,18 @@ div.tsp-button{
   border-color: black white white black;
 }
 
-.tsp-text-button{
+.tsp-text-button {
   padding: 2px 0px 3px 0px;
   margin-left: 12px;
   margin-bottom: 6px;
   min-width: 72px;
 }
 
-.tsp-input-label{
+.tsp-input-label {
   margin: 4px 4px 0 12px;
 }
 
-.tsp-text-input{
+.tsp-text-input {
   padding-bottom: 5px;
   padding-left: 2px;
   outline: none;

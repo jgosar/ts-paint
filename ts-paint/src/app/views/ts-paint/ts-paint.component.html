@@ -1,5 +1,9 @@
-<tsp-modal-window [title]="store.state.fileName + ' - Paint'" [fullscreen]="true" [icon]="'paint'"
-  (paste)="onPaste($event)">
+<tsp-modal-window
+  [title]="store.state.fileName + ' - Paint'"
+  [fullscreen]="true"
+  [icon]="'paint'"
+  (paste)="onPaste($event)"
+>
   <div class="tsp-vertical-bar">
     <div class="tsp-horizontal-bar">
       <tsp-menu [menuStructure]="store.state.menuStructure" (itemSelected)="store.executeMenuAction($event.action)">
@@ -8,25 +12,47 @@
 
     <div class="tsp-horizontal-bar tsp-can-grow">
       <div class="tsp-vertical-bar">
-        <tsp-toolbox [availableTools]="store.state.availableDrawingTools"
-          [selectedTool]="store.state.selectedDrawingTool?.type" (selectedToolChange)="store.setDrawingTool($event)">
+        <tsp-toolbox
+          [availableTools]="store.state.availableDrawingTools"
+          [selectedTool]="store.state.selectedDrawingTool?.type"
+          (selectedToolChange)="store.setDrawingTool($event)"
+        >
         </tsp-toolbox>
       </div>
       <div class="tsp-depressed-item-container tsp-vertical-bar tsp-can-grow">
-        <div class="tsp-depressed-item tsp-can-grow tsp-ts-paint__image_scroller"
-          (contextmenu)="$event.preventDefault()">
+        <div
+          class="tsp-depressed-item tsp-can-grow tsp-ts-paint__image_scroller"
+          (contextmenu)="$event.preventDefault()"
+        >
           <div class="tsp-ts-paint__image-padding">
             <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
-            <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.previewImage"
-              [parentImage]="store.state.image" [offset]="store.state.previewOffset"></tsp-zoomable-canvas>
-            <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.selectionImage"
-              [parentImage]="store.state.image" [offset]="store.state.selectionOffset"></tsp-zoomable-canvas>
-            <tsp-selection-frame [ngStyle]="{'display': store.state.selectionImage?'block':'none'}"
-              [zoom]="store.state.zoom" [image]="store.state.selectionImage" [parentImage]="store.state.image"
-              [offset]="store.state.selectionOffset"></tsp-selection-frame>
-            <tsp-mouse-tracker [zoom]="store.state.zoom" [image]="store.state.image"
-              (mouseMove)="store.processMouseMove($event)" (mouseDown)="store.processMouseDown($event)"
-              (mouseUp)="store.processMouseUp($event)" (mouseScroll)="store.processMouseScroll($event)">
+            <tsp-zoomable-canvas
+              [zoom]="store.state.zoom"
+              [image]="store.state.previewImage"
+              [parentImage]="store.state.image"
+              [offset]="store.state.previewOffset"
+            ></tsp-zoomable-canvas>
+            <tsp-zoomable-canvas
+              [zoom]="store.state.zoom"
+              [image]="store.state.selectionImage"
+              [parentImage]="store.state.image"
+              [offset]="store.state.selectionOffset"
+            ></tsp-zoomable-canvas>
+            <tsp-selection-frame
+              [ngStyle]="{ display: store.state.selectionImage ? 'block' : 'none' }"
+              [zoom]="store.state.zoom"
+              [image]="store.state.selectionImage"
+              [parentImage]="store.state.image"
+              [offset]="store.state.selectionOffset"
+            ></tsp-selection-frame>
+            <tsp-mouse-tracker
+              [zoom]="store.state.zoom"
+              [image]="store.state.image"
+              (mouseMove)="store.processMouseMove($event)"
+              (mouseDown)="store.processMouseDown($event)"
+              (mouseUp)="store.processMouseUp($event)"
+              (mouseScroll)="store.processMouseScroll($event)"
+            >
             </tsp-mouse-tracker>
           </div>
         </div>
@@ -34,20 +60,29 @@
     </div>
 
     <div class="tsp-horizontal-bar">
-      <tsp-palette [selectedPrimaryColor]="this.store.state.primaryColor"
-        [selectedSecondaryColor]="this.store.state.secondaryColor" [availableColors]="this.store.state.availableColors"
-        (selectedColorChange)="this.store.setColor($event)">
+      <tsp-palette
+        [selectedPrimaryColor]="this.store.state.primaryColor"
+        [selectedSecondaryColor]="this.store.state.secondaryColor"
+        [availableColors]="this.store.state.availableColors"
+        (selectedColorChange)="this.store.setColor($event)"
+      >
       </tsp-palette>
     </div>
 
     <div class="tsp-horizontal-bar">
-      <tsp-footer-info [helpText]="store.state.selectedDrawingTool?.helpText"
+      <tsp-footer-info
+        [helpText]="store.state.selectedDrawingTool?.helpText"
         [shapeStart]="store.state.selectedDrawingTool?.previewShapeStart || store.state.mousePosition"
-        [shapeDimensions]="store.state.selectedDrawingTool?.previewShapeDimensions"></tsp-footer-info>
+        [shapeDimensions]="store.state.selectedDrawingTool?.previewShapeDimensions"
+      ></tsp-footer-info>
     </div>
   </div>
 </tsp-modal-window>
 
-<tsp-attributes-window *ngIf="store.state.attributesWindowOpen" [image]="store.state.image"
-  (saveChanges)="this.store.changeAttributes($event)" (cancel)="this.store.closeAttributesWindow()">
+<tsp-attributes-window
+  *ngIf="store.state.attributesWindowOpen"
+  [image]="store.state.image"
+  (saveChanges)="this.store.changeAttributes($event)"
+  (cancel)="this.store.closeAttributesWindow()"
+>
 </tsp-attributes-window>
