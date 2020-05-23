@@ -15,8 +15,6 @@ export class ResizeImageAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [
-      new ResizeImageAction(state.image.width, state.image.height)
-    ];
+    return [new ResizeImageAction(state.image.width, state.image.height)];
   }
 }

@@ -1,7 +1,5 @@
 // @ts-ignore
-export function assertUnreachable(x: never) {
-
-}
+export function assertUnreachable(x: never) {}
 
 export function isDefined(object: any) {
   return object !== null && object !== undefined;
@@ -19,7 +17,7 @@ export function lastElement<T>(array: T[]): T | undefined {
 
 export function min(numbers: number[]): number {
   let minNumber: number = numbers[0];
-  numbers.forEach(num => {
+  numbers.forEach((num) => {
     if (num < minNumber) {
       minNumber = num;
     }
@@ -30,7 +28,7 @@ export function min(numbers: number[]): number {
 
 export function max(numbers: number[]): number {
   let maxNumber: number = numbers[0];
-  numbers.forEach(num => {
+  numbers.forEach((num) => {
     if (num > maxNumber) {
       maxNumber = num;
     }

@@ -22,9 +22,6 @@ export class DeleteSelectionAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [
-      new PasteImageUndoAction(state.selectionImage),
-      new MoveSelectionAction(state.selectionOffset),
-    ];
+    return [new PasteImageUndoAction(state.selectionImage), new MoveSelectionAction(state.selectionOffset)];
   }
 }

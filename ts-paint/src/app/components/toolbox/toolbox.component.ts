@@ -5,7 +5,7 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
   selector: 'tsp-toolbox',
   templateUrl: './toolbox.component.html',
   styleUrls: ['./toolbox.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolboxComponent {
   @Input()

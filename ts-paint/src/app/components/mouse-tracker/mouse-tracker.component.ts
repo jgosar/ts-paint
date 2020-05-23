@@ -7,7 +7,7 @@ import { MouseWheelEvent } from '../../types/mouse-tracker/mouse-wheel-event';
   selector: 'tsp-mouse-tracker',
   templateUrl: './mouse-tracker.component.html',
   styleUrls: ['./mouse-tracker.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MouseTrackerComponent implements OnChanges {
   @Input()
@@ -66,7 +66,7 @@ export class MouseTrackerComponent implements OnChanges {
   }
 
   onMouseScroll(event: WheelEvent) {
-    const wheelDelta: number = event.deltaY !== undefined ? event.deltaY / (-100) : event.detail / (-3);
+    const wheelDelta: number = event.deltaY !== undefined ? event.deltaY / -100 : event.detail / -3;
     this.mouseScroll.emit({ point: this.getEventPoint(event), wheelDelta });
   }
 

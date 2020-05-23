@@ -3,7 +3,6 @@ import { Point } from '../base/point';
 import { MoveSelectionAction } from '../actions/move-selection-action';
 
 export class MoveSelectionTool {
-
   constructor(startingPosition: Point, private _addAction: (action: MoveSelectionAction) => void) {
     this._currentPosition = startingPosition;
   }

@@ -17,9 +17,13 @@ export function openFile(): Promise<ImageFileData> {
     fileInput.onchange = (fileUploadEvent: any) => {
       const uploadedFile: File = fileUploadEvent.target.files[0];
       const fileName: string = getFileNameWithoutExtension(uploadedFile.name);
-      getImageDataFromUpload(uploadedFile, (imageData: ImageData) => {
-        resolve({ imageData, fileName });
-      }, reject);
+      getImageDataFromUpload(
+        uploadedFile,
+        (imageData: ImageData) => {
+          resolve({ imageData, fileName });
+        },
+        reject
+      );
     };
     fileInput.click();
   });
@@ -39,7 +43,11 @@ function getFileNameWithoutExtension(fileName: string): string {
   return fileName;
 }
 
-function getImageDataFromUpload(uploadedFile: File, callback: (imageData: ImageData) => void, errorCallback: (reason: string) => void) {
+function getImageDataFromUpload(
+  uploadedFile: File,
+  callback: (imageData: ImageData) => void,
+  errorCallback: (reason: string) => void
+) {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const fileReader: FileReader = new FileReader();
 

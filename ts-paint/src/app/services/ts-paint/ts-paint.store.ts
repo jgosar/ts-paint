@@ -27,7 +27,7 @@ import { DeleteSelectionAction } from 'src/app/types/actions/delete-selection-ac
 import { InvertColorsAction } from 'src/app/types/actions/invert-colors-action';
 
 @Injectable()
-export class TsPaintStore extends Store<TsPaintStoreState>{
+export class TsPaintStore extends Store<TsPaintStoreState> {
   constructor() {
     super(new TsPaintStoreState());
   }
@@ -36,7 +36,10 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     if (this.state.selectionImage !== undefined) {
       if (this.isPointInSelection(event.point)) {
         if (!this.state.moveSelectionTool) {
-          this.patchState(new MoveSelectionTool(this.state.selectionOffset, this.executeAction.bind(this)), 'moveSelectionTool');
+          this.patchState(
+            new MoveSelectionTool(this.state.selectionOffset, this.executeAction.bind(this)),
+            'moveSelectionTool'
+          );
         }
         this.state.moveSelectionTool.mouseDown(event);
       } else {
@@ -117,7 +120,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
       this.deselectIfSelected();
     }
 
-    Object.keys(patches).forEach(key => {
+    Object.keys(patches).forEach((key) => {
       const key2 = key as keyof TsObject.Path<TsPaintStoreState, []>;
       this.patchState(patches[key], key2);
     });
@@ -131,26 +134,42 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   private getMenuActionFunction(menuAction: MenuActionType): () => void {
     switch (menuAction) {
-      case MenuActionType.NEW: return this.newFile.bind(this);
-      case MenuActionType.OPEN_FILE: return this.openFile.bind(this);
-      case MenuActionType.SAVE_FILE: return this.saveFile.bind(this);
-      case MenuActionType.UNDO: return this.undo.bind(this);
-      case MenuActionType.REPEAT: return this.repeat.bind(this);
-      case MenuActionType.COPY: return this.copy.bind(this);
-      case MenuActionType.CUT: return this.cut.bind(this);
-      case MenuActionType.CLEAR_IMAGE: return this.clearImage.bind(this);
-      case MenuActionType.INVERT_COLORS: return this.invertColors.bind(this);
-      case MenuActionType.OPEN_ATTRIBUTES_WINDOW: return this.openAttributesWindow.bind(this);
-      case MenuActionType.SELECT_ALL: return this.selectAll.bind(this);
-      case MenuActionType.CLEAR_SELECTION: return this.clearSelection.bind(this);
-      case MenuActionType.DESELECT: return this.deselectIfSelected.bind(this);
+      case MenuActionType.NEW:
+        return this.newFile.bind(this);
+      case MenuActionType.OPEN_FILE:
+        return this.openFile.bind(this);
+      case MenuActionType.SAVE_FILE:
+        return this.saveFile.bind(this);
+      case MenuActionType.UNDO:
+        return this.undo.bind(this);
+      case MenuActionType.REPEAT:
+        return this.repeat.bind(this);
+      case MenuActionType.COPY:
+        return this.copy.bind(this);
+      case MenuActionType.CUT:
+        return this.cut.bind(this);
+      case MenuActionType.CLEAR_IMAGE:
+        return this.clearImage.bind(this);
+      case MenuActionType.INVERT_COLORS:
+        return this.invertColors.bind(this);
+      case MenuActionType.OPEN_ATTRIBUTES_WINDOW:
+        return this.openAttributesWindow.bind(this);
+      case MenuActionType.SELECT_ALL:
+        return this.selectAll.bind(this);
+      case MenuActionType.CLEAR_SELECTION:
+        return this.clearSelection.bind(this);
+      case MenuActionType.DESELECT:
+        return this.deselectIfSelected.bind(this);
     }
 
     assertUnreachable(menuAction);
   }
 
   private getHotkeyActionFunction(event: KeyboardEvent): () => void | undefined {
-    const menuAction: MenuActionType = findMenuActionTypeByHotkeyEvent([...this.state.menuStructure, ...this.state.hiddenHotkeyShortcuts], event);
+    const menuAction: MenuActionType = findMenuActionTypeByHotkeyEvent(
+      [...this.state.menuStructure, ...this.state.hiddenHotkeyShortcuts],
+      event
+    );
     if (menuAction) {
       return this.getMenuActionFunction(menuAction);
     }
@@ -161,7 +180,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private openFile() {
-    openFile().then(value => {
+    openFile().then((value) => {
       const action: OpenFileAction = new OpenFileAction(value);
       this.executeAction(action);
     });
@@ -169,7 +188,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
 
   pasteFile(pastedFile: File) {
     if (pastedFile !== null) {
-      pasteFile(pastedFile).then(pastedImage => {
+      pasteFile(pastedFile).then((pastedImage) => {
         const action: PasteImageAction = new PasteImageAction(pastedImage);
         this.executeAction(action);
       });
@@ -197,7 +216,7 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     if (this.state.undoPointer >= 0) {
       const undoPointer: number = this.state.undoPointer;
       const actionToUndo: TsPaintAction = this.state.actions[undoPointer];
-      actionToUndo.undoActions.forEach(undoAction => {
+      actionToUndo.undoActions.forEach((undoAction) => {
         this.executeAction(undoAction, false);
       });
 
@@ -225,7 +244,14 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
   }
 
   private selectAll() {
-    const action: RectangleSelectAction = new RectangleSelectAction([{ w: 0, h: 0 }, { w: this.state.image.width - 1, h: this.state.image.height - 1 }], false, 'image');
+    const action: RectangleSelectAction = new RectangleSelectAction(
+      [
+        { w: 0, h: 0 },
+        { w: this.state.image.width - 1, h: this.state.image.height - 1 },
+      ],
+      false,
+      'image'
+    );
     this.executeAction(action);
   }
 
@@ -242,12 +268,12 @@ export class TsPaintStore extends Store<TsPaintStoreState>{
     const selectionRectangleWith3pxBorder: RectangleArea = {
       start: {
         w: this.state.selectionOffset.w - 3,
-        h: this.state.selectionOffset.h - 3
+        h: this.state.selectionOffset.h - 3,
       },
       end: {
         w: this.state.selectionOffset.w + this.state.selectionImage.width - 1 + 3,
-        h: this.state.selectionOffset.h + this.state.selectionImage.height - 1 + 3
-      }
+        h: this.state.selectionOffset.h + this.state.selectionImage.height - 1 + 3,
+      },
     };
 
     return isPointInRectangle(point, selectionRectangleWith3pxBorder);

@@ -6,9 +6,6 @@ import { PasteImageUndoAction } from './paste-image-undo-action';
 
 export class PasteImageAction extends PasteImageUndoAction {
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [
-      new DeleteSelectionAction(),
-      new ResizeImageAction(state.image.width, state.image.height)
-    ];
+    return [new DeleteSelectionAction(), new ResizeImageAction(state.image.width, state.image.height)];
   }
 }

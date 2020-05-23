@@ -17,8 +17,6 @@ export class SetDrawingToolAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [
-      new SetDrawingToolAction(state.selectedDrawingTool?.type, this._getDrawingTool)
-    ];
+    return [new SetDrawingToolAction(state.selectedDrawingTool?.type, this._getDrawingTool)];
   }
 }

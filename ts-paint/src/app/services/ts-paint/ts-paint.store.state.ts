@@ -19,12 +19,36 @@ export class TsPaintStoreState {
   fileName: string = 'untitled';
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = { r: 255, g: 255, b: 255 };
-  availableColors: Color[] = [{ r: 0, g: 0, b: 0 }, { r: 255, g: 255, b: 255 }, { r: 128, g: 128, b: 128 }, { r: 196, g: 196, b: 196 }, { r: 128, g: 0, b: 0 }, { r: 255, g: 0, b: 0 }, { r: 128, g: 128, b: 0 }, { r: 255, g: 255, b: 0 }, { r: 0, g: 128, b: 0 }, { r: 0, g: 255, b: 0 }, { r: 0, g: 128, b: 128 }, { r: 0, g: 255, b: 255 }, { r: 0, g: 0, b: 128 }, { r: 0, g: 0, b: 255 }, { r: 128, g: 0, b: 128 }, { r: 255, g: 0, b: 255 }];
+  availableColors: Color[] = [
+    { r: 0, g: 0, b: 0 },
+    { r: 255, g: 255, b: 255 },
+    { r: 128, g: 128, b: 128 },
+    { r: 196, g: 196, b: 196 },
+    { r: 128, g: 0, b: 0 },
+    { r: 255, g: 0, b: 0 },
+    { r: 128, g: 128, b: 0 },
+    { r: 255, g: 255, b: 0 },
+    { r: 0, g: 128, b: 0 },
+    { r: 0, g: 255, b: 0 },
+    { r: 0, g: 128, b: 128 },
+    { r: 0, g: 255, b: 255 },
+    { r: 0, g: 0, b: 128 },
+    { r: 0, g: 0, b: 255 },
+    { r: 128, g: 0, b: 128 },
+    { r: 255, g: 0, b: 255 },
+  ];
   previewAction: TsPaintAction;
   actions: TsPaintAction[] = [];
   selectedDrawingTool: DrawingTool;
   availableDrawingTools: DrawingToolType[] = [
-    DrawingToolType.rectangleSelect, DrawingToolType.colorFiller, DrawingToolType.colorPicker, DrawingToolType.magnifier, DrawingToolType.pencil, DrawingToolType.line, DrawingToolType.rectangle, DrawingToolType.ellipse
+    DrawingToolType.rectangleSelect,
+    DrawingToolType.colorFiller,
+    DrawingToolType.colorPicker,
+    DrawingToolType.magnifier,
+    DrawingToolType.pencil,
+    DrawingToolType.line,
+    DrawingToolType.rectangle,
+    DrawingToolType.ellipse,
   ];
   undoPointer: number = -1;
   attributesWindowOpen: boolean = false;
@@ -37,55 +61,55 @@ export class TsPaintStoreState {
         {
           name: 'New',
           hotkeys: ['Ctrl', 'N'],
-          action: MenuActionType.NEW
+          action: MenuActionType.NEW,
         },
         {
           name: 'Open...',
           hotkeys: ['Ctrl', 'O'],
-          action: MenuActionType.OPEN_FILE
+          action: MenuActionType.OPEN_FILE,
         },
         {
           name: 'Save',
           hotkeys: ['Ctrl', 'S'],
-          action: MenuActionType.SAVE_FILE
+          action: MenuActionType.SAVE_FILE,
         },
         {
           name: 'Save As...',
-          disabled: true
+          disabled: true,
         },
         {},
         {
           name: 'Print Preview',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Page Setup...',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Print...',
-          disabled: true
+          disabled: true,
         },
         {},
         {
           name: 'Set As Wallpaper (Tiled)',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Set As Wallpaper (Centered)',
-          disabled: true
+          disabled: true,
         },
         {},
         {
           name: 'Recent file',
-          disabled: true
+          disabled: true,
         },
         {},
         {
           name: 'Exit',
-          disabled: true
+          disabled: true,
         },
-      ]
+      ],
     },
     {
       name: 'Edit',
@@ -93,64 +117,64 @@ export class TsPaintStoreState {
         {
           name: 'Undo',
           hotkeys: ['Ctrl', 'Z'],
-          action: MenuActionType.UNDO
+          action: MenuActionType.UNDO,
         },
         {
           name: 'Repeat',
           hotkeys: ['Ctrl', 'Y'],
-          action: MenuActionType.REPEAT
+          action: MenuActionType.REPEAT,
         },
         {},
         {
           name: 'Cut',
           hotkeys: ['Ctrl', 'X'],
-          action: MenuActionType.CUT
+          action: MenuActionType.CUT,
         },
         {
           name: 'Copy',
           hotkeys: ['Ctrl', 'C'],
-          action: MenuActionType.COPY
+          action: MenuActionType.COPY,
         },
         {
           name: 'Paste',
           hotkeys: ['Ctrl', 'V'],
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Clear Selection',
           hotkeys: ['Delete'],
-          action: MenuActionType.CLEAR_SELECTION
+          action: MenuActionType.CLEAR_SELECTION,
         },
         {
           name: 'Select All',
           hotkeys: ['Ctrl', 'A'],
-          action: MenuActionType.SELECT_ALL
+          action: MenuActionType.SELECT_ALL,
         },
         {},
         {
           name: 'Copy To',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Paste From...',
-          disabled: true
+          disabled: true,
         },
-      ]
+      ],
     },
     {
       name: 'View',
       menus: [
         {
           name: 'Tool Box',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Color Box',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Status Bar',
-          disabled: true
+          disabled: true,
         },
         {},
         {
@@ -159,104 +183,104 @@ export class TsPaintStoreState {
           menus: [
             {
               name: 'Normal Size',
-              disabled: true
+              disabled: true,
             },
             {
               name: 'Large Size',
-              disabled: true
+              disabled: true,
             },
             {
               name: 'Custom...',
-              disabled: true
+              disabled: true,
             },
             {},
             {
               name: 'Show Grid',
-              disabled: true
+              disabled: true,
             },
             {
               name: 'Show Thumbnail',
-              disabled: true
+              disabled: true,
             },
-          ]
+          ],
         },
         {
           name: 'View Bitmap',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Text Toolbar',
-          disabled: true
+          disabled: true,
         },
-      ]
+      ],
     },
     {
       name: 'Image',
       menus: [
         {
           name: 'Flip/Rotate',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Stretch/Skew',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Invert Colors',
           hotkeys: ['Ctrl', 'I'],
-          action: MenuActionType.INVERT_COLORS
+          action: MenuActionType.INVERT_COLORS,
         },
         {
           name: 'Attributes',
-          action: MenuActionType.OPEN_ATTRIBUTES_WINDOW
+          action: MenuActionType.OPEN_ATTRIBUTES_WINDOW,
         },
         {
           name: 'Clear Image',
-          action: MenuActionType.CLEAR_IMAGE
+          action: MenuActionType.CLEAR_IMAGE,
         },
-      ]
+      ],
     },
     {
       name: 'Options',
       menus: [
         {
           name: 'Edit Colors',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Get Colors',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Save Colors',
-          disabled: true
+          disabled: true,
         },
         {
           name: 'Draw Opaque',
-          disabled: true
+          disabled: true,
         },
-      ]
+      ],
     },
     {
       name: 'Help',
       menus: [
         {
           name: 'Help Topics',
-          disabled: true
+          disabled: true,
         },
         {},
         {
           name: 'About Paint',
-          disabled: true
-        }
-      ]
-    }
+          disabled: true,
+        },
+      ],
+    },
   ];
   hiddenHotkeyShortcuts: MenuItem[] = [
     {
       name: 'Deselect',
       hotkeys: ['Escape'],
-      action: MenuActionType.DESELECT
-    }
+      action: MenuActionType.DESELECT,
+    },
   ];
 }

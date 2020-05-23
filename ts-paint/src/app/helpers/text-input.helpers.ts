@@ -1,9 +1,6 @@
 import { replaceStringBetweenIndexes } from './string.helpers';
 
-export function simulateTextChange(
-  oldText: string,
-  event: KeyboardEvent | ClipboardEvent
-): string {
+export function simulateTextChange(oldText: string, event: KeyboardEvent | ClipboardEvent): string {
   let selectionStart: number = (event.target as any).selectionStart;
   let selectionEnd: number = (event.target as any).selectionEnd;
   let valueToInsert: string;
@@ -31,12 +28,7 @@ export function simulateTextChange(
     valueToInsert = event.clipboardData.getData('text/plain');
   }
 
-  const newText: string = replaceStringBetweenIndexes(
-    oldText,
-    selectionStart,
-    selectionEnd,
-    valueToInsert
-  );
+  const newText: string = replaceStringBetweenIndexes(oldText, selectionStart, selectionEnd, valueToInsert);
 
   return newText;
 }

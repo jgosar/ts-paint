@@ -29,14 +29,20 @@ export class DeselectSelectionAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    const pasteArea: RectangleArea = { start: state.selectionOffset, end: { w: state.selectionOffset.w + state.selectionImage.width - 1, h: state.selectionOffset.h + state.selectionImage.height - 1 } };
+    const pasteArea: RectangleArea = {
+      start: state.selectionOffset,
+      end: {
+        w: state.selectionOffset.w + state.selectionImage.width - 1,
+        h: state.selectionOffset.h + state.selectionImage.height - 1,
+      },
+    };
     const oldImagePart: ImageData = getImagePart(pasteArea, state.image);
     return [
       new PasteImageAction(oldImagePart), // TODO: This does not actually work
       new MoveSelectionAction(state.selectionOffset),
       new DeselectSelectionAction(),
       new PasteImageAction(state.selectionImage),
-      new MoveSelectionAction(state.selectionOffset)
+      new MoveSelectionAction(state.selectionOffset),
     ];
   }
 }

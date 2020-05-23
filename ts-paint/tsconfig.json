@@ -12,11 +12,7 @@
     "importHelpers": true,
     "noUnusedLocals": true,
     "target": "es2015",
-    "lib": [
-      "es2018",
-      "dom",
-      "dom.iterable"
-    ]
+    "lib": ["es2018", "dom", "dom.iterable"]
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,

@@ -21,7 +21,12 @@ export function drawLines(points: Point[], color: Color, image: ImageData) {
 export function setPixelInOriginalImage(point: Point, color: Color, image: ImageData) {
   const pixelOffset = getPixelOffset(point, image);
   if (pixelOffset !== undefined) {
-    [image.data[pixelOffset], image.data[pixelOffset + 1], image.data[pixelOffset + 2], image.data[pixelOffset + 3]] = [color.r, color.g, color.b, 255];
+    [image.data[pixelOffset], image.data[pixelOffset + 1], image.data[pixelOffset + 2], image.data[pixelOffset + 3]] = [
+      color.r,
+      color.g,
+      color.b,
+      255,
+    ];
   }
 }
 
@@ -114,7 +119,7 @@ function ellipsePlot([x0, y0, x1, y1]: number[], plot: (x, y) => void) {
   y = ry;
 
   // Initial decision parameter of region 1
-  d1 = (ry * ry) - (rx * rx * ry) + (0.25 * rx * rx);
+  d1 = ry * ry - rx * rx * ry + 0.25 * rx * rx;
   dx = 2 * ry * ry * x;
   dy = 2 * rx * rx * y;
 
@@ -130,22 +135,19 @@ function ellipsePlot([x0, y0, x1, y1]: number[], plot: (x, y) => void) {
     // decision parameter based on algorithm
     if (d1 < 0) {
       x++;
-      dx = dx + (2 * ry * ry);
-      d1 = d1 + dx + (ry * ry);
-    }
-    else {
+      dx = dx + 2 * ry * ry;
+      d1 = d1 + dx + ry * ry;
+    } else {
       x++;
       y--;
-      dx = dx + (2 * ry * ry);
-      dy = dy - (2 * rx * rx);
-      d1 = d1 + dx - dy + (ry * ry);
+      dx = dx + 2 * ry * ry;
+      dy = dy - 2 * rx * rx;
+      d1 = d1 + dx - dy + ry * ry;
     }
   }
 
   // Decision parameter of region 2
-  d2 = ((ry * ry) * ((x + 0.5) * (x + 0.5)))
-    + ((rx * rx) * ((y - 1) * (y - 1)))
-    - (rx * rx * ry * ry);
+  d2 = ry * ry * ((x + 0.5) * (x + 0.5)) + rx * rx * ((y - 1) * (y - 1)) - rx * rx * ry * ry;
 
   // Plotting points of region 2
   while (y >= 0) {
@@ -159,15 +161,14 @@ function ellipsePlot([x0, y0, x1, y1]: number[], plot: (x, y) => void) {
     // value based on algorithm
     if (d2 > 0) {
       y--;
-      dy = dy - (2 * rx * rx);
-      d2 = d2 + (rx * rx) - dy;
-    }
-    else {
+      dy = dy - 2 * rx * rx;
+      d2 = d2 + rx * rx - dy;
+    } else {
       y--;
       x++;
-      dx = dx + (2 * ry * ry);
-      dy = dy - (2 * rx * rx);
-      d2 = d2 + dx - dy + (rx * rx);
+      dx = dx + 2 * ry * ry;
+      dy = dy - 2 * rx * rx;
+      d2 = d2 + dx - dy + rx * rx;
     }
   }
 }

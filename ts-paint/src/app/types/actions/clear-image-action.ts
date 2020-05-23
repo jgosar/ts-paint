@@ -20,9 +20,6 @@ export class ClearImageAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [
-      new PasteImageAction(state.image),
-      new DeselectSelectionAction()
-    ];
+    return [new PasteImageAction(state.image), new DeselectSelectionAction()];
   }
 }

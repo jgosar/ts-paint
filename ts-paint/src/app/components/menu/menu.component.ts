@@ -5,7 +5,7 @@ import { MenuItem } from '../../types/menu/menu-item';
   selector: 'tsp-menu',
   templateUrl: './menu.component.html',
   styleUrls: ['./menu.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MenuComponent {
   @Input()

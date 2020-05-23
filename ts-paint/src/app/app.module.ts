@@ -29,13 +29,10 @@ import { FooterInfoComponent } from './components/footer-info/footer-info.compon
     ModalWindowComponent,
     AttributesWindowComponent,
     FooterInfoComponent,
-    IntegerInputComponent // TODO: make a separate inputs module
+    IntegerInputComponent, // TODO: make a separate inputs module
   ],
-  imports: [
-    BrowserModule,
-    FormsModule
-  ],
+  imports: [BrowserModule, FormsModule],
   providers: [TsPaintStore],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

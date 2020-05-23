@@ -7,8 +7,7 @@ import { SetColorAction } from '../set-color-action';
 import { TsPaintAction } from '../ts-paint-action';
 
 export class ColorPickerAction extends DrawingToolAction {
-  protected draw(points: Point[], color1: Color, color2: Color, image: ImageData) {
-  }
+  protected draw(points: Point[], color1: Color, color2: Color, image: ImageData) {}
 
   protected addPatches(state: TsPaintStoreState): Partial<TsPaintStoreState> {
     const color: Color = getPixel(this.points[0], state.image);

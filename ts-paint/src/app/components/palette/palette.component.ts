@@ -6,7 +6,7 @@ import { ColorSelection } from '../../types/base/color-selection';
   selector: 'tsp-palette',
   templateUrl: './palette.component.html',
   styleUrls: ['./palette.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PaletteComponent {
   @Input()

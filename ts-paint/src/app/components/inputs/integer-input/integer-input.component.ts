@@ -1,4 +1,14 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { simulateTextChange } from '../../../helpers/text-input.helpers';
 import { validateMinMax } from '../../../helpers/numeric.helpers';
 
@@ -6,7 +16,7 @@ import { validateMinMax } from '../../../helpers/numeric.helpers';
   selector: 'tsp-integer-input',
   templateUrl: './integer-input.component.html',
   styleUrls: ['./integer-input.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IntegerInputComponent implements OnChanges {
   @ViewChild('inputElement', { static: true })
@@ -65,7 +75,7 @@ export class IntegerInputComponent implements OnChanges {
   }
 
   private isInputValid(value: string): boolean {
-    return this._inputValidators.every(v => v(value));
+    return this._inputValidators.every((v) => v(value));
   }
 
   private validateRegex(value: string): boolean {
@@ -73,10 +83,6 @@ export class IntegerInputComponent implements OnChanges {
   }
 
   private validateMinMax(value: string): boolean {
-    return validateMinMax(
-      Number(value),
-      this.minValue,
-      this.maxValue
-    );
+    return validateMinMax(Number(value), this.minValue, this.maxValue);
   }
 }

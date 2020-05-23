@@ -17,7 +17,12 @@ export class PasteImageUndoAction extends TsPaintAction {
     patches.moveSelectionTool = undefined; // It will get initialized if needed
 
     if (this._imagePart.width > state.image.width || this._imagePart.height > state.image.height) {
-      const image: ImageData = resizeImage(state.image, Math.max(this._imagePart.width, state.image.width), Math.max(this._imagePart.height, state.image.height), state.secondaryColor);
+      const image: ImageData = resizeImage(
+        state.image,
+        Math.max(this._imagePart.width, state.image.width),
+        Math.max(this._imagePart.height, state.image.height),
+        state.secondaryColor
+      );
       return { image, patches };
     } else {
       return { patches };

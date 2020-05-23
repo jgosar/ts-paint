@@ -5,13 +5,10 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 @Component({
   selector: 'tsp-ts-paint',
   templateUrl: './ts-paint.component.html',
-  styleUrls: ['./ts-paint.component.less']
+  styleUrls: ['./ts-paint.component.less'],
 })
 export class TsPaintComponent implements OnInit {
-
-  constructor(public store: TsPaintStore, private _element: ElementRef) {
-
-  }
+  constructor(public store: TsPaintStore, private _element: ElementRef) {}
 
   ngOnInit(): void {
     this.store.setDrawingTool(DrawingToolType.line);
@@ -41,5 +38,4 @@ export class TsPaintComponent implements OnInit {
       event.returnValue = true;
     }
   }
-
 }

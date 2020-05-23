@@ -19,9 +19,7 @@ export class InvertColorsAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [
-      new InvertColorsAction()
-    ];
+    return [new InvertColorsAction()];
   }
 
   private invertColors(image: ImageData): ImageData {

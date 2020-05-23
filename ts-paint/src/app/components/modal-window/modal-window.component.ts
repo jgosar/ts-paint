@@ -4,7 +4,7 @@ import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmit
   selector: 'tsp-modal-window',
   templateUrl: './modal-window.component.html',
   styleUrls: ['./modal-window.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ModalWindowComponent implements OnChanges {
   @Input()

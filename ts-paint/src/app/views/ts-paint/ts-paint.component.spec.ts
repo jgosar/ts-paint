@@ -8,9 +8,8 @@ describe('TsPaintComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TsPaintComponent ]
-    })
-    .compileComponents();
+      declarations: [TsPaintComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

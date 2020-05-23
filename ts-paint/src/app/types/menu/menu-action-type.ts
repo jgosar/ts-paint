@@ -11,5 +11,5 @@ export enum MenuActionType {
   OPEN_ATTRIBUTES_WINDOW,
   SELECT_ALL,
   CLEAR_SELECTION,
-  DESELECT
+  DESELECT,
 }

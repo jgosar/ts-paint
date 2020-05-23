@@ -11,7 +11,12 @@ import { RectangleAction } from './rectangle-action';
 import { MagnifierAction } from './magnifier-action';
 import { EllipseAction } from './ellipse-action';
 
-export function createDrawingToolAction(toolType: DrawingToolType, points: Point[], swapColors: boolean, renderIn: 'image' | 'preview'): DrawingToolAction {
+export function createDrawingToolAction(
+  toolType: DrawingToolType,
+  points: Point[],
+  swapColors: boolean,
+  renderIn: 'image' | 'preview'
+): DrawingToolAction {
   switch (toolType) {
     case DrawingToolType.rectangleSelect:
       return new RectangleSelectAction(points, swapColors, renderIn);

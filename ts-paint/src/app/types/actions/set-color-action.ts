@@ -9,7 +9,11 @@ export class SetColorAction extends TsPaintAction {
     super('nowhere');
   }
 
-  public static getSetColorPatches(primary: boolean, color: Color, state: TsPaintStoreState): Partial<TsPaintStoreState> {
+  public static getSetColorPatches(
+    primary: boolean,
+    color: Color,
+    state: TsPaintStoreState
+  ): Partial<TsPaintStoreState> {
     const patches: Partial<TsPaintStoreState> = {};
 
     if (primary) {
@@ -33,7 +37,11 @@ export class SetColorAction extends TsPaintAction {
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
     const selection: ColorSelection = this.selection;
-    const patches: Partial<TsPaintStoreState> = SetColorAction.getSetColorPatches(selection.primary, selection.color, state);
+    const patches: Partial<TsPaintStoreState> = SetColorAction.getSetColorPatches(
+      selection.primary,
+      selection.color,
+      state
+    );
 
     return { patches };
   }

@@ -1,8 +1,4 @@
-export function validateMinMax(
-  value: number,
-  minValue: number,
-  maxValue: number
-): boolean {
+export function validateMinMax(value: number, minValue: number, maxValue: number): boolean {
   if (minValue && !isNaN(value) && minValue > value) {
     return false;
   }

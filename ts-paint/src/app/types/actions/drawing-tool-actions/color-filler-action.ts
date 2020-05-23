@@ -20,10 +20,10 @@ export class ColorFillerAction extends DrawingToolAction {
     if (isEmpty(this._sameColorPixels)) {
       this._sameColorPixels = this.getSameColorPixels(this.points[0], newColor, state.image);
     }
-    const minW: number = min(this._sameColorPixels.map(w => w.w));
-    const maxW: number = max(this._sameColorPixels.map(w => w.w));
-    const minH: number = min(this._sameColorPixels.map(w => w.h));
-    const maxH: number = max(this._sameColorPixels.map(w => w.h));
+    const minW: number = min(this._sameColorPixels.map((w) => w.w));
+    const maxW: number = max(this._sameColorPixels.map((w) => w.w));
+    const minH: number = min(this._sameColorPixels.map((w) => w.h));
+    const maxH: number = max(this._sameColorPixels.map((w) => w.h));
 
     return { start: { w: minW, h: minH }, end: { w: maxW, h: maxH } };
   }
@@ -32,7 +32,7 @@ export class ColorFillerAction extends DrawingToolAction {
     if (isEmpty(this._sameColorPixels)) {
       this._sameColorPixels = this.getSameColorPixels(this.points[0], color1, image);
     }
-    this._sameColorPixels.forEach(pixel => {
+    this._sameColorPixels.forEach((pixel) => {
       setPixelInOriginalImage(pixel, color1, image);
     });
   }
@@ -70,8 +70,17 @@ export class ColorFillerAction extends DrawingToolAction {
     return sameColorPixels;
   }
 
-  private addPointIfSameColor(image: ImageData, color: Color, point: Point, pixelQueue: Point[], visitedPixels: boolean[][]) {
-    if (!isPointInRectangle(point, { start: { w: 0, h: 0 }, end: { w: image.width - 1, h: image.height - 1 } }) || visitedPixels[point.w][point.h] !== undefined) {
+  private addPointIfSameColor(
+    image: ImageData,
+    color: Color,
+    point: Point,
+    pixelQueue: Point[],
+    visitedPixels: boolean[][]
+  ) {
+    if (
+      !isPointInRectangle(point, { start: { w: 0, h: 0 }, end: { w: image.width - 1, h: image.height - 1 } }) ||
+      visitedPixels[point.w][point.h] !== undefined
+    ) {
       return;
     }
     const colorOfPixel: Color = getPixel(point, image);

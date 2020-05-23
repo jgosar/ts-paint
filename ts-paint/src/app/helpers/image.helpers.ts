@@ -25,7 +25,12 @@ export function fillImage(image: ImageData, color: Color): ImageData {
 export function fillAreaInOriginalImage(image: ImageData, color: Color, area: RectangleArea) {
   for (let i = 0; i < image.data.length; i += 4) {
     if (isSubpixelInRectangle(i, area, image)) {
-      [image.data[i], image.data[i + 1], image.data[i + 2], image.data[i + 3]] = [color.r, color.g, color.b, color.a ?? 255];
+      [image.data[i], image.data[i + 1], image.data[i + 2], image.data[i + 3]] = [
+        color.r,
+        color.g,
+        color.b,
+        color.a ?? 255,
+      ];
     }
   }
 }
@@ -36,9 +41,19 @@ export function fillArea(image: ImageData, color: Color, area: RectangleArea): I
 
   for (let i = 0; i < newImageData.length; i += 4) {
     if (isSubpixelInRectangle(i, area, image)) {
-      [newImageData[i], newImageData[i + 1], newImageData[i + 2], newImageData[i + 3]] = [color.r, color.g, color.b, color.a ?? 255];
+      [newImageData[i], newImageData[i + 1], newImageData[i + 2], newImageData[i + 3]] = [
+        color.r,
+        color.g,
+        color.b,
+        color.a ?? 255,
+      ];
     } else {
-      [newImageData[i], newImageData[i + 1], newImageData[i + 2], newImageData[i + 3]] = [image.data[i], image.data[i + 1], image.data[i + 2], color.a ?? 255];
+      [newImageData[i], newImageData[i + 1], newImageData[i + 2], newImageData[i + 3]] = [
+        image.data[i],
+        image.data[i + 1],
+        image.data[i + 2],
+        color.a ?? 255,
+      ];
     }
   }
 
@@ -52,10 +67,12 @@ export function isSubpixelInRectangle(subpixelOffset: number, rectangle: Rectang
 }
 
 export function isPointInRectangle(point: Point, rectangle: RectangleArea): boolean {
-  return point.w >= Math.min(rectangle.start.w, rectangle.end.w) &&
+  return (
+    point.w >= Math.min(rectangle.start.w, rectangle.end.w) &&
     point.w <= Math.max(rectangle.start.w, rectangle.end.w) &&
     point.h >= Math.min(rectangle.start.h, rectangle.end.h) &&
-    point.h <= Math.max(rectangle.start.h, rectangle.end.h);
+    point.h <= Math.max(rectangle.start.h, rectangle.end.h)
+  );
 }
 
 export function calculateLocation(subpixelOffset: number, image: ImageData): Point {

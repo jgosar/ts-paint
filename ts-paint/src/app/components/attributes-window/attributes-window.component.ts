@@ -1,4 +1,13 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmitter, ViewChild, OnInit } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnChanges,
+  Output,
+  EventEmitter,
+  ViewChild,
+  OnInit,
+} from '@angular/core';
 import { Point } from '../../types/base/point';
 import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
 
@@ -6,7 +15,7 @@ import { IntegerInputComponent } from '../inputs/integer-input/integer-input.com
   selector: 'tsp-attributes-window',
   templateUrl: './attributes-window.component.html',
   styleUrls: ['./attributes-window.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AttributesWindowComponent implements OnInit, OnChanges {
   @ViewChild('widthInput', { static: true })

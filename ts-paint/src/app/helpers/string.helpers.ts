@@ -17,19 +17,12 @@ export function replaceStringBetweenIndexes(
     endIndex = currentValue.length;
   }
 
-  if (
-    startIndex > currentValue.length ||
-    endIndex < 0 ||
-    startIndex > endIndex
-  ) {
+  if (startIndex > currentValue.length || endIndex < 0 || startIndex > endIndex) {
     return currentValue;
   }
 
   const stringBeginning: string = currentValue.substring(0, startIndex);
-  const stringEnd: string = currentValue.substring(
-    endIndex,
-    currentValue.length
-  );
+  const stringEnd: string = currentValue.substring(endIndex, currentValue.length);
 
   return stringBeginning + valueToInsert + stringEnd;
 }
