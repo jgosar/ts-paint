@@ -3,15 +3,14 @@ import { Point } from '../base/point';
 import { MoveSelectionAction } from '../actions/move-selection-action';
 
 export class MoveSelectionTool {
-  constructor(startingPosition: Point, private _addAction: (action: MoveSelectionAction) => void) {
-    this._currentPosition = startingPosition;
-  }
+  constructor(private _addAction: (action: MoveSelectionAction) => void) {}
 
   private _mouseIsDown: boolean;
   private _mouseDownPoint: Point;
   private _currentPosition: Point;
 
-  mouseDown(event: MouseButtonEvent) {
+  mouseDown(startingPosition: Point, event: MouseButtonEvent) {
+    this._currentPosition = startingPosition;
     this._mouseIsDown = true;
     this._mouseDownPoint = event.point;
   }

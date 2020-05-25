@@ -36,12 +36,9 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     if (this.state.selectionImage !== undefined) {
       if (this.isPointInSelection(event.point)) {
         if (!this.state.moveSelectionTool) {
-          this.patchState(
-            new MoveSelectionTool(this.state.selectionOffset, this.executeAction.bind(this)),
-            'moveSelectionTool'
-          );
+          this.patchState(new MoveSelectionTool(this.executeAction.bind(this)), 'moveSelectionTool');
         }
-        this.state.moveSelectionTool.mouseDown(event);
+        this.state.moveSelectionTool.mouseDown(this.state.selectionOffset, event);
       } else {
         const action: DeselectSelectionAction = new DeselectSelectionAction();
         this.executeAction(action);
@@ -114,11 +111,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   private executeAction(action: TsPaintAction, logToHistory: boolean = true) {
-    const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
-
-    if (action.deselectsSelection) {
+    if (logToHistory && action.deselectsSelection) {
       this.deselectIfSelected();
     }
+
+    const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
 
     Object.keys(patches).forEach((key) => {
       const key2 = key as keyof TsObject.Path<TsPaintStoreState, []>;
@@ -128,7 +125,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   private deselectIfSelected() {
     if (this.state.selectionImage !== undefined) {
-      this.executeAction(new DeselectSelectionAction(), false);
+      this.executeAction(new DeselectSelectionAction(), true);
     }
   }
 

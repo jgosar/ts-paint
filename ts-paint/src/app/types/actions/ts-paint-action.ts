@@ -21,7 +21,7 @@ export abstract class TsPaintAction {
   public getStatePatches(state: TsPaintStoreState, logToHistory: boolean = true): Partial<TsPaintStoreState> {
     let patches: Partial<TsPaintStoreState> = {};
 
-    if (this.renderIn !== 'preview') {
+    if (logToHistory && this.renderIn !== 'preview') {
       this.undoActions = this.getUndoActions(state);
     }
 
@@ -55,8 +55,10 @@ export abstract class TsPaintAction {
 
       if (logToHistory) {
         const actions: TsPaintAction[] = patches.actions || state.actions.map((x) => x);
-        if (this.shouldOverridePreviousAction(actions)) {
+        if (this.shouldOverridePreviousAction(actions, state.undoPointer)) {
+          const actionToOverride: TsPaintAction = actions[state.undoPointer];
           patches.undoPointer = state.undoPointer;
+          this.undoActions = actionToOverride.undoActions;
         } else {
           patches.undoPointer = state.undoPointer + 1;
         }
@@ -67,11 +69,12 @@ export abstract class TsPaintAction {
     return patches;
   }
 
-  private shouldOverridePreviousAction(actions: TsPaintAction[]) {
+  private shouldOverridePreviousAction(actions: TsPaintAction[], undoPointer: number) {
     return (
       this._overridesPreviousActionOfSameType &&
       !isEmpty(actions) &&
-      lastElement(actions).constructor === this.constructor
+      actions.length > undoPointer - 1 &&
+      actions[undoPointer].constructor === this.constructor
     );
   }
 
