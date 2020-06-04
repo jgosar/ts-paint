@@ -25,6 +25,7 @@ import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.
 import { RectangleSelectAction } from 'src/app/types/actions/drawing-tool-actions/rectangle-select-action';
 import { DeleteSelectionAction } from 'src/app/types/actions/delete-selection-action';
 import { InvertColorsAction } from 'src/app/types/actions/invert-colors-action';
+import { FlipImageAction } from 'src/app/types/actions/flip-image-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -149,6 +150,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         return this.clearImage.bind(this);
       case MenuActionType.INVERT_COLORS:
         return this.invertColors.bind(this);
+      case MenuActionType.FLIP_IMAGE:
+        return this.flipImage.bind(this);
       case MenuActionType.OPEN_ATTRIBUTES_WINDOW:
         return this.openAttributesWindow.bind(this);
       case MenuActionType.SELECT_ALL:
@@ -232,6 +235,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   private invertColors() {
     const action: InvertColorsAction = new InvertColorsAction();
+    this.executeAction(action);
+  }
+
+  private flipImage() {
+    const action: FlipImageAction = new FlipImageAction('horizontal');
     this.executeAction(action);
   }
 

@@ -219,7 +219,8 @@ export class TsPaintStoreState {
       menus: [
         {
           name: 'Flip/Rotate',
-          disabled: true,
+          hotkeys: ['Ctrl', 'R'],
+          action: MenuActionType.FLIP_IMAGE,
         },
         {
           name: 'Stretch/Skew',

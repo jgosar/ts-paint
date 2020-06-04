@@ -129,7 +129,7 @@ export function getAreaHeight(area: RectangleArea): number {
   return 1 + Math.abs(area.end.h - area.start.h);
 }
 
-export function pasteImagePart(location: Point, imagePart: ImageData, image: ImageData) {
+export function pasteImagePart(location: Point, imagePart: ImageData, image: ImageData): ImageData {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const context: CanvasRenderingContext2D = canvas.getContext('2d');
   loadImageToCanvas(image, canvas);

@@ -3,7 +3,7 @@ import { RectangleArea } from '../base/rectangle-area';
 import { Point } from '../base/point';
 import { getAreaWidth, getAreaHeight, cloneImage, getImagePart } from '../../helpers/image.helpers';
 import { PartialActionResult } from './partial-action-result';
-import { lastElement, isEmpty } from '../../helpers/typescript.helpers';
+import { isEmpty } from '../../helpers/typescript.helpers';
 
 export abstract class TsPaintAction {
   public undoActions: TsPaintAction[] = [];
