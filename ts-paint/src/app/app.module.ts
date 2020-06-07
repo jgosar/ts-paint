@@ -15,6 +15,7 @@ import { AttributesWindowComponent } from './components/attributes-window/attrib
 import { FormsModule } from '@angular/forms';
 import { IntegerInputComponent } from './components/inputs/integer-input/integer-input.component';
 import { FooterInfoComponent } from './components/footer-info/footer-info.component';
+import { RadioButtonGroupComponent } from './components/inputs/radio-button-group/radio-button-group.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { FooterInfoComponent } from './components/footer-info/footer-info.compon
     AttributesWindowComponent,
     FooterInfoComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
+    RadioButtonGroupComponent, // TODO: make a separate inputs module
   ],
   imports: [BrowserModule, FormsModule],
   providers: [TsPaintStore],

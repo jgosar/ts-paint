@@ -1,0 +1,4 @@
+<div class="tsp-horizontal-bar" *ngFor="let option of options">
+  <input type="radio" name="{{ groupName }}" [value]="option" [(ngModel)]="selectedOptionInternal" />
+  {{ option.name }}
+</div>
