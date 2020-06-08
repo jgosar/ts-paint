@@ -1,4 +1,11 @@
-<div class="tsp-horizontal-bar" *ngFor="let option of options">
-  <input type="radio" name="{{ groupName }}" [value]="option" [(ngModel)]="selectedOptionInternal" />
-  {{ option.name }}
+<div class="tsp-horizontal-bar tsp-radio-button-group__item" *ngFor="let option of options; let i = index">
+  <input
+    class="tsp-radio-button"
+    type="radio"
+    name="{{ groupName }}"
+    id="{{ groupName + '-' + i }}"
+    [value]="option"
+    [(ngModel)]="selectedOptionInternal"
+  />
+  <label for="{{ groupName + '-' + i }}">{{ option.name }}</label>
 </div>

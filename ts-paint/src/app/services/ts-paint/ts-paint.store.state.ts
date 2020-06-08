@@ -52,6 +52,7 @@ export class TsPaintStoreState {
   ];
   undoPointer: number = -1;
   attributesWindowOpen: boolean = false;
+  flipRotateWindowOpen: boolean = false;
   mousePosition: Point;
   unsavedChanges: boolean = false;
   menuStructure: MenuItem[] = [

@@ -86,3 +86,11 @@
   (cancel)="this.store.closeAttributesWindow()"
 >
 </tsp-attributes-window>
+
+<tsp-flip-rotate-window
+  *ngIf="store.state.flipRotateWindowOpen"
+  [image]="store.state.image"
+  (saveChanges)="this.store.flipRotate($event)"
+  (cancel)="this.store.closeFlipRotateWindow()"
+>
+</tsp-flip-rotate-window>

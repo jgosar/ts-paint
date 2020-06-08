@@ -15,6 +15,7 @@ import { AttributesWindowComponent } from './components/attributes-window/attrib
 import { FormsModule } from '@angular/forms';
 import { IntegerInputComponent } from './components/inputs/integer-input/integer-input.component';
 import { FooterInfoComponent } from './components/footer-info/footer-info.component';
+import { FlipRotateWindowComponent } from './components/flip-rotate-window/flip-rotate-window.component';
 import { RadioButtonGroupComponent } from './components/inputs/radio-button-group/radio-button-group.component';
 
 @NgModule({
@@ -29,6 +30,7 @@ import { RadioButtonGroupComponent } from './components/inputs/radio-button-grou
     SelectionFrameComponent,
     ModalWindowComponent,
     AttributesWindowComponent,
+    FlipRotateWindowComponent,
     FooterInfoComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module

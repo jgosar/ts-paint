@@ -5,6 +5,7 @@
     type="text"
     class="tsp-text-input tsp-depressed-item"
     [(ngModel)]="model"
+    [attr.disabled]="disabled ? '' : null"
     (paste)="onPaste($event)"
     (keydown)="onKeydown($event)"
   />

@@ -1,0 +1,31 @@
+<tsp-modal-window
+  [title]="'Flip and Rotate'"
+  [closable]="true"
+  (closeClicked)="cancel.emit()"
+  (keyup.enter)="okClicked()"
+  (keyup.escape)="cancel.emit()"
+>
+  <div class="tsp-horizontal-bar tsp-flip-rotate-window__container">
+    <div class="tsp-vertical-bar">
+      <div class="tsp-vertical-bar">
+        <fieldset class="tsp-flip-rotate-window__fieldset">
+          <legend>Flip or rotate</legend>
+          <tsp-radio-button-group class="tsp-vertical-bar" [options]="actions" [(selectedOption)]="selectedAction">
+          </tsp-radio-button-group>
+          <tsp-integer-input
+            #angleInput
+            class="tsp-flip-rotate-window__angle_input"
+            [maxValue]="359"
+            [(value)]="angle"
+            [disabled]="selectedAction?.value !== 'rotate'"
+          >
+          </tsp-integer-input>
+        </fieldset>
+      </div>
+    </div>
+    <div class="tsp-vertical-bar">
+      <button class="tsp-button tsp-text-button" (click)="okClicked()">OK</button>
+      <button class="tsp-button tsp-text-button" (click)="cancel.emit()">Cancel</button>
+    </div>
+  </div>
+</tsp-modal-window>

@@ -30,6 +30,8 @@ export class IntegerInputComponent implements OnChanges {
   minValue: number = 0;
   @Input()
   maxValue: number = Number.MAX_SAFE_INTEGER;
+  @Input()
+  disabled: boolean = false;
   @Output()
   valueChange: EventEmitter<number> = new EventEmitter<number>();
 

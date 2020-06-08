@@ -26,6 +26,7 @@ import { RectangleSelectAction } from 'src/app/types/actions/drawing-tool-action
 import { DeleteSelectionAction } from 'src/app/types/actions/delete-selection-action';
 import { InvertColorsAction } from 'src/app/types/actions/invert-colors-action';
 import { FlipImageAction } from 'src/app/types/actions/flip-image-action';
+import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -97,6 +98,10 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     // TODO: Zooming
   }
 
+  private openAttributesWindow() {
+    this.patchState(true, 'attributesWindowOpen');
+  }
+
   changeAttributes(dimensions: Point) {
     this.closeAttributesWindow();
     const action: ResizeImageAction = new ResizeImageAction(dimensions.w, dimensions.h);
@@ -105,6 +110,24 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   closeAttributesWindow() {
     this.patchState(false, 'attributesWindowOpen');
+  }
+
+  private openFlipRotateWindow() {
+    this.patchState(true, 'flipRotateWindowOpen');
+  }
+
+  flipRotate(params: FlipRotateParams) {
+    this.closeFlipRotateWindow();
+
+    let action: TsPaintAction;
+    if (params.flip) {
+      action = new FlipImageAction(params.flip);
+    }
+    this.executeAction(action);
+  }
+
+  closeFlipRotateWindow() {
+    this.patchState(false, 'flipRotateWindowOpen');
   }
 
   private getDrawingTool(toolType: DrawingToolType): DrawingTool {
@@ -151,7 +174,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
       case MenuActionType.INVERT_COLORS:
         return this.invertColors.bind(this);
       case MenuActionType.FLIP_IMAGE:
-        return this.flipImage.bind(this);
+        return this.openFlipRotateWindow.bind(this);
       case MenuActionType.OPEN_ATTRIBUTES_WINDOW:
         return this.openAttributesWindow.bind(this);
       case MenuActionType.SELECT_ALL:
@@ -238,11 +261,6 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.executeAction(action);
   }
 
-  private flipImage() {
-    const action: FlipImageAction = new FlipImageAction('horizontal');
-    this.executeAction(action);
-  }
-
   private clearImage() {
     const action: ClearImageAction = new ClearImageAction();
     this.executeAction(action);
@@ -263,10 +281,6 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   private clearSelection() {
     const action: DeleteSelectionAction = new DeleteSelectionAction();
     this.executeAction(action);
-  }
-
-  private openAttributesWindow() {
-    this.patchState(true, 'attributesWindowOpen');
   }
 
   private isPointInSelection(point: Point): boolean {
