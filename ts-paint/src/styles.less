@@ -63,9 +63,24 @@ hr {
 }
 
 fieldset {
-  border: 1px solid;
-  border-color: @color--grey white white @color--grey;
-  padding: 3px 4px 5px 4px;
+  border: 1px solid @color--grey;
+  padding: 3px;
+  position: relative;
+}
+
+fieldset legend {
+  position: relative;
+  background-color: @color--lighter-grey;
+}
+
+fieldset::before {
+  content: ' ';
+  position: absolute;
+  top: 6px;
+  left: 0px;
+  right: -2px;
+  bottom: -2px;
+  border: 1px solid white;
 }
 
 .tsp-button {
