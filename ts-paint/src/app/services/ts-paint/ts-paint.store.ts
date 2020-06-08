@@ -27,6 +27,7 @@ import { DeleteSelectionAction } from 'src/app/types/actions/delete-selection-ac
 import { InvertColorsAction } from 'src/app/types/actions/invert-colors-action';
 import { FlipImageAction } from 'src/app/types/actions/flip-image-action';
 import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params';
+import { RotateImageAction } from 'src/app/types/actions/rotate-image-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -122,6 +123,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     let action: TsPaintAction;
     if (params.flip) {
       action = new FlipImageAction(params.flip);
+    } else if (params.rotate) {
+      action = new RotateImageAction(params.rotate);
     }
     this.executeAction(action);
   }
