@@ -4,7 +4,7 @@ import { PartialActionResult } from './partial-action-result';
 import { isDefined } from 'src/app/helpers/typescript.helpers';
 
 export class RotateImageAction extends TsPaintAction {
-  constructor(private _angle: number) {
+  constructor(private _angle: 90 | 180 | 270) {
     super('image');
   }
 
@@ -19,25 +19,35 @@ export class RotateImageAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [new RotateImageAction(-this._angle)];
+    return [new RotateImageAction(<90 | 180 | 270>(360 - this._angle))];
   }
 
   private rotateImage(image: ImageData): ImageData {
-    var canvas: HTMLCanvasElement = document.createElement('canvas');
-    var context: CanvasRenderingContext2D = canvas.getContext('2d');
-    canvas.width = image.width;
-    canvas.height = image.height;
+    const canvas0: HTMLCanvasElement = document.createElement('canvas');
+    const context0: CanvasRenderingContext2D = canvas0.getContext('2d');
+    canvas0.width = image.width;
+    canvas0.height = image.height;
+    context0.putImageData(image, 0, 0);
 
-    context.putImageData(image, 0, 0);
-    // TODO
-    /*if (this._direction === 'horizontal') {
-      context.scale(-1, 1);
-      context.drawImage(canvas, -image.width, 0);
+    const canvas: HTMLCanvasElement = document.createElement('canvas');
+    const context: CanvasRenderingContext2D = canvas.getContext('2d');
+    if (this._angle === 180) {
+      canvas.width = image.width;
+      canvas.height = image.height;
     } else {
-      context.scale(1, -1);
-      context.drawImage(canvas, 0, -image.height);
-    }*/
+      canvas.width = image.height;
+      canvas.height = image.width;
+    }
 
-    return context.getImageData(0, 0, image.width, image.height);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    if (this._angle === 180) {
+      context.translate(image.width / 2, image.height / 2);
+    } else {
+      context.translate(image.height / 2, image.width / 2);
+    }
+    context.rotate((this._angle * Math.PI) / 180);
+    context.drawImage(canvas0, -image.width / 2, -image.height / 2);
+
+    return context.getImageData(0, 0, canvas.width, canvas.height);
   }
 }

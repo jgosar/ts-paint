@@ -1,4 +1,4 @@
 export interface FlipRotateParams {
   flip?: 'horizontal' | 'vertical';
-  rotate?: number;
+  rotate?: 90 | 180 | 270;
 }

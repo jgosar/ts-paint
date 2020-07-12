@@ -55,7 +55,7 @@ export class FlipRotateWindowComponent implements OnInit, OnChanges {
   okClicked() {
     const selectedActionType: FlipRotateWindowAction = this.selectedAction.value;
     if (selectedActionType === 'rotate') {
-      this.saveChanges.emit({ rotate: this.angle });
+      this.saveChanges.emit({ rotate: 90 }); //TODO: fix this
     } else {
       this.saveChanges.emit({ flip: selectedActionType });
     }
