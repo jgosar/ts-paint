@@ -158,3 +158,15 @@ div.tsp-button {
 .tsp-radio-button:checked::before {
   background-image: url('./assets/ui/radio-checked.png');
 }
+
+.tsp-radio-button[disabled]::before {
+  background-image: url('./assets/ui/radio-disabled-unchecked.png');
+}
+
+.tsp-radio-button[disabled]:checked::before {
+  background-image: url('./assets/ui/radio-disabled-checked.png');
+}
+
+[disabled] {
+  color: @color--grey;
+}

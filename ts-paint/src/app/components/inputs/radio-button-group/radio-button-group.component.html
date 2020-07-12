@@ -6,6 +6,7 @@
     id="{{ groupName + '-' + i }}"
     [value]="option"
     [(ngModel)]="selectedOptionInternal"
+    [attr.disabled]="disabled ? '' : null"
   />
-  <label for="{{ groupName + '-' + i }}">{{ option.name }}</label>
+  <label for="{{ groupName + '-' + i }}" [attr.disabled]="disabled ? '' : null">{{ option.name }}</label>
 </div>

@@ -12,14 +12,13 @@
           <legend>Flip or rotate</legend>
           <tsp-radio-button-group class="tsp-vertical-bar" [options]="actions" [(selectedOption)]="selectedAction">
           </tsp-radio-button-group>
-          <tsp-integer-input
-            #angleInput
-            class="tsp-flip-rotate-window__angle_input"
-            [maxValue]="359"
-            [(value)]="angle"
+          <tsp-radio-button-group
+            class="tsp-vertical-bar tsp-flip-rotate-window__angle-buttons"
             [disabled]="selectedAction?.value !== 'rotate'"
+            [options]="angles"
+            [(selectedOption)]="selectedAngle"
           >
-          </tsp-integer-input>
+          </tsp-radio-button-group>
         </fieldset>
       </div>
     </div>

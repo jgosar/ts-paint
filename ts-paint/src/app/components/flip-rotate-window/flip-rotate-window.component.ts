@@ -10,8 +10,9 @@ import {
 } from '@angular/core';
 import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params';
 import { FlipRotateWindowAction } from './flip-rotate-window-action';
-import { FlipRotateWindowOption } from './flip-rotate-window-option';
+import { FlipRotateWindowActionOption } from './flip-rotate-window-action-option';
 import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
+import { FlipRotateWindowAngleOption } from './flip-rotate-window-angle-option';
 
 @Component({
   selector: 'tsp-flip-rotate-window',
@@ -30,23 +31,30 @@ export class FlipRotateWindowComponent implements OnInit, OnChanges {
   @Output()
   cancel: EventEmitter<void> = new EventEmitter<void>();
 
-  actions: FlipRotateWindowOption[] = [
+  actions: FlipRotateWindowActionOption[] = [
     { value: 'horizontal', name: 'Flip horizontal' },
     { value: 'vertical', name: 'Flip vertical' },
     { value: 'rotate', name: 'Rotate by angle' },
   ];
-  angle: number = 90;
 
-  get selectedAction(): FlipRotateWindowOption {
+  angles: FlipRotateWindowAngleOption[] = [
+    { value: 90, name: '90°' },
+    { value: 180, name: '180°' },
+    { value: 270, name: '270°' },
+  ];
+
+  selectedAngle: FlipRotateWindowAngleOption = this.angles[0];
+
+  get selectedAction(): FlipRotateWindowActionOption {
     return this._selectedAction;
   }
-  set selectedAction(value: FlipRotateWindowOption) {
+  set selectedAction(value: FlipRotateWindowActionOption) {
     this._selectedAction = value;
     if (value.value === 'rotate') {
       this.angleInput.focus();
     }
   }
-  private _selectedAction: FlipRotateWindowOption = this.actions[0];
+  private _selectedAction: FlipRotateWindowActionOption = this.actions[0];
 
   ngOnInit(): void {}
 
@@ -55,7 +63,7 @@ export class FlipRotateWindowComponent implements OnInit, OnChanges {
   okClicked() {
     const selectedActionType: FlipRotateWindowAction = this.selectedAction.value;
     if (selectedActionType === 'rotate') {
-      this.saveChanges.emit({ rotate: 90 }); //TODO: fix this
+      this.saveChanges.emit({ rotate: this.selectedAngle.value });
     } else {
       this.saveChanges.emit({ flip: selectedActionType });
     }

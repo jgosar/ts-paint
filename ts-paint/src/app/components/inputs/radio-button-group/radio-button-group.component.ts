@@ -20,6 +20,8 @@ export class RadioButtonGroupComponent implements OnChanges {
   options: RadioButtonOption<any>[] = [];
   @Input()
   selectedOption: RadioButtonOption<any>;
+  @Input()
+  disabled: boolean = false;
   @Output()
   selectedOptionChange: EventEmitter<RadioButtonOption<any>> = new EventEmitter<RadioButtonOption<any>>();
 

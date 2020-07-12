@@ -2,9 +2,12 @@ import { TsPaintAction } from './ts-paint-action';
 import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
 import { PartialActionResult } from './partial-action-result';
 import { isDefined } from 'src/app/helpers/typescript.helpers';
+import { loadImageToCanvas } from 'src/app/helpers/canvas.helpers';
+
+export type RotateImageActionAngle = 90 | 180 | 270;
 
 export class RotateImageAction extends TsPaintAction {
-  constructor(private _angle: 90 | 180 | 270) {
+  constructor(private _angle: RotateImageActionAngle) {
     super('image');
   }
 
@@ -19,15 +22,12 @@ export class RotateImageAction extends TsPaintAction {
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [new RotateImageAction(<90 | 180 | 270>(360 - this._angle))];
+    return [new RotateImageAction(<RotateImageActionAngle>(360 - this._angle))];
   }
 
   private rotateImage(image: ImageData): ImageData {
-    const canvas0: HTMLCanvasElement = document.createElement('canvas');
-    const context0: CanvasRenderingContext2D = canvas0.getContext('2d');
-    canvas0.width = image.width;
-    canvas0.height = image.height;
-    context0.putImageData(image, 0, 0);
+    const tmpCanvas: HTMLCanvasElement = document.createElement('canvas');
+    loadImageToCanvas(image, tmpCanvas);
 
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const context: CanvasRenderingContext2D = canvas.getContext('2d');
@@ -46,7 +46,7 @@ export class RotateImageAction extends TsPaintAction {
       context.translate(image.height / 2, image.width / 2);
     }
     context.rotate((this._angle * Math.PI) / 180);
-    context.drawImage(canvas0, -image.width / 2, -image.height / 2);
+    context.drawImage(tmpCanvas, -image.width / 2, -image.height / 2);
 
     return context.getImageData(0, 0, canvas.width, canvas.height);
   }
