@@ -133,6 +133,10 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.patchState(false, 'flipRotateWindowOpen');
   }
 
+  closeAboutPaintWindow() {
+    this.patchState(false, 'aboutPaintWindowOpen');
+  }
+
   private getDrawingTool(toolType: DrawingToolType): DrawingTool {
     return new DrawingTool(toolType, this.executeAction.bind(this));
   }
@@ -186,6 +190,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         return this.clearSelection.bind(this);
       case MenuActionType.DESELECT:
         return this.deselectIfSelected.bind(this);
+      case MenuActionType.ABOUT_PAINT:
+        return this.aboutPaint.bind(this);
     }
 
     assertUnreachable(menuAction);
@@ -299,5 +305,9 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     };
 
     return isPointInRectangle(point, selectionRectangleWith3pxBorder);
+  }
+
+  private aboutPaint() {
+    this.patchState(true, 'aboutPaintWindowOpen');
   }
 }

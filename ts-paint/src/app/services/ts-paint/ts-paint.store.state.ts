@@ -53,6 +53,7 @@ export class TsPaintStoreState {
   undoPointer: number = -1;
   attributesWindowOpen: boolean = false;
   flipRotateWindowOpen: boolean = false;
+  aboutPaintWindowOpen: boolean = false;
   mousePosition: Point;
   unsavedChanges: boolean = false;
   menuStructure: MenuItem[] = [
@@ -273,7 +274,7 @@ export class TsPaintStoreState {
         {},
         {
           name: 'About Paint',
-          disabled: true,
+          action: MenuActionType.ABOUT_PAINT,
         },
       ],
     },

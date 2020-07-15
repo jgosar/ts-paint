@@ -94,3 +94,6 @@
   (cancel)="this.store.closeFlipRotateWindow()"
 >
 </tsp-flip-rotate-window>
+
+<tsp-about-paint-window *ngIf="store.state.aboutPaintWindowOpen" (ok)="this.store.closeAboutPaintWindow()">
+</tsp-about-paint-window>

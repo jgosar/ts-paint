@@ -17,6 +17,7 @@ import { IntegerInputComponent } from './components/inputs/integer-input/integer
 import { FooterInfoComponent } from './components/footer-info/footer-info.component';
 import { FlipRotateWindowComponent } from './components/flip-rotate-window/flip-rotate-window.component';
 import { RadioButtonGroupComponent } from './components/inputs/radio-button-group/radio-button-group.component';
+import { AboutPaintWindowComponent } from './components/about-paint-window/about-paint-window.component';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { RadioButtonGroupComponent } from './components/inputs/radio-button-grou
     ModalWindowComponent,
     AttributesWindowComponent,
     FlipRotateWindowComponent,
+    AboutPaintWindowComponent,
     FooterInfoComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module

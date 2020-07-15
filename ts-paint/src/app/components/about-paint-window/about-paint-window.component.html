@@ -1,0 +1,23 @@
+<tsp-modal-window
+  [title]="'About Paint'"
+  [closable]="true"
+  (closeClicked)="ok.emit()"
+  (keyup.enter)="ok.emit()"
+  (keyup.escape)="ok.emit()"
+>
+  <div class="tsp-horizontal-bar tsp-about-paint-window__container">
+    <div class="tsp-vertical-bar tsp-about-paint-window__big-paint-icon"></div>
+    <div class="tsp-vertical-bar tsp-about-paint-window__info-container">
+      TS Paint <br />
+      {{ osVersion }} <br />
+      Made in 2020 by Jernej Gosar <br />
+      <br />
+      <br />
+      See the code: <a href="https://github.com/jgosar/ts-paint" target="_blank">https://github.com/jgosar/ts-paint</a>
+      <hr class="tsp-about-paint-window__horizontal_divider" />
+      <div class="tsp-horizontal-bar tsp-about-paint-window__buttons">
+        <button class="tsp-button tsp-text-button" (click)="ok.emit()">OK</button>
+      </div>
+    </div>
+  </div>
+</tsp-modal-window>
