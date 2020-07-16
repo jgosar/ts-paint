@@ -1,4 +1,4 @@
-import { Component, OnInit, ElementRef, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 
@@ -8,15 +8,13 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
   styleUrls: ['./ts-paint.component.less'],
 })
 export class TsPaintComponent implements OnInit {
-  constructor(public store: TsPaintStore, private _element: ElementRef) {}
+  constructor(public store: TsPaintStore) {}
 
   ngOnInit(): void {
     this.store.setDrawingTool(DrawingToolType.line);
-    setTimeout(() => {
-      this._element.nativeElement.click();
-    });
   }
 
+  @HostListener('document:paste', ['$event'])
   onPaste(event: any) {
     const pastedFile: File = event.clipboardData.items[0].getAsFile();
 
