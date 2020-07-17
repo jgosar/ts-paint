@@ -6,12 +6,17 @@ import { assertUnreachable } from '../../helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
 import { createDrawingToolAction } from '../actions/drawing-tool-actions/create-drawing-tool-action';
 import { TsPaintAction } from '../actions/ts-paint-action';
+import { MousePoint } from '../mouse-tracker/mouse-point';
 
 export class DrawingTool {
   private readonly _behaviour: DrawingToolBehaviour;
   private readonly _maxPoints: number;
 
-  constructor(public type: DrawingToolType, private _addAction: (action: TsPaintAction) => void) {
+  constructor(
+    public type: DrawingToolType,
+    private _addAction: (action: TsPaintAction) => void,
+    private _clearPreview: () => void
+  ) {
     switch (type) {
       /*case DrawingToolType.freeFormSelect:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;
@@ -30,7 +35,7 @@ export class DrawingTool {
         this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
         return;
       case DrawingToolType.magnifier:
-        this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
+        this._behaviour = DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW;
         this.helpText = 'Changes the magnification: left click to zoom in, right click to zoom out.';
         return;
       case DrawingToolType.pencil:
@@ -111,7 +116,8 @@ export class DrawingTool {
     }
   }
 
-  mouseMove(point: Point) {
+  mouseMove(mousePoint: MousePoint) {
+    const point: Point = mousePoint.point;
     if (this._behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
       if (this._mouseIsDown) {
         this.addPreviewAction([this._mouseDownPoint, point]);
@@ -120,6 +126,12 @@ export class DrawingTool {
       if (this._mouseIsDown) {
         this._mousePoints.push(point);
         this.addPreviewAction(this._mousePoints);
+      }
+    } else if (this._behaviour === DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW) {
+      if (mousePoint.outsideCanvas) {
+        this._clearPreview();
+      } else {
+        this.addPreviewAction([point]);
       }
     }
   }

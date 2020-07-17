@@ -13,7 +13,6 @@ import { SetColorAction } from '../../types/actions/set-color-action';
 import { SetDrawingToolAction } from '../../types/actions/set-drawing-tool-action';
 import { OpenFileAction } from '../../types/actions/open-file-action';
 import { ClearImageAction } from '../../types/actions/clear-image-action';
-import { Object as TsObject } from 'ts-toolbelt';
 import { PasteImageAction } from '../../types/actions/paste-image-action';
 import { RectangleArea } from '../../types/base/rectangle-area';
 import { isPointInRectangle, copyImagePart } from '../../helpers/image.helpers';
@@ -28,6 +27,7 @@ import { InvertColorsAction } from 'src/app/types/actions/invert-colors-action';
 import { FlipImageAction } from 'src/app/types/actions/flip-image-action';
 import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params';
 import { RotateImageAction } from 'src/app/types/actions/rotate-image-action';
+import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -60,12 +60,12 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     }
   }
 
-  processMouseMove(point: Point) {
-    this.patchState(point, 'mousePosition');
+  processMouseMove(mousePoint: MousePoint) {
+    this.patchState(mousePoint.point, 'mousePosition');
     if (this.state.moveSelectionTool !== undefined) {
-      this.state.moveSelectionTool.mouseMove(point);
+      this.state.moveSelectionTool.mouseMove(mousePoint);
     } else {
-      this.state.selectedDrawingTool?.mouseMove(point);
+      this.state.selectedDrawingTool?.mouseMove(mousePoint);
     }
   }
 
@@ -138,7 +138,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   private getDrawingTool(toolType: DrawingToolType): DrawingTool {
-    return new DrawingTool(toolType, this.executeAction.bind(this));
+    return new DrawingTool(toolType, this.executeAction.bind(this), this.clearPreview.bind(this));
   }
 
   private executeAction(action: TsPaintAction, logToHistory: boolean = true) {
@@ -148,10 +148,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
 
-    Object.keys(patches).forEach((key) => {
-      const key2 = key as keyof TsObject.Path<TsPaintStoreState, []>;
-      this.patchState(patches[key], key2);
-    });
+    this.setState({ ...this.state, ...patches });
+  }
+
+  private clearPreview() {
+    this.patchState(new ImageData(1, 1), 'previewImage');
   }
 
   private deselectIfSelected() {

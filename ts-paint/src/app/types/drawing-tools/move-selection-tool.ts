@@ -1,6 +1,7 @@
 import { MouseButtonEvent } from '../mouse-tracker/mouse-button-event';
 import { Point } from '../base/point';
 import { MoveSelectionAction } from '../actions/move-selection-action';
+import { MousePoint } from '../mouse-tracker/mouse-point';
 
 export class MoveSelectionTool {
   constructor(private _addAction: (action: MoveSelectionAction) => void) {}
@@ -24,9 +25,9 @@ export class MoveSelectionTool {
     this._currentPosition = position;
   }
 
-  mouseMove(point: Point) {
+  mouseMove(mousePoint: MousePoint) {
     if (this._mouseIsDown) {
-      const position: Point = this.calculateNewSelectionPosition(point);
+      const position: Point = this.calculateNewSelectionPosition(mousePoint.point);
       this._addAction(new MoveSelectionAction(position));
     }
   }

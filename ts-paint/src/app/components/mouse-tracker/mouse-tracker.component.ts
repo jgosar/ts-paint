@@ -2,6 +2,7 @@ import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmit
 import { Point } from '../../types/base/point';
 import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
 import { MouseWheelEvent } from '../../types/mouse-tracker/mouse-wheel-event';
+import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
 
 @Component({
   selector: 'tsp-mouse-tracker',
@@ -15,7 +16,7 @@ export class MouseTrackerComponent implements OnChanges {
   @Input()
   image: ImageData;
   @Output()
-  mouseMove: EventEmitter<Point> = new EventEmitter<Point>();
+  mouseMove: EventEmitter<MousePoint> = new EventEmitter<MousePoint>();
   @Output()
   mouseUp: EventEmitter<Point> = new EventEmitter<Point>();
   @Output()
@@ -37,8 +38,11 @@ export class MouseTrackerComponent implements OnChanges {
     return false;
   }
 
-  onMouseMove(event: MouseEvent) {
-    this.mouseMove.emit(this.getEventPoint(event));
+  onMouseMove(event: MouseEvent, outsideCanvas: boolean = false) {
+    this.mouseMove.emit({
+      point: this.getEventPoint(event),
+      outsideCanvas,
+    });
   }
 
   onMouseIn(event: MouseEvent) {
@@ -51,7 +55,7 @@ export class MouseTrackerComponent implements OnChanges {
   }
 
   onMouseOut(event: MouseEvent) {
-    this.onMouseMove(event);
+    this.onMouseMove(event, true);
     this._lastMouseOut = event;
   }
 
@@ -70,7 +74,7 @@ export class MouseTrackerComponent implements OnChanges {
     this.mouseScroll.emit({ point: this.getEventPoint(event), wheelDelta });
   }
 
-  private getEventPoint(event: MouseEvent | WheelEvent) {
+  private getEventPoint(event: MouseEvent | WheelEvent): Point {
     // @ts-ignore
     return this.constrainPointToImage(this.unzoomPoint({ w: event.layerX, h: event.layerY }));
   }
