@@ -1,8 +1,8 @@
-import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { Subject } from 'rxjs';
-import { debounceTime, takeUntil } from 'rxjs/operators';
+import { debounceTime, takeUntil, map, distinctUntilChanged } from 'rxjs/operators';
 import { Point } from 'src/app/types/base/point';
 
 @Component({
@@ -11,6 +11,9 @@ import { Point } from 'src/app/types/base/point';
   styleUrls: ['./ts-paint.component.less'],
 })
 export class TsPaintComponent implements OnInit, OnDestroy {
+  @ViewChild('imageScroller', { static: true })
+  imageScroller: ElementRef;
+
   private _ngUnsubscribe: Subject<void> = new Subject();
   private _scrollingHappened: Subject<Point> = new Subject<Point>();
 
@@ -22,6 +25,17 @@ export class TsPaintComponent implements OnInit, OnDestroy {
     this._scrollingHappened.pipe(debounceTime(400), takeUntil(this._ngUnsubscribe)).subscribe((scrollPosition) => {
       this.store.setScrollPosition(scrollPosition);
     });
+
+    this.store.state$
+      .pipe(
+        map((state) => state.scrollPosition),
+        distinctUntilChanged(),
+        takeUntil(this._ngUnsubscribe)
+      )
+      .subscribe((scrollPosition) => {
+        this.imageScroller.nativeElement.scrollLeft = scrollPosition.w;
+        this.imageScroller.nativeElement.scrollTop = scrollPosition.h;
+      });
   }
 
   ngOnDestroy(): void {
