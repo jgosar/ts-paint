@@ -18,6 +18,7 @@ import { FooterInfoComponent } from './components/footer-info/footer-info.compon
 import { FlipRotateWindowComponent } from './components/flip-rotate-window/flip-rotate-window.component';
 import { RadioButtonGroupComponent } from './components/inputs/radio-button-group/radio-button-group.component';
 import { AboutPaintWindowComponent } from './components/about-paint-window/about-paint-window.component';
+import { ImageScrollerComponent } from './components/image-scroller/image-scroller.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { AboutPaintWindowComponent } from './components/about-paint-window/about
     MenuComponent,
     ZoomableCanvasComponent,
     MouseTrackerComponent,
+    ImageScrollerComponent,
     ToolboxComponent,
     PaletteComponent,
     SelectionFrameComponent,

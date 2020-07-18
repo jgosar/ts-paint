@@ -15,11 +15,10 @@
         </tsp-toolbox>
       </div>
       <div class="tsp-depressed-item-container tsp-vertical-bar tsp-can-grow">
-        <div
-          #imageScroller
-          class="tsp-depressed-item tsp-can-grow tsp-ts-paint__image_scroller"
-          (contextmenu)="$event.preventDefault()"
-          (scroll)="onScroll($event)"
+        <tsp-image-scroller
+          class="tsp-depressed-item tsp-can-grow"
+          [scrollPosition]="store.state.scrollPosition"
+          (scrollPositionChange)="this.store.setScrollPosition($event)"
         >
           <div class="tsp-ts-paint__image-padding">
             <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
@@ -52,7 +51,7 @@
             >
             </tsp-mouse-tracker>
           </div>
-        </div>
+        </tsp-image-scroller>
       </div>
     </div>
 
