@@ -95,6 +95,10 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.executeAction(action);
   }
 
+  setScrollPosition(scrollPosition: Point) {
+    this.patchState(scrollPosition, 'scrollPosition');
+  }
+
   processMouseScroll(event: WheelEvent) {
     // TODO: Zooming
   }

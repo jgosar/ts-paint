@@ -11,6 +11,9 @@ import { DEFAULT_AVAILABLE_COLORS, DRAWING_TOOLS, MENU_STRUCTURE, NON_MENU_SHORT
 export class TsPaintStoreState {
   zoom: number = 1;
   image: ImageData = createImage(300, 200);
+  scrollPosition: Point = { w: 0, h: 0 };
+  viewportW: number = 300;
+  viewportH: number = 200;
   previewImage: ImageData;
   previewOffset: Point = { w: 0, h: 0 };
   selectionImage: ImageData;
