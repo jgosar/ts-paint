@@ -110,7 +110,9 @@ export class DrawingTool {
     } else if (this._behaviour === DrawingToolBehaviour.FREE_DRAW) {
       this._mousePoints.push(point);
       this.addFinalAction(this._mousePoints);
-    } else if (this._behaviour === DrawingToolBehaviour.SINGLE_POINT) {
+    } else if (
+      [DrawingToolBehaviour.SINGLE_POINT, DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW].includes(this._behaviour)
+    ) {
       this._mousePoints = [point];
       this.addFinalAction(this._mousePoints);
     }
