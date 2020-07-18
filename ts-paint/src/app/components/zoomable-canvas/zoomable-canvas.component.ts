@@ -16,6 +16,8 @@ export class ZoomableCanvasComponent implements OnChanges {
   parentImage: ImageData;
   @Input()
   offset: Point = { w: 0, h: 0 };
+  @Input()
+  invertBackground: boolean = false;
   @ViewChild('imageCanvas', { static: true })
   imageCanvas: ElementRef;
 
@@ -54,6 +56,9 @@ export class ZoomableCanvasComponent implements OnChanges {
         canvas.width = 0;
         canvas.height = 0;
       }
+    }
+
+    if (this.invertBackground) {
     }
   }
 }

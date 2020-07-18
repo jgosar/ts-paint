@@ -27,6 +27,7 @@
               [image]="store.state.previewImage"
               [parentImage]="store.state.image"
               [offset]="store.state.previewOffset"
+              [invertBackground]="store.state.selectedDrawingTool?.invertedPreview"
             ></tsp-zoomable-canvas>
             <tsp-zoomable-canvas
               [zoom]="store.state.zoom"
