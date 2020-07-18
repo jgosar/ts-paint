@@ -2,20 +2,30 @@ import { Point } from '../types/base/point';
 import { Color } from '../types/base/color';
 import { getPixelOffset } from './image.helpers';
 import { RectangleArea } from '../types/base/rectangle-area';
+import { isDefined } from '@angular/compiler/src/util';
 
 export function drawLine(start: Point, end: Point, color: Color, image: ImageData) {
   const [x0, y0, x1, y1]: number[] = [start.w, start.h, end.w, end.h];
   bresenhamLinePlot([x0, y0, x1, y1], (x, y) => setPixelInOriginalImage({ w: x, h: y }, color, image));
 }
 
-export function drawRectangle({ start: corner1, end: corner3 }: RectangleArea, color: Color, image: ImageData) {
+export function drawRectangle(
+  { start: corner1, end: corner3 }: RectangleArea,
+  color: Color,
+  image: ImageData,
+  drawLineFunction?: (start: Point, end: Point, color: Color, image: ImageData) => void
+) {
   const corner2: Point = { w: corner1.w, h: corner3.h };
   const corner4: Point = { w: corner3.w, h: corner1.h };
 
-  drawLine(corner1, corner2, color, image);
-  drawLine(corner2, corner3, color, image);
-  drawLine(corner3, corner4, color, image);
-  drawLine(corner4, corner1, color, image);
+  if (!isDefined(drawLineFunction)) {
+    drawLineFunction = drawLine;
+  }
+
+  drawLineFunction(corner1, corner2, color, image);
+  drawLineFunction(corner2, corner3, color, image);
+  drawLineFunction(corner3, corner4, color, image);
+  drawLineFunction(corner4, corner1, color, image);
 }
 
 export function drawEllipse(start: Point, end: Point, color: Color, image: ImageData) {

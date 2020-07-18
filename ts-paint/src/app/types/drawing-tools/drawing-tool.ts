@@ -24,6 +24,7 @@ export class DrawingTool {
       case DrawingToolType.rectangleSelect:
         this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
         this._maxPoints = 2;
+        this.invertedPreview = true;
         return;
       /*case DrawingToolType.eraser:
         this._behaviour = DrawingToolBehaviour.FREE_DRAW;

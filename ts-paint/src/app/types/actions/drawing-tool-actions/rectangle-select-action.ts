@@ -1,5 +1,5 @@
 import { DrawingToolAction } from './drawing-tool-action';
-import { getLinePoints, setPixelInOriginalImage, invertColor, getPixel } from '../../../helpers/drawing.helpers';
+import { getLinePoints, setPixelInOriginalImage, drawRectangle } from '../../../helpers/drawing.helpers';
 import { Point } from '../../../types/base/point';
 import { Color } from '../../../types/base/color';
 import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
@@ -9,21 +9,16 @@ import { getImagePart, fillAreaInOriginalImage } from '../../../helpers/image.he
 export class RectangleSelectAction extends DrawingToolAction {
   constructor(public points: Point[], public swapColors: boolean, public renderIn: 'image' | 'preview' | 'nowhere') {
     super(points, swapColors, renderIn);
-    this._needsPreviewPixels = true;
   }
 
   protected draw(points: Point[], color1: Color, color2: Color, image: ImageData, state: TsPaintStoreState) {
     if (this.renderIn === 'preview') {
-      const corners: Point[] = [
-        points[0],
-        { w: points[1].w, h: points[0].h },
-        points[1],
-        { w: points[0].w, h: points[1].h },
-      ];
-      this.paintDashInvertedLine(corners[0], corners[1], state, image);
-      this.paintDashInvertedLine(corners[0], corners[3], state, image);
-      this.paintDashInvertedLine(corners[1], corners[2], state, image);
-      this.paintDashInvertedLine(corners[3], corners[2], state, image);
+      drawRectangle(
+        { start: points[0], end: points[1] },
+        { r: 255, g: 255, b: 255 },
+        image,
+        this.getDashedLineStyle(state)
+      );
     } else if (this.renderIn === 'image') {
       const area: RectangleArea = { start: points[0], end: points[1] };
       fillAreaInOriginalImage(image, state.secondaryColor, area);
@@ -42,13 +37,17 @@ export class RectangleSelectAction extends DrawingToolAction {
     return patches;
   }
 
-  private paintDashInvertedLine(start: Point, end: Point, state: TsPaintStoreState, image: ImageData) {
-    const dashLength: number = Math.ceil(4 / state.zoom);
-    const pointsToPaint: Point[] = getLinePoints(start, end);
-    pointsToPaint.forEach((point, index) => {
-      if (Math.floor(index / dashLength) % 2 === 0) {
-        setPixelInOriginalImage(point, invertColor(getPixel(point, image)), image);
-      }
-    });
+  private getDashedLineStyle(
+    state: TsPaintStoreState
+  ): (start: Point, end: Point, color: Color, image: ImageData) => void {
+    return (start: Point, end: Point, color: Color, image: ImageData) => {
+      const dashLength: number = Math.ceil(4 / state.zoom);
+      const pointsToPaint: Point[] = getLinePoints(start, end);
+      pointsToPaint.forEach((point, index) => {
+        if (Math.floor(index / dashLength) % 2 === 0) {
+          setPixelInOriginalImage(point, color, image);
+        }
+      });
+    };
   }
 }
