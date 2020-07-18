@@ -3,6 +3,7 @@ import { Point } from '../../types/base/point';
 import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
 import { MouseWheelEvent } from '../../types/mouse-tracker/mouse-wheel-event';
 import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
+import { MouseButton } from 'src/app/types/mouse-tracker/mouse-button';
 
 @Component({
   selector: 'tsp-mouse-tracker',
@@ -60,13 +61,17 @@ export class MouseTrackerComponent implements OnChanges {
   }
 
   onMouseUp(event: MouseEvent) {
-    this._mouseIsDown = false;
-    this.mouseUp.emit(this.getEventPoint(event));
+    if (this._mouseIsDown) {
+      this._mouseIsDown = false;
+      this.mouseUp.emit(this.getEventPoint(event));
+    }
   }
 
   onMouseDown(event: MouseEvent) {
-    this._mouseIsDown = true;
-    this.mouseDown.emit({ point: this.getEventPoint(event), button: event.button });
+    if (event.button !== MouseButton.MIDDLE) {
+      this._mouseIsDown = true;
+      this.mouseDown.emit({ point: this.getEventPoint(event), button: event.button });
+    }
   }
 
   onMouseScroll(event: WheelEvent) {
