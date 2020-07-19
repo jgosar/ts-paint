@@ -12,9 +12,7 @@ export function createImage(width: number, height: number, color: Color = COLOR_
 export function cloneImage(original: ImageData): ImageData {
   const clone: ImageData = new ImageData(original.width, original.height);
 
-  original.data.forEach((x, i) => {
-    clone.data[i] = x;
-  });
+  clone.data.set(original.data);
 
   return clone;
 }
