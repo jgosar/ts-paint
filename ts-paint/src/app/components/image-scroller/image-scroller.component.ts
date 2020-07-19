@@ -25,13 +25,17 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
   scrollerDiv: ElementRef;
 
   private _scrollListener: () => void;
+  private _isModelLocked: boolean = false;
 
   constructor(private _element: ElementRef, private _renderer: Renderer2) {}
 
   @Input()
   public set scrollPosition(scrollPosition: Point) {
-    this._element.nativeElement.scrollLeft = scrollPosition.w;
-    this._element.nativeElement.scrollTop = scrollPosition.h;
+    this._isModelLocked = true;
+    setTimeout(() => {
+      this._element.nativeElement.scrollLeft = scrollPosition.w;
+      this._element.nativeElement.scrollTop = scrollPosition.h;
+    });
   }
   @Output()
   public scrollPositionChange: EventEmitter<Point> = new EventEmitter<Point>();
@@ -66,10 +70,14 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   onScroll(event: Event) {
-    if (event.srcElement) {
-      // @ts-ignore
-      const scrollPosition: Point = { w: event.srcElement.scrollLeft, h: event.srcElement.scrollTop };
-      this._viewportScrolled.next(scrollPosition);
+    if (this._isModelLocked) {
+      this._isModelLocked = false;
+    } else {
+      if (event.srcElement) {
+        // @ts-ignore
+        const scrollPosition: Point = { w: event.srcElement.scrollLeft, h: event.srcElement.scrollTop };
+        this._viewportScrolled.next(scrollPosition);
+      }
     }
   }
 

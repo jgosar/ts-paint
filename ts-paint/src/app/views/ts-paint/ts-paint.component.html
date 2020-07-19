@@ -18,6 +18,7 @@
         <tsp-image-scroller
           class="tsp-depressed-item tsp-can-grow"
           [scrollPosition]="store.state.scrollPosition"
+          (contextmenu)="$event.preventDefault()"
           (scrollPositionChange)="this.store.setScrollPosition($event)"
           (viewportSizeChange)="this.store.setViewportSize($event)"
         >
