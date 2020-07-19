@@ -5,6 +5,7 @@ import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.sta
 import { TsPaintAction } from '../ts-paint-action';
 import { drawRectangle } from 'src/app/helpers/drawing.helpers';
 import { RectangleArea } from '../../base/rectangle-area';
+import { COLOR_WHITE } from 'src/app/services/ts-paint/ts-paint.config';
 
 export class MagnifierAction extends DrawingToolAction {
   protected getAffectedArea(state: TsPaintStoreState): RectangleArea {
@@ -15,7 +16,7 @@ export class MagnifierAction extends DrawingToolAction {
     if (this.renderIn === 'preview') {
       drawRectangle(
         { start: { w: 0, h: 0 }, end: { w: image.width - 1, h: image.height - 1 } }, // image is the zoomed viewport, we draw a rectangle to mark where it will be
-        { r: 255, g: 255, b: 255 },
+        COLOR_WHITE, // Because this tool uses the invertedPreview option, COLOR_WHITE is used to invert the background
         image
       );
     }

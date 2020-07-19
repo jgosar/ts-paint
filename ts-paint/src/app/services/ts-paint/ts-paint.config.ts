@@ -3,9 +3,11 @@ import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { MenuItem } from 'src/app/types/menu/menu-item';
 
+export const COLOR_WHITE: Color = { r: 255, g: 255, b: 255 };
+
 export const DEFAULT_AVAILABLE_COLORS: Color[] = [
   { r: 0, g: 0, b: 0 },
-  { r: 255, g: 255, b: 255 },
+  COLOR_WHITE,
   { r: 128, g: 128, b: 128 },
   { r: 196, g: 196, b: 196 },
   { r: 128, g: 0, b: 0 },

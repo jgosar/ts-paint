@@ -6,7 +6,13 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { TsPaintAction } from '../../types/actions/ts-paint-action';
 import { Point } from '../../types/base/point';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
-import { DEFAULT_AVAILABLE_COLORS, DRAWING_TOOLS, MENU_STRUCTURE, NON_MENU_SHORTCUTS } from './ts-paint.config';
+import {
+  DEFAULT_AVAILABLE_COLORS,
+  DRAWING_TOOLS,
+  MENU_STRUCTURE,
+  NON_MENU_SHORTCUTS,
+  COLOR_WHITE,
+} from './ts-paint.config';
 
 export class TsPaintStoreState {
   zoom: number = 1;
@@ -20,7 +26,7 @@ export class TsPaintStoreState {
   moveSelectionTool: MoveSelectionTool;
   fileName: string = 'untitled';
   primaryColor: Color = { r: 0, g: 0, b: 0 };
-  secondaryColor: Color = { r: 255, g: 255, b: 255 };
+  secondaryColor: Color = COLOR_WHITE;
   availableColors: Color[] = DEFAULT_AVAILABLE_COLORS;
   previewAction: TsPaintAction;
   actions: TsPaintAction[] = [];

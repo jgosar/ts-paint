@@ -2,8 +2,9 @@ import { Color } from '../types/base/color';
 import { Point } from '../types/base/point';
 import { RectangleArea } from '../types/base/rectangle-area';
 import { loadImageToCanvas } from './canvas.helpers';
+import { COLOR_WHITE } from '../services/ts-paint/ts-paint.config';
 
-export function createImage(width: number, height: number, color: Color = { r: 255, g: 255, b: 255 }): ImageData {
+export function createImage(width: number, height: number, color: Color = COLOR_WHITE): ImageData {
   const image: ImageData = new ImageData(width, height);
   return fillImage(image, color);
 }

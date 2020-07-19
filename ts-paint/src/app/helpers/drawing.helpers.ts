@@ -3,6 +3,7 @@ import { Color } from '../types/base/color';
 import { getPixelOffset } from './image.helpers';
 import { RectangleArea } from '../types/base/rectangle-area';
 import { isDefined } from '@angular/compiler/src/util';
+import { COLOR_WHITE } from '../services/ts-paint/ts-paint.config';
 
 export function drawLine(start: Point, end: Point, color: Color, image: ImageData) {
   const [x0, y0, x1, y1]: number[] = [start.w, start.h, end.w, end.h];
@@ -66,13 +67,12 @@ export function invertColor(color: Color): Color {
 }
 
 export function drawDashedFrame(image: ImageData) {
-  const white: Color = { r: 255, g: 255, b: 255 };
   const blueish: Color = { r: 0, g: 120, b: 215 };
   let color: Color;
 
   for (let w = 0; w < image.width; w++) {
     if (Math.floor((w + 1) / 4) % 2 === 0) {
-      color = white;
+      color = COLOR_WHITE;
     } else {
       color = blueish;
     }
@@ -81,7 +81,7 @@ export function drawDashedFrame(image: ImageData) {
   }
   for (let h = 0; h < image.height; h++) {
     if (Math.floor((h + 1) / 4) % 2 === 0) {
-      color = white;
+      color = COLOR_WHITE;
     } else {
       color = blueish;
     }
