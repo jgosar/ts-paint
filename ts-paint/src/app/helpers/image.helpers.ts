@@ -160,3 +160,9 @@ export function resizeImage(image: ImageData, newWidth: number, newHeight: numbe
 
   return resized;
 }
+
+export function constrainPointToImage(image: ImageData, point: Point): Point {
+  const w: number = Math.min(Math.max(0, point.w), (image?.width ?? 1) - 1);
+  const h: number = Math.min(Math.max(0, point.h), (image?.height ?? 1) - 1);
+  return { w, h };
+}

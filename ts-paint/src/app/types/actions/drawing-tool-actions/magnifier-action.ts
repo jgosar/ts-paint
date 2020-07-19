@@ -6,6 +6,7 @@ import { TsPaintAction } from '../ts-paint-action';
 import { drawRectangle } from 'src/app/helpers/drawing.helpers';
 import { RectangleArea } from '../../base/rectangle-area';
 import { COLOR_WHITE } from 'src/app/services/ts-paint/ts-paint.config';
+import { constrainPointToImage } from 'src/app/helpers/image.helpers';
 
 export class MagnifierAction extends DrawingToolAction {
   protected getAffectedArea(state: TsPaintStoreState): RectangleArea {
@@ -47,8 +48,10 @@ export class MagnifierAction extends DrawingToolAction {
     const halfWidth: number = Math.ceil(zoomedViewportSize.w / 2);
     const halfHeight: number = Math.ceil(zoomedViewportSize.h / 2);
 
-    const start: Point = { w: centre.w - halfWidth, h: centre.h - halfHeight };
-    const end: Point = { w: centre.w + halfWidth, h: centre.h + halfHeight };
+    let start: Point = { w: centre.w - halfWidth, h: centre.h - halfHeight };
+    let end: Point = { w: centre.w + halfWidth, h: centre.h + halfHeight };
+    start = constrainPointToImage(state.image, start);
+    end = constrainPointToImage(state.image, end);
 
     return { start, end };
   }

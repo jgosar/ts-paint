@@ -4,6 +4,7 @@ import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
 import { MouseWheelEvent } from '../../types/mouse-tracker/mouse-wheel-event';
 import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
 import { MouseButton } from 'src/app/types/mouse-tracker/mouse-button';
+import { constrainPointToImage } from 'src/app/helpers/image.helpers';
 
 @Component({
   selector: 'tsp-mouse-tracker',
@@ -81,16 +82,11 @@ export class MouseTrackerComponent implements OnChanges {
 
   private getEventPoint(event: MouseEvent | WheelEvent): Point {
     // @ts-ignore
-    return this.constrainPointToImage(this.unzoomPoint({ w: event.layerX, h: event.layerY }));
+    const eventPoint: Point = this.unzoomPoint({ w: event.layerX, h: event.layerY });
+    return constrainPointToImage(this.image, eventPoint);
   }
 
   private unzoomPoint(zoomedPoint: Point): Point {
     return { w: Math.floor(zoomedPoint.w / this.zoom), h: Math.floor(zoomedPoint.h / this.zoom) };
-  }
-
-  private constrainPointToImage(point: Point): Point {
-    const w: number = Math.min(Math.max(0, point.w), (this.image?.width ?? 1) - 1);
-    const h: number = Math.min(Math.max(0, point.h), (this.image?.height ?? 1) - 1);
-    return { w, h };
   }
 }
