@@ -9,6 +9,7 @@ import {
   Input,
   Renderer2,
   AfterViewInit,
+  HostListener,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -34,13 +35,23 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
   }
   @Output()
   public scrollPositionChange: EventEmitter<Point> = new EventEmitter<Point>();
+  @Output()
+  public viewportSizeChange: EventEmitter<Point> = new EventEmitter<Point>();
 
   private _ngUnsubscribe: Subject<void> = new Subject();
-  private _scrollingHappened: Subject<Point> = new Subject<Point>();
+  private _viewportScrolled: Subject<Point> = new Subject<Point>();
+  private _viewportResized: Subject<Point> = new Subject<Point>();
 
   ngOnInit(): void {
-    this._scrollingHappened.pipe(debounceTime(400), takeUntil(this._ngUnsubscribe)).subscribe((scrollPosition) => {
+    this._viewportScrolled.pipe(debounceTime(400), takeUntil(this._ngUnsubscribe)).subscribe((scrollPosition) => {
       this.scrollPositionChange.emit(scrollPosition);
+    });
+    this._viewportResized.pipe(debounceTime(400), takeUntil(this._ngUnsubscribe)).subscribe((viewportSize) => {
+      this.viewportSizeChange.emit(viewportSize);
+    });
+
+    setTimeout(() => {
+      this.onResize(); // Report initial viewport size
     });
   }
 
@@ -58,7 +69,17 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
     if (event.srcElement) {
       // @ts-ignore
       const scrollPosition: Point = { w: event.srcElement.scrollLeft, h: event.srcElement.scrollTop };
-      this._scrollingHappened.next(scrollPosition);
+      this._viewportScrolled.next(scrollPosition);
     }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    // @ts-ignore
+    const viewportSize: Point = {
+      w: this._element.nativeElement.clientWidth,
+      h: this._element.nativeElement.clientHeight,
+    };
+    this._viewportResized.next(viewportSize);
   }
 }

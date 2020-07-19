@@ -99,6 +99,10 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.patchState(scrollPosition, 'scrollPosition');
   }
 
+  setViewportSize(viewportSize: Point) {
+    this.patchState(viewportSize, 'viewportSize');
+  }
+
   processMouseScroll(event: WheelEvent) {
     // TODO: Zooming
   }

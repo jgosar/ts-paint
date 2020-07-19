@@ -19,6 +19,7 @@
           class="tsp-depressed-item tsp-can-grow"
           [scrollPosition]="store.state.scrollPosition"
           (scrollPositionChange)="this.store.setScrollPosition($event)"
+          (viewportSizeChange)="this.store.setViewportSize($event)"
         >
           <div class="tsp-ts-paint__image-padding">
             <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>

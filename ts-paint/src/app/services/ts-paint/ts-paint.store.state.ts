@@ -12,8 +12,7 @@ export class TsPaintStoreState {
   zoom: number = 1;
   image: ImageData = createImage(300, 200);
   scrollPosition: Point = { w: 0, h: 0 };
-  viewportW: number = 300;
-  viewportH: number = 200;
+  viewportSize: Point = { w: 600, h: 400 };
   previewImage: ImageData;
   previewOffset: Point = { w: 0, h: 0 };
   selectionImage: ImageData;
