@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { TsPaintStoreState } from './ts-paint.store.state';
 import { Store } from 'rxjs-observable-store';
 import { MenuActionType } from '../../types/menu/menu-action-type';
-import { assertUnreachable } from '../../helpers/typescript.helpers';
+import { assertUnreachable, isDefined } from '../../helpers/typescript.helpers';
 import { Point } from '../../types/base/point';
 import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
@@ -28,6 +28,7 @@ import { FlipImageAction } from 'src/app/types/actions/flip-image-action';
 import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params';
 import { RotateImageAction } from 'src/app/types/actions/rotate-image-action';
 import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
+import { CropAction } from 'src/app/types/actions/crop-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -187,6 +188,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         return this.cut.bind(this);
       case MenuActionType.CLEAR_IMAGE:
         return this.clearImage.bind(this);
+      case MenuActionType.CROP:
+        return this.crop.bind(this);
       case MenuActionType.INVERT_COLORS:
         return this.invertColors.bind(this);
       case MenuActionType.FLIP_IMAGE:
@@ -282,6 +285,13 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   private clearImage() {
     const action: ClearImageAction = new ClearImageAction();
     this.executeAction(action);
+  }
+
+  private crop() {
+    if (isDefined(this.state.selectionImage)) {
+      const action: CropAction = new CropAction();
+      this.executeAction(action);
+    }
   }
 
   private selectAll() {

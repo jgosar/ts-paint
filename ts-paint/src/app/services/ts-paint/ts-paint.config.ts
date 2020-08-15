@@ -220,6 +220,10 @@ export const MENU_STRUCTURE: MenuItem[] = [
         name: 'Clear Image',
         action: MenuActionType.CLEAR_IMAGE,
       },
+      {
+        name: 'Crop',
+        action: MenuActionType.CROP,
+      },
     ],
   },
   {
