@@ -34,12 +34,13 @@ export class StretchImageAction extends TsPaintAction {
   private stretchImage(image: ImageData): ImageData {
     const canvas: HTMLCanvasElement = document.createElement('canvas');
     const context: CanvasRenderingContext2D = canvas.getContext('2d');
-    canvas.width = image.width;
-    canvas.height = image.height;
-
-    context.putImageData(image, 0, 0);
     const horizontalScale: number = (this._params.horizontal || 100) / 100;
     const verticalScale: number = (this._params.vertical || 100) / 100;
+
+    canvas.width = image.width * horizontalScale;
+    canvas.height = image.height * verticalScale;
+
+    context.putImageData(image, 0, 0);
 
     context.scale(horizontalScale, verticalScale);
     context.drawImage(canvas, 0, 0);
