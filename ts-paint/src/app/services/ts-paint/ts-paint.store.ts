@@ -29,6 +29,8 @@ import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params
 import { RotateImageAction } from 'src/app/types/actions/rotate-image-action';
 import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
 import { CropAction } from 'src/app/types/actions/crop-action';
+import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-params';
+import { StretchImageAction } from 'src/app/types/actions/stretch-image-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -146,6 +148,27 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.patchState(false, 'aboutPaintWindowOpen');
   }
 
+  private openStretchSkewWindow() {
+    this.stretchSkew({ stretch: { horizontal: 200 } });
+    //this.patchState(true, 'stretchSkewWindowOpen');
+  }
+
+  stretchSkew(params: StretchSkewParams) {
+    this.closeFlipRotateWindow();
+
+    let action: TsPaintAction;
+    if (params.stretch) {
+      action = new StretchImageAction(params.stretch);
+    } else if (params.skew) {
+      //TODO: action = new SkewImageAction(params.skew);
+    }
+    this.executeAction(action);
+  }
+
+  closeStretchSkewWindow() {
+    this.patchState(false, 'stretchSkewWindowOpen');
+  }
+
   private getDrawingTool(toolType: DrawingToolType): DrawingTool {
     return new DrawingTool(toolType, this.executeAction.bind(this), this.clearPreview.bind(this));
   }
@@ -190,6 +213,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         return this.clearImage.bind(this);
       case MenuActionType.CROP:
         return this.crop.bind(this);
+      case MenuActionType.STRETCH_SKEW:
+        return this.openStretchSkewWindow.bind(this);
       case MenuActionType.INVERT_COLORS:
         return this.invertColors.bind(this);
       case MenuActionType.FLIP_IMAGE:
