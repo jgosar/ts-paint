@@ -1,17 +1,7 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  Input,
-  OnChanges,
-  Output,
-  EventEmitter,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmitter, OnInit } from '@angular/core';
 import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params';
 import { FlipRotateWindowAction } from './flip-rotate-window-action';
 import { FlipRotateWindowActionOption } from './flip-rotate-window-action-option';
-import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
 import { FlipRotateWindowAngleOption } from './flip-rotate-window-angle-option';
 
 @Component({
@@ -21,9 +11,6 @@ import { FlipRotateWindowAngleOption } from './flip-rotate-window-angle-option';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FlipRotateWindowComponent implements OnInit, OnChanges {
-  @ViewChild('angleInput', { static: true })
-  angleInput: IntegerInputComponent;
-
   @Input()
   image: ImageData;
   @Output()
@@ -44,17 +31,7 @@ export class FlipRotateWindowComponent implements OnInit, OnChanges {
   ];
 
   selectedAngle: FlipRotateWindowAngleOption = this.angles[0];
-
-  get selectedAction(): FlipRotateWindowActionOption {
-    return this._selectedAction;
-  }
-  set selectedAction(value: FlipRotateWindowActionOption) {
-    this._selectedAction = value;
-    if (value.value === 'rotate') {
-      this.angleInput.focus();
-    }
-  }
-  private _selectedAction: FlipRotateWindowActionOption = this.actions[0];
+  selectedAction: FlipRotateWindowActionOption = this.actions[0];
 
   ngOnInit(): void {}
 
