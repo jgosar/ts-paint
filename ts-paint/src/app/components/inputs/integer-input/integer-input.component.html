@@ -1,5 +1,5 @@
-<label class="tsp-input-label">{{ label }}</label>
-<div class="tsp-depressed-item-container">
+<label class="tsp-input-label tsp-can-grow">{{ label }}</label>
+<div class="tsp-depressed-item-container tsp-integer-input__input-container">
   <input
     #inputElement
     type="text"
@@ -10,3 +10,4 @@
     (keydown)="onKeydown($event)"
   />
 </div>
+<label class="tsp-input-label tsp-input-label--after-field">{{ unit }}</label>
