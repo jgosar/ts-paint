@@ -94,5 +94,12 @@
 >
 </tsp-flip-rotate-window>
 
+<tsp-stretch-skew-window
+  *ngIf="store.state.stretchSkewWindowOpen"
+  (saveChanges)="this.store.stretchSkew($event)"
+  (cancel)="this.store.closeStretchSkewWindow()"
+>
+</tsp-stretch-skew-window>
+
 <tsp-about-paint-window *ngIf="store.state.aboutPaintWindowOpen" (ok)="this.store.closeAboutPaintWindow()">
 </tsp-about-paint-window>

@@ -149,12 +149,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   private openStretchSkewWindow() {
-    this.stretchSkew({ stretch: { horizontal: 200 } });
-    //this.patchState(true, 'stretchSkewWindowOpen');
+    this.patchState(true, 'stretchSkewWindowOpen');
   }
 
   stretchSkew(params: StretchSkewParams) {
-    this.closeFlipRotateWindow();
+    this.closeStretchSkewWindow();
 
     let action: TsPaintAction;
     if (params.stretch) {

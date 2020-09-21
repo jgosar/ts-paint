@@ -19,6 +19,7 @@ import { FlipRotateWindowComponent } from './components/flip-rotate-window/flip-
 import { RadioButtonGroupComponent } from './components/inputs/radio-button-group/radio-button-group.component';
 import { AboutPaintWindowComponent } from './components/about-paint-window/about-paint-window.component';
 import { ImageScrollerComponent } from './components/image-scroller/image-scroller.component';
+import { StretchSkewWindowComponent } from './components/stretch-skew-window/stretch-skew-window.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { ImageScrollerComponent } from './components/image-scroller/image-scroll
     ModalWindowComponent,
     AttributesWindowComponent,
     FlipRotateWindowComponent,
+    StretchSkewWindowComponent,
     AboutPaintWindowComponent,
     FooterInfoComponent,
     IntegerInputComponent, // TODO: make a separate inputs module

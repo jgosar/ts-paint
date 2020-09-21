@@ -37,8 +37,8 @@ export class StretchImageAction extends TsPaintAction {
     const horizontalScale: number = (this._params.horizontal || 100) / 100;
     const verticalScale: number = (this._params.vertical || 100) / 100;
 
-    canvas.width = image.width * horizontalScale;
-    canvas.height = image.height * verticalScale;
+    canvas.width = image.width * Math.max(1, horizontalScale);
+    canvas.height = image.height * Math.max(1, verticalScale);
 
     context.putImageData(image, 0, 0);
 
