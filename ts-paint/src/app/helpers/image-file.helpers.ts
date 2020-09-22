@@ -35,7 +35,7 @@ export function readImageDataFromFile(imageFile: File): Promise<ImageData> {
   });
 }
 
-function getFileNameWithoutExtension(fileName: string): string {
+export function getFileNameWithoutExtension(fileName: string): string {
   if (fileName.includes('.')) {
     fileName = fileName.substring(0, fileName.lastIndexOf('.'));
   }

@@ -7,6 +7,7 @@ export class OpenFileAction extends TsPaintAction {
   constructor(public fileData: ImageFileData) {
     super('image');
     this._deselectsSelection = true;
+    this._replacesImage = true;
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {

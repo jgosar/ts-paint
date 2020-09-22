@@ -18,7 +18,12 @@ import { RectangleArea } from '../../types/base/rectangle-area';
 import { isPointInRectangle, copyImagePart } from '../../helpers/image.helpers';
 import { DeselectSelectionAction } from '../../types/actions/deselect-selection-action';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
-import { saveFile, showFileUploadDialog, readImageDataFromFile } from '../../helpers/image-file.helpers';
+import {
+  saveFile,
+  showFileUploadDialog,
+  readImageDataFromFile,
+  getFileNameWithoutExtension,
+} from '../../helpers/image-file.helpers';
 import { ResizeImageAction } from '../../types/actions/resize-image-action';
 import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.helpers';
 import { RectangleSelectAction } from 'src/app/types/actions/drawing-tool-actions/rectangle-select-action';
@@ -177,10 +182,17 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     if (logToHistory && action.deselectsSelection) {
       this.deselectIfSelected();
     }
+    if (action.replacesImage && this.state.unsavedChanges && this.userWantsToSaveImage()) {
+      this.saveFile();
+    }
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
 
     this.setState({ ...this.state, ...patches });
+  }
+
+  private userWantsToSaveImage(): boolean {
+    return confirm('Save changes to ' + this.state.fileName + '?');
   }
 
   private clearPreview() {
@@ -257,7 +269,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   loadFile(file: File) {
     readImageDataFromFile(file).then((pastedImage) => {
-      const fileData: ImageFileData = { imageData: pastedImage, fileName: file.name };
+      const fileData: ImageFileData = { imageData: pastedImage, fileName: getFileNameWithoutExtension(file.name) };
       const action: OpenFileAction = new OpenFileAction(fileData);
       this.executeAction(action);
     });

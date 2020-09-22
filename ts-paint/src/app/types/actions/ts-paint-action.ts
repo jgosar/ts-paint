@@ -10,12 +10,17 @@ export abstract class TsPaintAction {
   protected _previewOffset: Point = { h: 0, w: 0 };
   protected _deselectsSelection: boolean = false;
   protected _needsPreviewPixels: boolean = false;
+  protected _replacesImage: boolean = false;
   protected _overridesPreviousActionOfSameType: boolean = false;
 
   constructor(public renderIn: 'image' | 'preview' | 'nowhere') {}
 
-  public get deselectsSelection() {
+  public get deselectsSelection(): boolean {
     return this._deselectsSelection;
+  }
+
+  public get replacesImage(): boolean {
+    return this._replacesImage;
   }
 
   public getStatePatches(state: TsPaintStoreState, logToHistory: boolean = true): Partial<TsPaintStoreState> {
@@ -44,7 +49,7 @@ export abstract class TsPaintAction {
       } else if (this.renderIn === 'image') {
         patches.image = partialResult.image;
         patches.previewImage = new ImageData(1, 1);
-        patches.unsavedChanges = true;
+        patches.unsavedChanges = !this._replacesImage;
       }
     }
 
