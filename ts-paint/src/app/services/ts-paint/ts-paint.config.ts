@@ -205,7 +205,6 @@ export const MENU_STRUCTURE: MenuItem[] = [
       },
       {
         name: 'Stretch/Skew',
-        hotkeys: ['Ctrl', 'W'],
         action: MenuActionType.STRETCH_SKEW,
       },
       {
