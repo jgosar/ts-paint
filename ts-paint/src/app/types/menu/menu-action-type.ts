@@ -8,6 +8,7 @@ export enum MenuActionType {
   COPY,
   CLEAR_IMAGE,
   CROP,
+  STRETCH_SKEW,
   INVERT_COLORS,
   FLIP_IMAGE,
   OPEN_ATTRIBUTES_WINDOW,

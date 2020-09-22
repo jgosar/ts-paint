@@ -205,7 +205,8 @@ export const MENU_STRUCTURE: MenuItem[] = [
       },
       {
         name: 'Stretch/Skew',
-        disabled: true,
+        hotkeys: ['Ctrl', 'W'],
+        action: MenuActionType.STRETCH_SKEW,
       },
       {
         name: 'Invert Colors',

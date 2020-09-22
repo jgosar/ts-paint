@@ -1,0 +1,44 @@
+<tsp-modal-window
+  [title]="'Stretch and Skew'"
+  [closable]="true"
+  (closeClicked)="cancel.emit()"
+  (keyup.enter)="okClicked()"
+  (keyup.escape)="cancel.emit()"
+>
+  <div class="tsp-horizontal-bar tsp-stretch-skew-window__container">
+    <div class="tsp-vertical-bar">
+      <div class="tsp-vertical-bar">
+        <fieldset class="tsp-stretch-skew-window__fieldset">
+          <legend>Stretch</legend>
+          <div class="tsp-horizontal-bar tsp-stretch-skew-window__input-with-icon">
+            <div class="tsp-stretch-skew-window__big-icon tsp-stretch-skew-window__big-icon--stretch-horizontal"></div>
+            <tsp-integer-input
+              #stretchHorizontalInput
+              class="tsp-stretch-skew-window__number_input tsp-can-grow"
+              [label]="'Horizontal:'"
+              [unit]="'%'"
+              [maxValue]="1600"
+              [(value)]="stretchHorizontal"
+            >
+            </tsp-integer-input>
+          </div>
+          <div class="tsp-horizontal-bar tsp-stretch-skew-window__input-with-icon">
+            <div class="tsp-stretch-skew-window__big-icon tsp-stretch-skew-window__big-icon--stretch-vertical"></div>
+            <tsp-integer-input
+              class="tsp-stretch-skew-window__number_input tsp-can-grow"
+              [label]="'Vertical:'"
+              [unit]="'%'"
+              [maxValue]="1600"
+              [(value)]="stretchVertical"
+            >
+            </tsp-integer-input>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+    <div class="tsp-vertical-bar">
+      <button class="tsp-button tsp-text-button" (click)="okClicked()">OK</button>
+      <button class="tsp-button tsp-text-button" (click)="cancel.emit()">Cancel</button>
+    </div>
+  </div>
+</tsp-modal-window>

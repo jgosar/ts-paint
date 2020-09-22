@@ -25,6 +25,8 @@ export class IntegerInputComponent implements OnChanges {
   @Input()
   label: string = '';
   @Input()
+  unit: string = '';
+  @Input()
   value: number;
   @Input()
   minValue: number = 0;
