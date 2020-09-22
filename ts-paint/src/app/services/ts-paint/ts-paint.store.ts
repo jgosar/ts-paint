@@ -18,7 +18,7 @@ import { RectangleArea } from '../../types/base/rectangle-area';
 import { isPointInRectangle, copyImagePart } from '../../helpers/image.helpers';
 import { DeselectSelectionAction } from '../../types/actions/deselect-selection-action';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
-import { saveFile, openFile, pasteFile } from '../../helpers/image-file.helpers';
+import { saveFile, showFileUploadDialog, readImageDataFromFile } from '../../helpers/image-file.helpers';
 import { ResizeImageAction } from '../../types/actions/resize-image-action';
 import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.helpers';
 import { RectangleSelectAction } from 'src/app/types/actions/drawing-tool-actions/rectangle-select-action';
@@ -249,14 +249,14 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   private openFile() {
-    openFile().then((value) => {
-      const action: OpenFileAction = new OpenFileAction(value);
+    showFileUploadDialog().then((selectedFile) => {
+      const action: OpenFileAction = new OpenFileAction(selectedFile);
       this.executeAction(action);
     });
   }
 
   loadFile(file: File) {
-    pasteFile(file).then((pastedImage) => {
+    readImageDataFromFile(file).then((pastedImage) => {
       const fileData: ImageFileData = { imageData: pastedImage, fileName: file.name };
       const action: OpenFileAction = new OpenFileAction(fileData);
       this.executeAction(action);
@@ -265,7 +265,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   pasteFile(pastedFile: File) {
     if (pastedFile !== null) {
-      pasteFile(pastedFile).then((pastedImage) => {
+      readImageDataFromFile(pastedFile).then((pastedImage) => {
         const action: PasteImageAction = new PasteImageAction(pastedImage);
         this.executeAction(action);
       });

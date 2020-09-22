@@ -10,7 +10,7 @@ export function saveFile(fileData: ImageFileData) {
   downloadLink.click();
 }
 
-export function openFile(): Promise<ImageFileData> {
+export function showFileUploadDialog(): Promise<ImageFileData> {
   return new Promise<ImageFileData>((resolve, reject) => {
     const fileInput: HTMLInputElement = document.createElement('input');
     fileInput.type = 'file';
@@ -29,9 +29,9 @@ export function openFile(): Promise<ImageFileData> {
   });
 }
 
-export function pasteFile(pastedFile: File): Promise<ImageData> {
+export function readImageDataFromFile(imageFile: File): Promise<ImageData> {
   return new Promise<ImageData>((resolve, reject) => {
-    getImageDataFromUpload(pastedFile, resolve, reject);
+    getImageDataFromUpload(imageFile, resolve, reject);
   });
 }
 
