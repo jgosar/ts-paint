@@ -20,6 +20,7 @@ import { RadioButtonGroupComponent } from './components/inputs/radio-button-grou
 import { AboutPaintWindowComponent } from './components/about-paint-window/about-paint-window.component';
 import { ImageScrollerComponent } from './components/image-scroller/image-scroller.component';
 import { StretchSkewWindowComponent } from './components/stretch-skew-window/stretch-skew-window.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,7 @@ import { StretchSkewWindowComponent } from './components/stretch-skew-window/str
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module
   ],
-  imports: [BrowserModule, FormsModule],
+  imports: [BrowserModule, FormsModule, RouterModule.forRoot([])],
   providers: [TsPaintStore],
   bootstrap: [AppComponent],
 })

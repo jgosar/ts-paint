@@ -35,6 +35,12 @@ export function readImageDataFromFile(imageFile: File): Promise<ImageData> {
   });
 }
 
+export function readImageDataFromUrl(imageUrl: string): Promise<ImageData> {
+  return new Promise<ImageData>((resolve, reject) => {
+    loadImageFromUrl(imageUrl, resolve, reject);
+  });
+}
+
 export function getFileNameWithoutExtension(fileName: string): string {
   if (fileName.includes('.')) {
     fileName = fileName.substring(0, fileName.lastIndexOf('.'));
@@ -48,27 +54,36 @@ function getImageDataFromUpload(
   callback: (imageData: ImageData) => void,
   errorCallback: (reason: string) => void
 ) {
-  const canvas: HTMLCanvasElement = document.createElement('canvas');
   const fileReader: FileReader = new FileReader();
 
   fileReader.onload = (progress: any) => {
     const imgUrl: string = progress.target.result as string; // TODO: What if this is an ArrayBuffer?
 
-    const image: HTMLImageElement = new Image();
-    image.src = imgUrl;
-    image.onload = () => {
-      canvas.width = image.width;
-      canvas.height = image.height;
-      const context: CanvasRenderingContext2D = canvas.getContext('2d');
-      context.drawImage(image, 0, 0);
-
-      const imageData: ImageData = context.getImageData(0, 0, image.width, image.height);
-      callback(imageData);
-    };
-    image.onerror = () => {
-      errorCallback('Something went wrong, are you sure you pasted an image?');
-    };
+    loadImageFromUrl(imgUrl, callback, errorCallback);
   };
 
   fileReader.readAsDataURL(uploadedFile);
+}
+
+function loadImageFromUrl(
+  imgUrl: string,
+  callback: (imageData: ImageData) => void,
+  errorCallback: (reason: string) => void
+) {
+  const canvas: HTMLCanvasElement = document.createElement('canvas');
+  const image: HTMLImageElement = new Image();
+  image.src = imgUrl;
+  image.setAttribute('crossOrigin', '');
+  image.onload = () => {
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context: CanvasRenderingContext2D = canvas.getContext('2d');
+    context.drawImage(image, 0, 0);
+
+    const imageData: ImageData = context.getImageData(0, 0, image.width, image.height);
+    callback(imageData);
+  };
+  image.onerror = () => {
+    errorCallback('Something went wrong, are you sure you pasted an image?');
+  };
 }
