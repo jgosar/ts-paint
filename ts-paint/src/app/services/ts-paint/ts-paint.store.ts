@@ -31,6 +31,7 @@ import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
 import { CropAction } from 'src/app/types/actions/crop-action';
 import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-params';
 import { StretchImageAction } from 'src/app/types/actions/stretch-image-action';
+import { ImageFileData } from 'src/app/types/base/image-file-data';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -250,6 +251,14 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   private openFile() {
     openFile().then((value) => {
       const action: OpenFileAction = new OpenFileAction(value);
+      this.executeAction(action);
+    });
+  }
+
+  loadFile(file: File) {
+    pasteFile(file).then((pastedImage) => {
+      const fileData: ImageFileData = { imageData: pastedImage, fileName: file.name };
+      const action: OpenFileAction = new OpenFileAction(fileData);
       this.executeAction(action);
     });
   }
