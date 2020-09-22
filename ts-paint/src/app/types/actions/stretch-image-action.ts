@@ -41,6 +41,7 @@ export class StretchImageAction extends TsPaintAction {
     canvas.height = image.height * Math.max(1, verticalScale);
 
     context.putImageData(image, 0, 0);
+    context.imageSmoothingEnabled = false;
 
     context.scale(horizontalScale, verticalScale);
     context.drawImage(canvas, 0, 0);
