@@ -21,6 +21,22 @@ export class TsPaintComponent implements OnInit {
     this.store.pasteFile(pastedFile);
   }
 
+  @HostListener('dragover', ['$event'])
+  onDragover(event: any) {
+    // We need to prevent default handling of dragover event in order to process the drop event
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  @HostListener('drop', ['$event'])
+  onDrop(event: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    const pastedFile: File = event.dataTransfer.items[0].getAsFile();
+
+    this.store.loadFile(pastedFile);
+  }
+
   @HostListener('window:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
     const executed: boolean = this.store.executeHotkeyAction(event);

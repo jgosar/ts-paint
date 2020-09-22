@@ -18,7 +18,12 @@ import { RectangleArea } from '../../types/base/rectangle-area';
 import { isPointInRectangle, copyImagePart } from '../../helpers/image.helpers';
 import { DeselectSelectionAction } from '../../types/actions/deselect-selection-action';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
-import { saveFile, openFile, pasteFile } from '../../helpers/image-file.helpers';
+import {
+  saveFile,
+  showFileUploadDialog,
+  readImageDataFromFile,
+  getFileNameWithoutExtension,
+} from '../../helpers/image-file.helpers';
 import { ResizeImageAction } from '../../types/actions/resize-image-action';
 import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.helpers';
 import { RectangleSelectAction } from 'src/app/types/actions/drawing-tool-actions/rectangle-select-action';
@@ -31,6 +36,7 @@ import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
 import { CropAction } from 'src/app/types/actions/crop-action';
 import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-params';
 import { StretchImageAction } from 'src/app/types/actions/stretch-image-action';
+import { ImageFileData } from 'src/app/types/base/image-file-data';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -176,10 +182,17 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     if (logToHistory && action.deselectsSelection) {
       this.deselectIfSelected();
     }
+    if (action.replacesImage && this.state.unsavedChanges && this.userWantsToSaveImage()) {
+      this.saveFile();
+    }
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
 
     this.setState({ ...this.state, ...patches });
+  }
+
+  private userWantsToSaveImage(): boolean {
+    return confirm('Save changes to ' + this.state.fileName + '?');
   }
 
   private clearPreview() {
@@ -248,15 +261,23 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   private openFile() {
-    openFile().then((value) => {
-      const action: OpenFileAction = new OpenFileAction(value);
+    showFileUploadDialog().then((selectedFile) => {
+      const action: OpenFileAction = new OpenFileAction(selectedFile);
+      this.executeAction(action);
+    });
+  }
+
+  loadFile(file: File) {
+    readImageDataFromFile(file).then((pastedImage) => {
+      const fileData: ImageFileData = { imageData: pastedImage, fileName: getFileNameWithoutExtension(file.name) };
+      const action: OpenFileAction = new OpenFileAction(fileData);
       this.executeAction(action);
     });
   }
 
   pasteFile(pastedFile: File) {
     if (pastedFile !== null) {
-      pasteFile(pastedFile).then((pastedImage) => {
+      readImageDataFromFile(pastedFile).then((pastedImage) => {
         const action: PasteImageAction = new PasteImageAction(pastedImage);
         this.executeAction(action);
       });
