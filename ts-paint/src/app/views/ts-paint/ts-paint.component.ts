@@ -12,8 +12,8 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 export class TsPaintComponent implements OnInit {
   constructor(public store: TsPaintStore, private activatedRoute: ActivatedRoute) {
     this.activatedRoute.queryParams.subscribe((params) => {
-      if (isDefined(params['image'])) {
-        store.loadFileFromUrl(params['image']);
+      if (isDefined(params['imageUrl'])) {
+        store.loadFileFromUrl(params['imageUrl']);
       }
     });
   }
