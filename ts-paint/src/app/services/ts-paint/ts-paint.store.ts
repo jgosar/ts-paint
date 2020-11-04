@@ -45,6 +45,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     super(new TsPaintStoreState());
   }
 
+  ////////////////////////////// Mouse actions //////////////////////////////
   processMouseDown(event: MouseButtonEvent) {
     if (this.state.selectionImage !== undefined) {
       if (this.isPointInSelection(event.point)) {
@@ -79,25 +80,63 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     }
   }
 
-  executeMenuAction(menuAction: MenuActionType) {
-    const menuActionFunction: () => void = this.getMenuActionFunction(menuAction);
-    menuActionFunction();
+  private isPointInSelection(point: Point): boolean {
+    const selectionRectangleWith3pxBorder: RectangleArea = {
+      start: {
+        w: this.state.selectionOffset.w - 3,
+        h: this.state.selectionOffset.h - 3,
+      },
+      end: {
+        w: this.state.selectionOffset.w + this.state.selectionImage.width - 1 + 3,
+        h: this.state.selectionOffset.h + this.state.selectionImage.height - 1 + 3,
+      },
+    };
+
+    return isPointInRectangle(point, selectionRectangleWith3pxBorder);
   }
 
-  executeHotkeyAction(event: KeyboardEvent): boolean {
-    const hotkeyActionFunction: () => void = this.getHotkeyActionFunction(event);
+  ////////////////////////////// File operations //////////////////////////////
 
-    if (hotkeyActionFunction) {
-      hotkeyActionFunction();
-      return true;
-    } else {
-      return false;
+  loadFile(file: File) {
+    readImageDataFromFile(file).then((imageData) => {
+      const fileData: ImageFileData = { imageData, fileName: getFileNameWithoutExtension(file.name) };
+      const action: OpenFileAction = new OpenFileAction(fileData);
+      this.executeAction(action);
+    });
+  }
+
+  loadFileFromUrl(imageUrl: string) {
+    const splitUrl: string[] = imageUrl.split('/');
+    const fileName: string = getFileNameWithoutExtension(splitUrl[splitUrl.length - 1]);
+    readImageDataFromUrl(imageUrl).then((imageData) => {
+      const fileData: ImageFileData = { imageData, fileName };
+      const action: OpenFileAction = new OpenFileAction(fileData);
+      this.executeAction(action);
+    });
+  }
+
+  pasteFile(pastedFile: File) {
+    if (pastedFile !== null) {
+      readImageDataFromFile(pastedFile).then((pastedImage) => {
+        const action: PasteImageAction = new PasteImageAction(pastedImage);
+        this.executeAction(action);
+      });
     }
   }
+
+  ////////////////////////////// UI changes //////////////////////////////
 
   setDrawingTool(toolType: DrawingToolType) {
     const action: SetDrawingToolAction = new SetDrawingToolAction(toolType, this.getDrawingTool.bind(this));
     this.executeAction(action);
+  }
+
+  private getDrawingTool(toolType: DrawingToolType): DrawingTool {
+    return new DrawingTool(toolType, this.executeAction.bind(this), this.clearPreview.bind(this));
+  }
+
+  private clearPreview() {
+    this.patchState(new ImageData(1, 1), 'previewImage');
   }
 
   setColor(selection: ColorSelection) {
@@ -113,97 +152,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.patchState(viewportSize, 'viewportSize');
   }
 
-  processMouseScroll(event: WheelEvent) {
-    // TODO: Zooming
-  }
+  ////////////////////////////// Menu actions //////////////////////////////
 
-  private openAttributesWindow() {
-    this.patchState(true, 'attributesWindowOpen');
-  }
-
-  changeAttributes(dimensions: Point) {
-    this.closeAttributesWindow();
-    const action: ResizeImageAction = new ResizeImageAction(dimensions.w, dimensions.h);
-    this.executeAction(action);
-  }
-
-  closeAttributesWindow() {
-    this.patchState(false, 'attributesWindowOpen');
-  }
-
-  private openFlipRotateWindow() {
-    this.patchState(true, 'flipRotateWindowOpen');
-  }
-
-  flipRotate(params: FlipRotateParams) {
-    this.closeFlipRotateWindow();
-
-    let action: TsPaintAction;
-    if (params.flip) {
-      action = new FlipImageAction(params.flip);
-    } else if (params.rotate) {
-      action = new RotateImageAction(params.rotate);
-    }
-    this.executeAction(action);
-  }
-
-  closeFlipRotateWindow() {
-    this.patchState(false, 'flipRotateWindowOpen');
-  }
-
-  closeAboutPaintWindow() {
-    this.patchState(false, 'aboutPaintWindowOpen');
-  }
-
-  private openStretchSkewWindow() {
-    this.patchState(true, 'stretchSkewWindowOpen');
-  }
-
-  stretchSkew(params: StretchSkewParams) {
-    this.closeStretchSkewWindow();
-
-    let action: TsPaintAction;
-    if (params.stretch) {
-      action = new StretchImageAction(params.stretch);
-    } else if (params.skew) {
-      //TODO: action = new SkewImageAction(params.skew);
-    }
-    this.executeAction(action);
-  }
-
-  closeStretchSkewWindow() {
-    this.patchState(false, 'stretchSkewWindowOpen');
-  }
-
-  private getDrawingTool(toolType: DrawingToolType): DrawingTool {
-    return new DrawingTool(toolType, this.executeAction.bind(this), this.clearPreview.bind(this));
-  }
-
-  private executeAction(action: TsPaintAction, logToHistory: boolean = true) {
-    if (logToHistory && action.deselectsSelection) {
-      this.deselectIfSelected();
-    }
-    if (action.replacesImage && this.state.unsavedChanges && this.userWantsToSaveImage()) {
-      this.saveFile();
-    }
-
-    const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
-
-    this.setState({ ...this.state, ...patches });
-  }
-
-  private userWantsToSaveImage(): boolean {
-    return confirm('Save changes to ' + this.state.fileName + '?');
-  }
-
-  private clearPreview() {
-    this.patchState(new ImageData(1, 1), 'previewImage');
-  }
-
-  private deselectIfSelected() {
-    if (this.state.selectionImage !== undefined) {
-      this.executeAction(new DeselectSelectionAction(), true);
-    }
+  executeMenuAction(menuAction: MenuActionType) {
+    const menuActionFunction: () => void = this.getMenuActionFunction(menuAction);
+    menuActionFunction();
   }
 
   private getMenuActionFunction(menuAction: MenuActionType): () => void {
@@ -247,16 +200,6 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     assertUnreachable(menuAction);
   }
 
-  private getHotkeyActionFunction(event: KeyboardEvent): () => void | undefined {
-    const menuAction: MenuActionType = findMenuActionTypeByHotkeyEvent(
-      [...this.state.menuStructure, ...this.state.hiddenHotkeyShortcuts],
-      event
-    );
-    if (menuAction) {
-      return this.getMenuActionFunction(menuAction);
-    }
-  }
-
   private newFile() {
     location.reload();
   }
@@ -266,44 +209,6 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
       const action: OpenFileAction = new OpenFileAction(selectedFile);
       this.executeAction(action);
     });
-  }
-
-  loadFile(file: File) {
-    readImageDataFromFile(file).then((imageData) => {
-      const fileData: ImageFileData = { imageData, fileName: getFileNameWithoutExtension(file.name) };
-      const action: OpenFileAction = new OpenFileAction(fileData);
-      this.executeAction(action);
-    });
-  }
-
-  loadFileFromUrl(imageUrl: string) {
-    const splitUrl: string[] = imageUrl.split('/');
-    const fileName: string = getFileNameWithoutExtension(splitUrl[splitUrl.length - 1]);
-    readImageDataFromUrl(imageUrl).then((imageData) => {
-      const fileData: ImageFileData = { imageData, fileName };
-      const action: OpenFileAction = new OpenFileAction(fileData);
-      this.executeAction(action);
-    });
-  }
-
-  pasteFile(pastedFile: File) {
-    if (pastedFile !== null) {
-      readImageDataFromFile(pastedFile).then((pastedImage) => {
-        const action: PasteImageAction = new PasteImageAction(pastedImage);
-        this.executeAction(action);
-      });
-    }
-  }
-
-  private copy() {
-    if (this.state.selectionImage) {
-      copyImagePart(this.state.selectionImage);
-    }
-  }
-
-  private cut() {
-    this.copy();
-    this.clearSelection();
   }
 
   private saveFile() {
@@ -333,9 +238,15 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     }
   }
 
-  private invertColors() {
-    const action: InvertColorsAction = new InvertColorsAction();
-    this.executeAction(action);
+  private copy() {
+    if (this.state.selectionImage) {
+      copyImagePart(this.state.selectionImage);
+    }
+  }
+
+  private cut() {
+    this.copy();
+    this.clearSelection();
   }
 
   private clearImage() {
@@ -348,6 +259,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
       const action: CropAction = new CropAction();
       this.executeAction(action);
     }
+  }
+
+  private invertColors() {
+    const action: InvertColorsAction = new InvertColorsAction();
+    this.executeAction(action);
   }
 
   private selectAll() {
@@ -367,22 +283,121 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.executeAction(action);
   }
 
-  private isPointInSelection(point: Point): boolean {
-    const selectionRectangleWith3pxBorder: RectangleArea = {
-      start: {
-        w: this.state.selectionOffset.w - 3,
-        h: this.state.selectionOffset.h - 3,
-      },
-      end: {
-        w: this.state.selectionOffset.w + this.state.selectionImage.width - 1 + 3,
-        h: this.state.selectionOffset.h + this.state.selectionImage.height - 1 + 3,
-      },
-    };
-
-    return isPointInRectangle(point, selectionRectangleWith3pxBorder);
+  private deselectIfSelected() {
+    if (this.state.selectionImage !== undefined) {
+      this.executeAction(new DeselectSelectionAction(), true);
+    }
   }
+
+  ////////////////////////////// Stretch/skew window //////////////////////////////
+
+  private openStretchSkewWindow() {
+    this.patchState(true, 'stretchSkewWindowOpen');
+  }
+
+  stretchSkew(params: StretchSkewParams) {
+    this.closeStretchSkewWindow();
+
+    let action: TsPaintAction;
+    if (params.stretch) {
+      action = new StretchImageAction(params.stretch);
+    } else if (params.skew) {
+      //TODO: action = new SkewImageAction(params.skew);
+    }
+    this.executeAction(action);
+  }
+
+  closeStretchSkewWindow() {
+    this.patchState(false, 'stretchSkewWindowOpen');
+  }
+
+  ////////////////////////////// Flip/rotate window //////////////////////////////
+
+  private openFlipRotateWindow() {
+    this.patchState(true, 'flipRotateWindowOpen');
+  }
+
+  flipRotate(params: FlipRotateParams) {
+    this.closeFlipRotateWindow();
+
+    let action: TsPaintAction;
+    if (params.flip) {
+      action = new FlipImageAction(params.flip);
+    } else if (params.rotate) {
+      action = new RotateImageAction(params.rotate);
+    }
+    this.executeAction(action);
+  }
+
+  closeFlipRotateWindow() {
+    this.patchState(false, 'flipRotateWindowOpen');
+  }
+
+  ////////////////////////////// Attributes window //////////////////////////////
+
+  private openAttributesWindow() {
+    this.patchState(true, 'attributesWindowOpen');
+  }
+
+  changeAttributes(dimensions: Point) {
+    this.closeAttributesWindow();
+    const action: ResizeImageAction = new ResizeImageAction(dimensions.w, dimensions.h);
+    this.executeAction(action);
+  }
+
+  closeAttributesWindow() {
+    this.patchState(false, 'attributesWindowOpen');
+  }
+
+  ////////////////////////////// About Paint window //////////////////////////////
 
   private aboutPaint() {
     this.patchState(true, 'aboutPaintWindowOpen');
+  }
+
+  closeAboutPaintWindow() {
+    this.patchState(false, 'aboutPaintWindowOpen');
+  }
+
+  ////////////////////////////// Hotkey actions //////////////////////////////
+  
+  executeHotkeyAction(event: KeyboardEvent): boolean {
+    const hotkeyActionFunction: () => void = this.getHotkeyActionFunction(event);
+
+    if (hotkeyActionFunction) {
+      hotkeyActionFunction();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private getHotkeyActionFunction(event: KeyboardEvent): () => void | undefined {
+    const menuAction: MenuActionType = findMenuActionTypeByHotkeyEvent(
+      [...this.state.menuStructure, ...this.state.hiddenHotkeyShortcuts],
+      event
+    );
+    if (menuAction) {
+      return this.getMenuActionFunction(menuAction);
+    }
+  }
+
+  ////////////////////////////// Action processing //////////////////////////////
+
+  private executeAction(action: TsPaintAction, logToHistory: boolean = true) {
+    if (logToHistory && action.deselectsSelection) {
+      this.deselectIfSelected();
+    }
+    if (action.replacesImage && this.state.unsavedChanges && this.userWantsToSaveImage()) {
+      this.saveFile();
+    }
+
+    const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
+
+    this.setState({ ...this.state, ...patches });
+  }
+
+  private userWantsToSaveImage(): boolean {
+    return confirm('Save changes to ' + this.state.fileName + '?');
   }
 }
