@@ -1,4 +1,6 @@
+import { isDefined } from '@angular/compiler/src/util';
 import { Component, OnInit, HostListener } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 
@@ -8,7 +10,13 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
   styleUrls: ['./ts-paint.component.less'],
 })
 export class TsPaintComponent implements OnInit {
-  constructor(public store: TsPaintStore) {}
+  constructor(public store: TsPaintStore, private activatedRoute: ActivatedRoute) {
+    this.activatedRoute.queryParams.subscribe((params) => {
+      if (isDefined(params['imageUrl'])) {
+        store.loadFileFromUrl(params['imageUrl']);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.store.setDrawingTool(DrawingToolType.line);

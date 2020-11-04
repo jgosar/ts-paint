@@ -23,6 +23,7 @@ import {
   showFileUploadDialog,
   readImageDataFromFile,
   getFileNameWithoutExtension,
+  readImageDataFromUrl,
 } from '../../helpers/image-file.helpers';
 import { ResizeImageAction } from '../../types/actions/resize-image-action';
 import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.helpers';
@@ -268,8 +269,18 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   loadFile(file: File) {
-    readImageDataFromFile(file).then((pastedImage) => {
-      const fileData: ImageFileData = { imageData: pastedImage, fileName: getFileNameWithoutExtension(file.name) };
+    readImageDataFromFile(file).then((imageData) => {
+      const fileData: ImageFileData = { imageData, fileName: getFileNameWithoutExtension(file.name) };
+      const action: OpenFileAction = new OpenFileAction(fileData);
+      this.executeAction(action);
+    });
+  }
+
+  loadFileFromUrl(imageUrl: string) {
+    const splitUrl: string[] = imageUrl.split('/');
+    const fileName: string = getFileNameWithoutExtension(splitUrl[splitUrl.length - 1]);
+    readImageDataFromUrl(imageUrl).then((imageData) => {
+      const fileData: ImageFileData = { imageData, fileName };
       const action: OpenFileAction = new OpenFileAction(fileData);
       this.executeAction(action);
     });
