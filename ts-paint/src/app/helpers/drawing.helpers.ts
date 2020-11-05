@@ -90,6 +90,23 @@ export function drawDashedFrame(image: ImageData) {
   }
 }
 
+export function calculateShapeDimensions(start: Point, end: Point): Point {
+  let width: number = end.w - start.w;
+  if (width >= 0) {
+    width++;
+  } else {
+    width--;
+  }
+  let height: number = end.h - start.h;
+  if (height >= 0) {
+    height++;
+  } else {
+    height--;
+  }
+
+  return { w: width, h: height };
+}
+
 export function getLinePoints(start: Point, end: Point): Point[] {
   const points: Point[] = [];
   const [x0, y0, x1, y1]: number[] = [start.w, start.h, end.w, end.h];
