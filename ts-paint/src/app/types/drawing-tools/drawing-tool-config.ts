@@ -19,7 +19,7 @@ interface PartialDrawingToolConfig{
 }
 
 export interface DrawingToolConfig extends PartialDrawingToolConfig{
-  createAction: (points: Point[], swapColors: boolean, renderIn: 'image' | 'preview')=>DrawingToolAction
+  actionClass: new (points: Point[], swapColors: boolean, renderIn: 'image' | 'preview')=>DrawingToolAction
 }
 
 export const DRAWING_TOOL_CONFIG_DEFAULTS: PartialDrawingToolConfig = {
@@ -35,44 +35,44 @@ export const DRAWING_TOOL_CONFIG: {[key in DrawingToolType]: DrawingToolConfig} 
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
       invertedPreview: true,
-      createAction: (points, swapColors, renderIn)=>new RectangleSelectAction(points, swapColors, renderIn)
+      actionClass: RectangleSelectAction
   },
   [DrawingToolType.colorFiller]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
-      createAction: (points, swapColors, renderIn)=>new ColorFillerAction(points, swapColors, renderIn)
+      actionClass: ColorFillerAction
   },
   [DrawingToolType.colorPicker]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
-      createAction: (points, swapColors, renderIn)=>new ColorPickerAction(points, swapColors, renderIn)
+      actionClass: ColorPickerAction
   },
   [DrawingToolType.magnifier]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW,
       helpText: 'Changes the magnification: left click to zoom in, right click to zoom out.',
       invertedPreview: true,
-      createAction: (points, swapColors, renderIn)=>new MagnifierAction(points, swapColors, renderIn)
+      actionClass: MagnifierAction
   },
   [DrawingToolType.pencil]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.FREE_DRAW,
-      createAction: (points, swapColors, renderIn)=>new PencilAction(points, swapColors, renderIn)
+      actionClass: PencilAction
   },
   [DrawingToolType.line]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
-      createAction: (points, swapColors, renderIn)=>new LineAction(points, swapColors, renderIn)
+      actionClass: LineAction
   },
   [DrawingToolType.rectangle]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
-      createAction: (points, swapColors, renderIn)=>new RectangleAction(points, swapColors, renderIn)
+      actionClass: RectangleAction
   },
   [DrawingToolType.ellipse]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
-      createAction: (points, swapColors, renderIn)=>new EllipseAction(points, swapColors, renderIn)
+      actionClass: EllipseAction
   }
 }

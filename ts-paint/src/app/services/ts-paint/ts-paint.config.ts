@@ -24,17 +24,6 @@ export const DEFAULT_AVAILABLE_COLORS: Color[] = [
   { r: 255, g: 0, b: 255 },
 ];
 
-export const DRAWING_TOOLS: DrawingToolType[] = [
-  DrawingToolType.rectangleSelect,
-  DrawingToolType.colorFiller,
-  DrawingToolType.colorPicker,
-  DrawingToolType.magnifier,
-  DrawingToolType.pencil,
-  DrawingToolType.line,
-  DrawingToolType.rectangle,
-  DrawingToolType.ellipse,
-];
-
 export const MENU_STRUCTURE: MenuItem[] = [
   {
     name: 'File',

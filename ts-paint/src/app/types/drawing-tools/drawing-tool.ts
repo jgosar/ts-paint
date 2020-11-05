@@ -89,12 +89,12 @@ export class DrawingTool {
   private addPreviewAction(points: Point[]) {
     this.previewShapeStart = points[0];
     this.previewShapeDimensions = calculateShapeDimensions(points[0], points[points.length - 1]);
-    const action: TsPaintAction = this._config.createAction(points, this._swapColors, 'preview');
+    const action: TsPaintAction = new this._config.actionClass(points, this._swapColors, 'preview');
     this._addAction(action);
   }
 
   private addFinalAction(points: Point[]) {
-    const action: TsPaintAction = this._config.createAction(points, this._swapColors, 'image');
+    const action: TsPaintAction = new this._config.actionClass(points, this._swapColors, 'image');
     this._addAction(action);
     this.clearData();
   }

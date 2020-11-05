@@ -2,13 +2,11 @@ import { MenuItem } from '../../types/menu/menu-item';
 import { createImage } from '../../helpers/image.helpers';
 import { DrawingTool } from '../../types/drawing-tools/drawing-tool';
 import { Color } from '../../types/base/color';
-import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { TsPaintAction } from '../../types/actions/ts-paint-action';
 import { Point } from '../../types/base/point';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
 import {
   DEFAULT_AVAILABLE_COLORS,
-  DRAWING_TOOLS,
   MENU_STRUCTURE,
   NON_MENU_SHORTCUTS,
   COLOR_WHITE,
@@ -31,7 +29,6 @@ export class TsPaintStoreState {
   previewAction: TsPaintAction;
   actions: TsPaintAction[] = [];
   selectedDrawingTool: DrawingTool;
-  availableDrawingTools: DrawingToolType[] = DRAWING_TOOLS;
   undoPointer: number = -1;
   attributesWindowOpen: boolean = false;
   flipRotateWindowOpen: boolean = false;
