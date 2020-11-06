@@ -2,86 +2,31 @@ import { DrawingToolBehaviour } from './drawing-tool-behaviour';
 import { MouseButtonEvent } from '../mouse-tracker/mouse-button-event';
 import { Point } from '../base/point';
 import { DrawingToolType } from './drawing-tool-type';
-import { assertUnreachable } from '../../helpers/typescript.helpers';
 import { MouseButton } from '../mouse-tracker/mouse-button';
-import { createDrawingToolAction } from '../actions/drawing-tool-actions/create-drawing-tool-action';
 import { TsPaintAction } from '../actions/ts-paint-action';
 import { MousePoint } from '../mouse-tracker/mouse-point';
+import { DrawingToolConfig, DRAWING_TOOL_CONFIG } from './drawing-tool-config';
+import { calculateShapeDimensions } from 'src/app/helpers/drawing.helpers';
 
 export class DrawingTool {
-  private readonly _behaviour: DrawingToolBehaviour;
-  private readonly _maxPoints: number;
+  private readonly _config: DrawingToolConfig;
+
+  get helpText(): string{
+    return this._config.helpText??'';
+  }
+
+  get invertedPreview(): boolean{
+    return this._config.invertedPreview??false;
+  }
 
   constructor(
     public type: DrawingToolType,
     private _addAction: (action: TsPaintAction) => void,
     private _clearPreview: () => void
   ) {
-    switch (type) {
-      /*case DrawingToolType.freeFormSelect:
-        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
-        return;*/
-      case DrawingToolType.rectangleSelect:
-        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        this._maxPoints = 2;
-        this.invertedPreview = true;
-        return;
-      /*case DrawingToolType.eraser:
-        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
-        return;*/
-      case DrawingToolType.colorFiller:
-        this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
-        return;
-      case DrawingToolType.colorPicker:
-        this._behaviour = DrawingToolBehaviour.SINGLE_POINT;
-        return;
-      case DrawingToolType.magnifier:
-        this._behaviour = DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW;
-        this.helpText = 'Changes the magnification: left click to zoom in, right click to zoom out.';
-        this.invertedPreview = true;
-        return;
-      case DrawingToolType.pencil:
-        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
-        return;
-      /*case DrawingToolType.brush:
-        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
-        return;
-      case DrawingToolType.airbrush:
-        this._behaviour = DrawingToolBehaviour.FREE_DRAW;
-        return;
-      case DrawingToolType.text:
-        this._behaviour = DrawingToolBehaviour.TEXT;
-        return;*/
-      case DrawingToolType.line:
-        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        this._maxPoints = 2;
-        return;
-      /*case DrawingToolType.curve:
-        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        this._maxPoints = 4;
-        return;*/
-      case DrawingToolType.rectangle:
-        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        this._maxPoints = 2;
-        return;
-      /*case DrawingToolType.polygon:
-        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        return;*/
-      case DrawingToolType.ellipse:
-        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        this._maxPoints = 2;
-        return;
-      /*case DrawingToolType.roundedRectangle:
-        this._behaviour = DrawingToolBehaviour.CLICK_AND_DRAG;
-        this._maxPoints = 2;
-        return;*/
-    }
-
-    assertUnreachable(type);
+    this._config = {...DRAWING_TOOL_CONFIG[type]};
   }
 
-  public readonly helpText: string = '';
-  public readonly invertedPreview: boolean = false;
   public previewShapeStart: Point;
   public previewShapeDimensions: Point;
 
@@ -94,9 +39,9 @@ export class DrawingTool {
     this._mouseIsDown = true;
     this._swapColors = event.button !== MouseButton.LEFT;
 
-    if (this._behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
+    if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
       this._mouseDownPoint = event.point;
-    } else if (this._behaviour === DrawingToolBehaviour.FREE_DRAW) {
+    } else if (this._config.behaviour === DrawingToolBehaviour.FREE_DRAW) {
       this._mousePoints.push(event.point);
     }
   }
@@ -104,17 +49,17 @@ export class DrawingTool {
   mouseUp(point: Point) {
     this._mouseIsDown = false;
 
-    if (this._behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
-      if (this._maxPoints === 2) {
+    if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
+      if (this._config.maxPoints === 2) {
         this.addFinalAction([this._mouseDownPoint, point]);
       } else {
         // TODO: Handle click & drag with multiple points
       }
-    } else if (this._behaviour === DrawingToolBehaviour.FREE_DRAW) {
+    } else if (this._config.behaviour === DrawingToolBehaviour.FREE_DRAW) {
       this._mousePoints.push(point);
       this.addFinalAction(this._mousePoints);
     } else if (
-      [DrawingToolBehaviour.SINGLE_POINT, DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW].includes(this._behaviour)
+      [DrawingToolBehaviour.SINGLE_POINT, DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW].includes(this._config.behaviour)
     ) {
       this._mousePoints = [point];
       this.addFinalAction(this._mousePoints);
@@ -123,16 +68,16 @@ export class DrawingTool {
 
   mouseMove(mousePoint: MousePoint) {
     const point: Point = mousePoint.point;
-    if (this._behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
+    if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
       if (this._mouseIsDown) {
         this.addPreviewAction([this._mouseDownPoint, point]);
       }
-    } else if (this._behaviour === DrawingToolBehaviour.FREE_DRAW) {
+    } else if (this._config.behaviour === DrawingToolBehaviour.FREE_DRAW) {
       if (this._mouseIsDown) {
         this._mousePoints.push(point);
         this.addPreviewAction(this._mousePoints);
       }
-    } else if (this._behaviour === DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW) {
+    } else if (this._config.behaviour === DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW) {
       if (mousePoint.outsideCanvas) {
         this._clearPreview();
       } else {
@@ -143,13 +88,13 @@ export class DrawingTool {
 
   private addPreviewAction(points: Point[]) {
     this.previewShapeStart = points[0];
-    this.previewShapeDimensions = this.calculateDimensions(points[0], points[points.length - 1]);
-    const action: TsPaintAction = createDrawingToolAction(this.type, points, this._swapColors, 'preview');
+    this.previewShapeDimensions = calculateShapeDimensions(points[0], points[points.length - 1]);
+    const action: TsPaintAction = new this._config.actionClass(points, this._swapColors, 'preview');
     this._addAction(action);
   }
 
   private addFinalAction(points: Point[]) {
-    const action: TsPaintAction = createDrawingToolAction(this.type, points, this._swapColors, 'image');
+    const action: TsPaintAction = new this._config.actionClass(points, this._swapColors, 'image');
     this._addAction(action);
     this.clearData();
   }
@@ -161,22 +106,5 @@ export class DrawingTool {
     this._mouseDownPoint = undefined;
     this._mousePoints = [];
     this._swapColors = undefined;
-  }
-
-  private calculateDimensions(start: Point, end: Point): Point {
-    let dw: number = end.w - start.w;
-    if (dw >= 0) {
-      dw++;
-    } else {
-      dw--;
-    }
-    let dh: number = end.h - start.h;
-    if (dh >= 0) {
-      dh++;
-    } else {
-      dh--;
-    }
-
-    return { w: dw, h: dh };
   }
 }

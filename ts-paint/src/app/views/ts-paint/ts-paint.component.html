@@ -8,7 +8,6 @@
     <div class="tsp-horizontal-bar tsp-can-grow">
       <div class="tsp-vertical-bar">
         <tsp-toolbox
-          [availableTools]="store.state.availableDrawingTools"
           [selectedTool]="store.state.selectedDrawingTool?.type"
           (selectedToolChange)="store.setDrawingTool($event)"
         >

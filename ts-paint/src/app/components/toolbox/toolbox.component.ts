@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
-import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
+import { ALL_DRAWING_TOOL_TYPES, DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 
 @Component({
   selector: 'tsp-toolbox',
@@ -8,8 +8,8 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToolboxComponent {
-  @Input()
-  availableTools: DrawingToolType[];
+  protected availableTools: DrawingToolType[] = ALL_DRAWING_TOOL_TYPES;
+  
   @Input()
   selectedTool: DrawingToolType;
   @Output()
