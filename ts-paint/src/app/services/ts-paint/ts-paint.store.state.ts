@@ -10,7 +10,9 @@ import {
   MENU_STRUCTURE,
   NON_MENU_SHORTCUTS,
   COLOR_WHITE,
+  DEFAULT_DRAWING_TOOL_OPTIONS,
 } from './ts-paint.config';
+import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
 
 export class TsPaintStoreState {
   zoom: number = 1;
@@ -29,6 +31,7 @@ export class TsPaintStoreState {
   previewAction: TsPaintAction;
   actions: TsPaintAction[] = [];
   selectedDrawingTool: DrawingTool;
+  drawingToolOptions: DrawingToolOptions = DEFAULT_DRAWING_TOOL_OPTIONS;
   undoPointer: number = -1;
   attributesWindowOpen: boolean = false;
   flipRotateWindowOpen: boolean = false;

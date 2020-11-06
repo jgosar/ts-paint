@@ -1,4 +1,5 @@
 import { Color } from 'src/app/types/base/color';
+import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { MenuItem } from 'src/app/types/menu/menu-item';
@@ -23,6 +24,10 @@ export const DEFAULT_AVAILABLE_COLORS: Color[] = [
   { r: 128, g: 0, b: 128 },
   { r: 255, g: 0, b: 255 },
 ];
+
+export const DEFAULT_DRAWING_TOOL_OPTIONS: DrawingToolOptions = {
+  [DrawingToolType.rectangle]: {fillType: 'empty'}
+}
 
 export const MENU_STRUCTURE: MenuItem[] = [
   {
