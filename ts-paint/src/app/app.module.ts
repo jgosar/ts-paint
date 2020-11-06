@@ -21,6 +21,8 @@ import { AboutPaintWindowComponent } from './components/about-paint-window/about
 import { ImageScrollerComponent } from './components/image-scroller/image-scroller.component';
 import { StretchSkewWindowComponent } from './components/stretch-skew-window/stretch-skew-window.component';
 import { RouterModule } from '@angular/router';
+import { DrawingToolOptionsComponent } from './components/drawing-tool-options/drawing-tool-options.component';
+import { FillTypePickerComponent } from './components/fill-type-picker/fill-type-picker.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,8 @@ import { RouterModule } from '@angular/router';
     StretchSkewWindowComponent,
     AboutPaintWindowComponent,
     FooterInfoComponent,
+    DrawingToolOptionsComponent,
+    FillTypePickerComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module
   ],
