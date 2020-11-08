@@ -12,12 +12,12 @@ import { isDefined } from '@angular/compiler/src/util';
 export class DrawingTool {
   private readonly _config: DrawingToolConfig;
 
-  get helpText(): string{
-    return this._config.helpText??'';
+  get helpText(): string {
+    return this._config.helpText ?? '';
   }
 
-  get invertedPreview(): boolean{
-    return this._config.invertedPreview??false;
+  get invertedPreview(): boolean {
+    return this._config.invertedPreview ?? false;
   }
 
   constructor(
@@ -25,7 +25,7 @@ export class DrawingTool {
     private _addAction: (action: TsPaintAction) => void,
     private _clearPreview: () => void
   ) {
-    this._config = {...DRAWING_TOOL_CONFIG[type]};
+    this._config = { ...DRAWING_TOOL_CONFIG[type] };
   }
 
   public previewShapeStart: Point;
@@ -49,7 +49,7 @@ export class DrawingTool {
 
   mouseUp(event: TspMouseEvent) {
     const point: Point = event.shiftKey ? this.snapToAngle(event.point) : event.point;
-    
+
     this._mouseIsDown = false;
 
     if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
@@ -62,7 +62,9 @@ export class DrawingTool {
       this._mousePoints.push(point);
       this.addFinalAction(this._mousePoints);
     } else if (
-      [DrawingToolBehaviour.SINGLE_POINT, DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW].includes(this._config.behaviour)
+      [DrawingToolBehaviour.SINGLE_POINT, DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW].includes(
+        this._config.behaviour
+      )
     ) {
       this._mousePoints = [point];
       this.addFinalAction(this._mousePoints);
@@ -113,45 +115,54 @@ export class DrawingTool {
   }
 
   private snapToAngle(point: Point): Point {
-    if(this._config.angleSnap===DrawingToolAngleSnap.NONE || [DrawingToolBehaviour.SINGLE_POINT, DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW, DrawingToolBehaviour.TEXT, DrawingToolBehaviour.FREE_DRAW].includes(this._config.behaviour)){
+    if (
+      this._config.angleSnap === DrawingToolAngleSnap.NONE ||
+      [
+        DrawingToolBehaviour.SINGLE_POINT,
+        DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW,
+        DrawingToolBehaviour.TEXT,
+        DrawingToolBehaviour.FREE_DRAW,
+      ].includes(this._config.behaviour)
+    ) {
       return point;
-    } else{
+    } else {
       let previousPoint: Point;
 
-      if(this._config.behaviour===DrawingToolBehaviour.CLICK_AND_DRAG && this._mouseIsDown){
+      if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG && this._mouseIsDown) {
         previousPoint = this._mouseDownPoint;
       }
 
-      if(!isDefined(previousPoint)){
+      if (!isDefined(previousPoint)) {
         return point;
       }
 
-      const deltaW: number = point.w-previousPoint.w;
-      const deltaH: number = point.h-previousPoint.h;
+      const deltaW: number = point.w - previousPoint.w;
+      const deltaH: number = point.h - previousPoint.h;
       const absDeltaW: number = Math.abs(deltaW);
       const absDeltaH: number = Math.abs(deltaH);
       let snappedDeltaW: number;
       let snappedDeltaH: number;
 
-      const angleIsAround45Degrees: boolean = absDeltaW>absDeltaH/2 && absDeltaH>absDeltaW/2;
+      const angleIsAround45Degrees: boolean = absDeltaW > absDeltaH / 2 && absDeltaH > absDeltaW / 2;
 
-      if(this._config.angleSnap===DrawingToolAngleSnap.EVERY_45_DEGREES && !angleIsAround45Degrees){
+      if (this._config.angleSnap === DrawingToolAngleSnap.EVERY_45_DEGREES && !angleIsAround45Degrees) {
         const absDelta: number = Math.max(absDeltaH, absDeltaW);
 
-        if(absDeltaW>absDeltaH){
-          snappedDeltaW = absDelta*Math.sign(deltaW);
+        if (absDeltaW > absDeltaH) {
+          snappedDeltaW = absDelta * Math.sign(deltaW);
           snappedDeltaH = 0;
-        } else{
+        } else {
           snappedDeltaW = 0;
-          snappedDeltaH = absDelta*Math.sign(deltaH);
+          snappedDeltaH = absDelta * Math.sign(deltaH);
         }
-      } else { //DIAGONAL
+      } else {
+        //DIAGONAL
         const absDelta: number = Math.min(absDeltaH, absDeltaW);
-        snappedDeltaW = absDelta*Math.sign(deltaW);
-        snappedDeltaH = absDelta*Math.sign(deltaH);
+        snappedDeltaW = absDelta * Math.sign(deltaW);
+        snappedDeltaH = absDelta * Math.sign(deltaH);
       }
 
-      return {w: previousPoint.w+snappedDeltaW, h: previousPoint.h+snappedDeltaH};
+      return { w: previousPoint.w + snappedDeltaW, h: previousPoint.h + snappedDeltaH };
     }
   }
 }

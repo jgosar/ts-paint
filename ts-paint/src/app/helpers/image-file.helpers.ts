@@ -75,12 +75,12 @@ function loadImageFromUrl(
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const image: HTMLImageElement = new Image();
 
-  if(imgUrl.startsWith('http')){
-    image.src = CORS__PROXY_URL+imgUrl; // It's a web URL, so we need to access it through a proxy to avoid CORS errors
-  } else{
+  if (imgUrl.startsWith('http')) {
+    image.src = CORS__PROXY_URL + imgUrl; // It's a web URL, so we need to access it through a proxy to avoid CORS errors
+  } else {
     image.src = imgUrl; // It's a data URL, so we can access it directly
   }
-  
+
   image.setAttribute('crossOrigin', '');
   image.onload = () => {
     canvas.width = image.width;

@@ -17,4 +17,6 @@ export enum DrawingToolType {
   /*roundedRectangle,*/
 }
 
-export const ALL_DRAWING_TOOL_TYPES: DrawingToolType[] = Object.keys(DrawingToolType).map(t => DrawingToolType[t]).filter(t=> typeof t === "number");
+export const ALL_DRAWING_TOOL_TYPES: DrawingToolType[] = Object.keys(DrawingToolType)
+  .map((t) => DrawingToolType[t])
+  .filter((t) => typeof t === 'number');

@@ -29,11 +29,7 @@ export function drawRectangle(
   drawLineFunction(corner4, corner1, color, image);
 }
 
-export function fillRectangle(
-  area: RectangleArea,
-  color: Color,
-  image: ImageData
-) {
+export function fillRectangle(area: RectangleArea, color: Color, image: ImageData) {
   fillAreaInOriginalImage(image, color, area);
 }
 

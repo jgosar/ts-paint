@@ -366,7 +366,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   ////////////////////////////// Hotkey actions //////////////////////////////
-  
+
   executeHotkeyAction(event: KeyboardEvent): boolean {
     const hotkeyActionFunction: () => void = this.getHotkeyActionFunction(event);
 

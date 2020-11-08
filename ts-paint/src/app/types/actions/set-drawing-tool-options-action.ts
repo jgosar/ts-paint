@@ -9,7 +9,9 @@ export class SetDrawingToolOptionsAction extends TsPaintAction {
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
-    const patches: Partial<TsPaintStoreState> = { drawingToolOptions: {...state.drawingToolOptions, ...this.changedOptions} };
+    const patches: Partial<TsPaintStoreState> = {
+      drawingToolOptions: { ...state.drawingToolOptions, ...this.changedOptions },
+    };
 
     return { patches };
   }

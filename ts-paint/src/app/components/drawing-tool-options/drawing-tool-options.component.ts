@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { FillType } from 'src/app/types/drawing-tools/fill-type';
@@ -24,17 +32,17 @@ export class DrawingToolOptionsComponent implements OnChanges {
     this.displayedPicker = undefined;
     this.selectedFillType = undefined;
 
-    if([DrawingToolType.rectangle].includes(this.selectedTool)){
+    if ([DrawingToolType.rectangle].includes(this.selectedTool)) {
       this.displayedPicker = 'fillTypePicker';
       this.selectedFillType = this.options[this.selectedTool].fillType;
     }
   }
 
-  changeSelectedFillType(fillType: FillType){
+  changeSelectedFillType(fillType: FillType) {
     const changes: Partial<DrawingToolOptions> = {};
 
-    if([DrawingToolType.rectangle].includes(this.selectedTool)){
-      changes[this.selectedTool] = {fillType};
+    if ([DrawingToolType.rectangle].includes(this.selectedTool)) {
+      changes[this.selectedTool] = { fillType };
     }
 
     this.optionsChange.emit(changes);

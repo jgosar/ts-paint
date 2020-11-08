@@ -9,7 +9,7 @@ import { ALL_DRAWING_TOOL_TYPES, DrawingToolType } from '../../types/drawing-too
 })
 export class ToolboxComponent {
   availableTools: DrawingToolType[] = ALL_DRAWING_TOOL_TYPES;
-  
+
   @Input()
   selectedTool: DrawingToolType;
   @Output()

@@ -42,7 +42,7 @@ export class MouseTrackerComponent implements OnChanges {
     this.mouseMove.emit({
       point: this.getEventPoint(event),
       outsideCanvas,
-      shiftKey: event.shiftKey
+      shiftKey: event.shiftKey,
     });
   }
 
@@ -66,7 +66,7 @@ export class MouseTrackerComponent implements OnChanges {
       this.mouseUp.emit({
         point: this.getEventPoint(event),
         outsideCanvas: false,
-        shiftKey: event.shiftKey
+        shiftKey: event.shiftKey,
       });
     }
   }
@@ -78,7 +78,7 @@ export class MouseTrackerComponent implements OnChanges {
         point: this.getEventPoint(event),
         button: event.button,
         outsideCanvas: false,
-        shiftKey: event.shiftKey
+        shiftKey: event.shiftKey,
       });
     }
   }

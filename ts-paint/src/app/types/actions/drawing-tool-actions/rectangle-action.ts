@@ -11,12 +11,12 @@ export class RectangleAction extends DrawingToolAction {
   protected draw(points: Point[], color1: Color, color2: Color, image: ImageData, state: TsPaintStoreState) {
     const options: RectangleOptions = state.drawingToolOptions[DrawingToolType.rectangle];
 
-    if(options.fillType===FillType.EMPTY){
+    if (options.fillType === FillType.EMPTY) {
       drawRectangle({ start: points[0], end: points[1] }, color1, image);
-    } else if(options.fillType===FillType.FILL_SECONDARY){
+    } else if (options.fillType === FillType.FILL_SECONDARY) {
       fillRectangle({ start: points[0], end: points[1] }, color2, image);
       drawRectangle({ start: points[0], end: points[1] }, color1, image);
-    } else{
+    } else {
       fillRectangle({ start: points[0], end: points[1] }, color1, image);
     }
   }
