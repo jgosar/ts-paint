@@ -7,6 +7,8 @@ import { TsPaintAction } from '../actions/ts-paint-action';
 import { MousePoint } from '../mouse-tracker/mouse-point';
 import { DrawingToolConfig, DRAWING_TOOL_CONFIG } from './drawing-tool-config';
 import { calculateShapeDimensions } from 'src/app/helpers/drawing.helpers';
+import { DrawingToolAngleSnap } from './drawing-tool-angle-snap';
+import { isDefined } from '@angular/compiler/src/util';
 
 export class DrawingTool {
   private readonly _config: DrawingToolConfig;
@@ -47,7 +49,8 @@ export class DrawingTool {
   }
 
   mouseUp(mousePoint: MousePoint) {
-    const point: Point = mousePoint.point;
+    const point: Point = mousePoint.shiftKey ? this.snapToAngle(mousePoint.point) : mousePoint.point;
+    
     this._mouseIsDown = false;
 
     if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
@@ -68,7 +71,8 @@ export class DrawingTool {
   }
 
   mouseMove(mousePoint: MousePoint) {
-    const point: Point = mousePoint.point;
+    const point: Point = mousePoint.shiftKey ? this.snapToAngle(mousePoint.point) : mousePoint.point;
+
     if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
       if (this._mouseIsDown) {
         this.addPreviewAction([this._mouseDownPoint, point]);
@@ -107,5 +111,48 @@ export class DrawingTool {
     this._mouseDownPoint = undefined;
     this._mousePoints = [];
     this._swapColors = undefined;
+  }
+
+  private snapToAngle(point: Point): Point {
+    if(this._config.angleSnap===DrawingToolAngleSnap.NONE || [DrawingToolBehaviour.SINGLE_POINT, DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW, DrawingToolBehaviour.TEXT, DrawingToolBehaviour.FREE_DRAW].includes(this._config.behaviour)){
+      return point;
+    } else{
+      let previousPoint: Point;
+
+      if(this._config.behaviour===DrawingToolBehaviour.CLICK_AND_DRAG && this._mouseIsDown){
+        previousPoint = this._mouseDownPoint;
+      }
+
+      if(!isDefined(previousPoint)){
+        return point;
+      }
+
+      const deltaW: number = point.w-previousPoint.w;
+      const deltaH: number = point.h-previousPoint.h;
+      const absDeltaW: number = Math.abs(deltaW);
+      const absDeltaH: number = Math.abs(deltaH);
+      let snappedDeltaW: number;
+      let snappedDeltaH: number;
+
+      const angleIsAround45Degrees: boolean = absDeltaW>absDeltaH/2 && absDeltaH>absDeltaW/2;
+
+      if(this._config.angleSnap===DrawingToolAngleSnap.EVERY_45_DEGREES && !angleIsAround45Degrees){
+        const absDelta: number = Math.max(absDeltaH, absDeltaW);
+
+        if(absDeltaW>absDeltaH){
+          snappedDeltaW = absDelta*Math.sign(deltaW);
+          snappedDeltaH = 0;
+        } else{
+          snappedDeltaW = 0;
+          snappedDeltaH = absDelta*Math.sign(deltaH);
+        }
+      } else { //DIAGONAL
+        const absDelta: number = Math.min(absDeltaH, absDeltaW);
+        snappedDeltaW = absDelta*Math.sign(deltaW);
+        snappedDeltaH = absDelta*Math.sign(deltaH);
+      }
+
+      return {w: previousPoint.w+snappedDeltaW, h: previousPoint.h+snappedDeltaH};
+    }
   }
 }

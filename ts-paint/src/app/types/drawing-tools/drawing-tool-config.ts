@@ -58,7 +58,6 @@ export const DRAWING_TOOL_CONFIG: {[key in DrawingToolType]: DrawingToolConfig} 
   [DrawingToolType.pencil]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.FREE_DRAW,
-      angleSnap: DrawingToolAngleSnap.EVERY_45_DEGREES,
       actionClass: PencilAction
   },
   [DrawingToolType.line]:{
@@ -72,14 +71,14 @@ export const DRAWING_TOOL_CONFIG: {[key in DrawingToolType]: DrawingToolConfig} 
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
-      angleSnap: DrawingToolAngleSnap.EVERY_90_DEGREES,
+      angleSnap: DrawingToolAngleSnap.DIAGONAL,
       actionClass: RectangleAction
   },
   [DrawingToolType.ellipse]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
-      angleSnap: DrawingToolAngleSnap.EVERY_90_DEGREES,
+      angleSnap: DrawingToolAngleSnap.DIAGONAL,
       actionClass: EllipseAction
   }
 }
