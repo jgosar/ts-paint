@@ -4,7 +4,6 @@ import { Store } from 'rxjs-observable-store';
 import { MenuActionType } from '../../types/menu/menu-action-type';
 import { assertUnreachable, isDefined } from '../../helpers/typescript.helpers';
 import { Point } from '../../types/base/point';
-import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { DrawingTool } from '../../types/drawing-tools/drawing-tool';
 import { ColorSelection } from '../../types/base/color-selection';
@@ -33,7 +32,7 @@ import { InvertColorsAction } from 'src/app/types/actions/invert-colors-action';
 import { FlipImageAction } from 'src/app/types/actions/flip-image-action';
 import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params';
 import { RotateImageAction } from 'src/app/types/actions/rotate-image-action';
-import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
+import { TspMouseEvent } from 'src/app/types/mouse-tracker/tsp-mouse-event';
 import { CropAction } from 'src/app/types/actions/crop-action';
 import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-params';
 import { StretchImageAction } from 'src/app/types/actions/stretch-image-action';
@@ -48,7 +47,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   ////////////////////////////// Mouse actions //////////////////////////////
-  processMouseDown(event: MouseButtonEvent) {
+  processMouseDown(event: TspMouseEvent) {
     if (this.state.selectionImage !== undefined) {
       if (this.isPointInSelection(event.point)) {
         if (!this.state.moveSelectionTool) {
@@ -65,20 +64,20 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     }
   }
 
-  processMouseUp(point: Point) {
+  processMouseUp(event: TspMouseEvent) {
     if (this.state.moveSelectionTool !== undefined) {
-      this.state.moveSelectionTool.mouseUp(point);
+      this.state.moveSelectionTool.mouseUp(event);
     } else {
-      this.state.selectedDrawingTool?.mouseUp(point);
+      this.state.selectedDrawingTool?.mouseUp(event);
     }
   }
 
-  processMouseMove(mousePoint: MousePoint) {
-    this.patchState(mousePoint.point, 'mousePosition');
+  processMouseMove(event: TspMouseEvent) {
+    this.patchState(event.point, 'mousePosition');
     if (this.state.moveSelectionTool !== undefined) {
-      this.state.moveSelectionTool.mouseMove(mousePoint);
+      this.state.moveSelectionTool.mouseMove(event);
     } else {
-      this.state.selectedDrawingTool?.mouseMove(mousePoint);
+      this.state.selectedDrawingTool?.mouseMove(event);
     }
   }
 

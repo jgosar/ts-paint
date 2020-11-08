@@ -1,8 +1,6 @@
 import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 import { Point } from '../../types/base/point';
-import { MouseButtonEvent } from '../../types/mouse-tracker/mouse-button-event';
-import { MouseWheelEvent } from '../../types/mouse-tracker/mouse-wheel-event';
-import { MousePoint } from 'src/app/types/mouse-tracker/mouse-point';
+import { TspMouseEvent } from 'src/app/types/mouse-tracker/tsp-mouse-event';
 import { MouseButton } from 'src/app/types/mouse-tracker/mouse-button';
 import { constrainPointToImage } from 'src/app/helpers/image.helpers';
 
@@ -18,13 +16,13 @@ export class MouseTrackerComponent implements OnChanges {
   @Input()
   image: ImageData;
   @Output()
-  mouseMove: EventEmitter<MousePoint> = new EventEmitter<MousePoint>();
+  mouseMove: EventEmitter<TspMouseEvent> = new EventEmitter<TspMouseEvent>();
   @Output()
-  mouseUp: EventEmitter<Point> = new EventEmitter<Point>();
+  mouseUp: EventEmitter<TspMouseEvent> = new EventEmitter<TspMouseEvent>();
   @Output()
-  mouseDown: EventEmitter<MouseButtonEvent> = new EventEmitter<MouseButtonEvent>();
+  mouseDown: EventEmitter<TspMouseEvent> = new EventEmitter<TspMouseEvent>();
   @Output()
-  mouseScroll: EventEmitter<MouseWheelEvent> = new EventEmitter<MouseWheelEvent>();
+  mouseScroll: EventEmitter<TspMouseEvent> = new EventEmitter<TspMouseEvent>();
 
   zoomedWidth: number = 0;
   zoomedHeight: number = 0;
@@ -44,6 +42,7 @@ export class MouseTrackerComponent implements OnChanges {
     this.mouseMove.emit({
       point: this.getEventPoint(event),
       outsideCanvas,
+      shiftKey: event.shiftKey
     });
   }
 
@@ -64,14 +63,23 @@ export class MouseTrackerComponent implements OnChanges {
   onMouseUp(event: MouseEvent) {
     if (this._mouseIsDown) {
       this._mouseIsDown = false;
-      this.mouseUp.emit(this.getEventPoint(event));
+      this.mouseUp.emit({
+        point: this.getEventPoint(event),
+        outsideCanvas: false,
+        shiftKey: event.shiftKey
+      });
     }
   }
 
   onMouseDown(event: MouseEvent) {
     if (event.button !== MouseButton.MIDDLE) {
       this._mouseIsDown = true;
-      this.mouseDown.emit({ point: this.getEventPoint(event), button: event.button });
+      this.mouseDown.emit({
+        point: this.getEventPoint(event),
+        button: event.button,
+        outsideCanvas: false,
+        shiftKey: event.shiftKey
+      });
     }
   }
 
