@@ -1,10 +1,9 @@
 import { DrawingToolBehaviour } from './drawing-tool-behaviour';
-import { MouseButtonEvent } from '../mouse-tracker/mouse-button-event';
 import { Point } from '../base/point';
 import { DrawingToolType } from './drawing-tool-type';
 import { MouseButton } from '../mouse-tracker/mouse-button';
 import { TsPaintAction } from '../actions/ts-paint-action';
-import { MousePoint } from '../mouse-tracker/mouse-point';
+import { TspMouseEvent } from '../mouse-tracker/tsp-mouse-event';
 import { DrawingToolConfig, DRAWING_TOOL_CONFIG } from './drawing-tool-config';
 import { calculateShapeDimensions } from 'src/app/helpers/drawing.helpers';
 import { DrawingToolAngleSnap } from './drawing-tool-angle-snap';
@@ -37,7 +36,7 @@ export class DrawingTool {
   private _mousePoints: Point[] = [];
   private _swapColors: boolean;
 
-  mouseDown(event: MouseButtonEvent) {
+  mouseDown(event: TspMouseEvent) {
     this._mouseIsDown = true;
     this._swapColors = event.button !== MouseButton.LEFT;
 
@@ -48,8 +47,8 @@ export class DrawingTool {
     }
   }
 
-  mouseUp(mousePoint: MousePoint) {
-    const point: Point = mousePoint.shiftKey ? this.snapToAngle(mousePoint.point) : mousePoint.point;
+  mouseUp(event: TspMouseEvent) {
+    const point: Point = event.shiftKey ? this.snapToAngle(event.point) : event.point;
     
     this._mouseIsDown = false;
 
@@ -70,8 +69,8 @@ export class DrawingTool {
     }
   }
 
-  mouseMove(mousePoint: MousePoint) {
-    const point: Point = mousePoint.shiftKey ? this.snapToAngle(mousePoint.point) : mousePoint.point;
+  mouseMove(event: TspMouseEvent) {
+    const point: Point = event.shiftKey ? this.snapToAngle(event.point) : event.point;
 
     if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {
       if (this._mouseIsDown) {
@@ -83,7 +82,7 @@ export class DrawingTool {
         this.addPreviewAction(this._mousePoints);
       }
     } else if (this._config.behaviour === DrawingToolBehaviour.SINGLE_POINT_WITH_PREVIEW) {
-      if (mousePoint.outsideCanvas) {
+      if (event.outsideCanvas) {
         this._clearPreview();
       } else {
         this.addPreviewAction([point]);

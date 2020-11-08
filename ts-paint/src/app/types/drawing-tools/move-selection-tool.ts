@@ -1,7 +1,7 @@
-import { MouseButtonEvent } from '../mouse-tracker/mouse-button-event';
+import { TspMouseEvent } from '../mouse-tracker/tsp-mouse-event';
 import { Point } from '../base/point';
 import { MoveSelectionAction } from '../actions/move-selection-action';
-import { MousePoint } from '../mouse-tracker/mouse-point';
+import { TspMouseEvent } from '../mouse-tracker/tsp-mouse-event';
 
 export class MoveSelectionTool {
   constructor(private _addAction: (action: MoveSelectionAction) => void) {}
@@ -10,14 +10,14 @@ export class MoveSelectionTool {
   private _mouseDownPoint: Point;
   private _currentPosition: Point;
 
-  mouseDown(startingPosition: Point, event: MouseButtonEvent) {
+  mouseDown(startingPosition: Point, event: TspMouseEvent) {
     this._currentPosition = startingPosition;
     this._mouseIsDown = true;
     this._mouseDownPoint = event.point;
   }
 
-  mouseUp(mousePoint: MousePoint) {
-    const position: Point = this.calculateNewSelectionPosition(mousePoint.point);
+  mouseUp(event: TspMouseEvent) {
+    const position: Point = this.calculateNewSelectionPosition(event.point);
     this._addAction(new MoveSelectionAction(position));
 
     this._mouseIsDown = false;
@@ -25,9 +25,9 @@ export class MoveSelectionTool {
     this._currentPosition = position;
   }
 
-  mouseMove(mousePoint: MousePoint) {
+  mouseMove(event: TspMouseEvent) {
     if (this._mouseIsDown) {
-      const position: Point = this.calculateNewSelectionPosition(mousePoint.point);
+      const position: Point = this.calculateNewSelectionPosition(event.point);
       this._addAction(new MoveSelectionAction(position));
     }
   }
