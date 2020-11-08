@@ -22,3 +22,32 @@ To install the extension, follow these steps:
 - In the upper right corner enable **Developer mode**
 - In the upper left corner, click **Load unpacked**
 - In the directory picker, select the `ts-paint\ts-paint-chrome-extension` directory
+
+## Future plans
+
+### Immediate TODO list
+- Draw lines at 45°/90° angles when holding Shift
+- Eraser tool
+- Add option of using different line thicknesses
+- Text tool
+- Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
+- File/Save as window (Changing save location is not possible, but I can add the options of renaming the file or saving it as a JPG)
+- Use the _File System Access API_ to overwrite files directly, instead of saving changes to a new downloaded file
+- Image/Draw Opaque option
+- View/Zoom/Show Grid option
+
+### Nice to have
+- Different mouse cursors for different drawing tools
+- Polygon tool
+- Curve tool
+- Brush tool
+- Airbrush tool
+- View/View Bitmap option
+- File/Print (Possibility of printing the image without the UI)
+
+### Planned features that are not part of the original MS Paint
+- CSS Filter color effects (hue-rotate, brightness, contrast, etc.)
+- Transparency
+- Clipboard manager
+- Editing history window?
+- Layers?
