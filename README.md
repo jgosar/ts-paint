@@ -26,7 +26,6 @@ To install the extension, follow these steps:
 ## Future plans
 
 ### Immediate TODO list
-- Draw lines at 45°/90° angles when holding Shift
 - Eraser tool
 - Add option of using different line thicknesses
 - Text tool
@@ -49,5 +48,5 @@ To install the extension, follow these steps:
 - CSS Filter color effects (hue-rotate, brightness, contrast, etc.)
 - Transparency
 - Clipboard manager
-- Editing history window?
+- Editing history window + Export/import editing steps to/from JSON
 - Layers?
