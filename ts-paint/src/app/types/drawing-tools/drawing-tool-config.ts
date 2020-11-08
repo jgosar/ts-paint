@@ -8,6 +8,7 @@ import { PencilAction } from '../actions/drawing-tool-actions/pencil-action';
 import { RectangleAction } from '../actions/drawing-tool-actions/rectangle-action';
 import { RectangleSelectAction } from '../actions/drawing-tool-actions/rectangle-select-action';
 import { Point } from '../base/point';
+import { DrawingToolAngleSnap } from './drawing-tool-angle-snap';
 import { DrawingToolBehaviour } from './drawing-tool-behaviour';
 import { DrawingToolType } from './drawing-tool-type';
 
@@ -15,7 +16,8 @@ interface PartialDrawingToolConfig{
   behaviour: DrawingToolBehaviour,
   maxPoints: number,
   helpText: string,
-  invertedPreview: boolean
+  invertedPreview: boolean,
+  angleSnap: DrawingToolAngleSnap
 }
 
 export interface DrawingToolConfig extends PartialDrawingToolConfig{
@@ -26,7 +28,8 @@ export const DRAWING_TOOL_CONFIG_DEFAULTS: PartialDrawingToolConfig = {
       behaviour: DrawingToolBehaviour.SINGLE_POINT,
       maxPoints: 1,
       helpText:'',
-      invertedPreview: false
+      invertedPreview: false,
+      angleSnap: DrawingToolAngleSnap.NONE
 }
 
 export const DRAWING_TOOL_CONFIG: {[key in DrawingToolType]: DrawingToolConfig} = {
@@ -55,24 +58,28 @@ export const DRAWING_TOOL_CONFIG: {[key in DrawingToolType]: DrawingToolConfig} 
   [DrawingToolType.pencil]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.FREE_DRAW,
+      angleSnap: DrawingToolAngleSnap.EVERY_45_DEGREES,
       actionClass: PencilAction
   },
   [DrawingToolType.line]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
+      angleSnap: DrawingToolAngleSnap.EVERY_45_DEGREES,
       actionClass: LineAction
   },
   [DrawingToolType.rectangle]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
+      angleSnap: DrawingToolAngleSnap.EVERY_90_DEGREES,
       actionClass: RectangleAction
   },
   [DrawingToolType.ellipse]:{
       ...DRAWING_TOOL_CONFIG_DEFAULTS,
       behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
       maxPoints: 2,
+      angleSnap: DrawingToolAngleSnap.EVERY_90_DEGREES,
       actionClass: EllipseAction
   }
 }
