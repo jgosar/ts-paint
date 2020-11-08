@@ -46,7 +46,8 @@ export class DrawingTool {
     }
   }
 
-  mouseUp(point: Point) {
+  mouseUp(mousePoint: MousePoint) {
+    const point: Point = mousePoint.point;
     this._mouseIsDown = false;
 
     if (this._config.behaviour === DrawingToolBehaviour.CLICK_AND_DRAG) {

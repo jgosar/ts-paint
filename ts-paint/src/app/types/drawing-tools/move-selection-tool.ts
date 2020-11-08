@@ -16,8 +16,8 @@ export class MoveSelectionTool {
     this._mouseDownPoint = event.point;
   }
 
-  mouseUp(point: Point) {
-    const position: Point = this.calculateNewSelectionPosition(point);
+  mouseUp(mousePoint: MousePoint) {
+    const position: Point = this.calculateNewSelectionPosition(mousePoint.point);
     this._addAction(new MoveSelectionAction(position));
 
     this._mouseIsDown = false;

@@ -65,11 +65,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     }
   }
 
-  processMouseUp(point: Point) {
+  processMouseUp(mousePoint: MousePoint) {
     if (this.state.moveSelectionTool !== undefined) {
-      this.state.moveSelectionTool.mouseUp(point);
+      this.state.moveSelectionTool.mouseUp(mousePoint);
     } else {
-      this.state.selectedDrawingTool?.mouseUp(point);
+      this.state.selectedDrawingTool?.mouseUp(mousePoint);
     }
   }
 

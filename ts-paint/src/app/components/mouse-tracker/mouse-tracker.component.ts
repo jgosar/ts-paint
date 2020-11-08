@@ -20,7 +20,7 @@ export class MouseTrackerComponent implements OnChanges {
   @Output()
   mouseMove: EventEmitter<MousePoint> = new EventEmitter<MousePoint>();
   @Output()
-  mouseUp: EventEmitter<Point> = new EventEmitter<Point>();
+  mouseUp: EventEmitter<MousePoint> = new EventEmitter<MousePoint>();
   @Output()
   mouseDown: EventEmitter<MouseButtonEvent> = new EventEmitter<MouseButtonEvent>();
   @Output()
@@ -44,6 +44,7 @@ export class MouseTrackerComponent implements OnChanges {
     this.mouseMove.emit({
       point: this.getEventPoint(event),
       outsideCanvas,
+      shiftKey: event.shiftKey
     });
   }
 
@@ -64,7 +65,11 @@ export class MouseTrackerComponent implements OnChanges {
   onMouseUp(event: MouseEvent) {
     if (this._mouseIsDown) {
       this._mouseIsDown = false;
-      this.mouseUp.emit(this.getEventPoint(event));
+      this.mouseUp.emit({
+        point: this.getEventPoint(event),
+        outsideCanvas: false,
+        shiftKey: event.shiftKey
+      });
     }
   }
 
