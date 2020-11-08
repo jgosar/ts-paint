@@ -1,0 +1,36 @@
+@import 'variables';
+
+:host(tsp-fill-type-picker) {
+}
+
+.tsp-fill-type-picker__option {
+  width: 35px;
+  height: 18px;
+  margin: 2px 0px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.tsp-fill-type-picker__option--selected {
+  background-color: @color--dark-blue;
+}
+
+.tsp-fill-type-picker__option--EMPTYIcon {
+  background-image: url('../../../assets/icons/fill_empty.png');
+}
+
+.tsp-fill-type-picker__option--EMPTYIcon.tsp-fill-type-picker__option--selected {
+  background-image: url('../../../assets/icons/fill_empty_selected.png');
+}
+
+.tsp-fill-type-picker__option--FILL_SECONDARYIcon {
+  background-image: url('../../../assets/icons/fill_secondary.png');
+}
+
+.tsp-fill-type-picker__option--FILL_SECONDARYIcon.tsp-fill-type-picker__option--selected {
+  background-image: url('../../../assets/icons/fill_secondary_selected.png');
+}
+
+.tsp-fill-type-picker__option--FILL_PRIMARYIcon {
+  background-image: url('../../../assets/icons/fill_primary.png');
+}

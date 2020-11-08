@@ -12,6 +12,12 @@
           (selectedToolChange)="store.setDrawingTool($event)"
         >
         </tsp-toolbox>
+        <tsp-drawing-tool-options
+          [selectedTool]="store.state.selectedDrawingTool?.type"
+          [options]="store.state.drawingToolOptions"
+          (optionsChange)="store.setDrawingToolOptions($event)"
+        >
+        </tsp-drawing-tool-options>
       </div>
       <div class="tsp-depressed-item-container tsp-vertical-bar tsp-can-grow">
         <tsp-image-scroller

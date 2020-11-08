@@ -1,6 +1,6 @@
 import { Point } from '../types/base/point';
 import { Color } from '../types/base/color';
-import { getPixelOffset } from './image.helpers';
+import { fillAreaInOriginalImage, getPixelOffset } from './image.helpers';
 import { RectangleArea } from '../types/base/rectangle-area';
 import { isDefined } from '@angular/compiler/src/util';
 import { COLOR_WHITE } from '../services/ts-paint/ts-paint.config';
@@ -27,6 +27,14 @@ export function drawRectangle(
   drawLineFunction(corner2, corner3, color, image);
   drawLineFunction(corner3, corner4, color, image);
   drawLineFunction(corner4, corner1, color, image);
+}
+
+export function fillRectangle(
+  area: RectangleArea,
+  color: Color,
+  image: ImageData
+) {
+  fillAreaInOriginalImage(image, color, area);
 }
 
 export function drawEllipse(start: Point, end: Point, color: Color, image: ImageData) {

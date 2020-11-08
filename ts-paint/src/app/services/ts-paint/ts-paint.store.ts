@@ -38,6 +38,8 @@ import { CropAction } from 'src/app/types/actions/crop-action';
 import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-params';
 import { StretchImageAction } from 'src/app/types/actions/stretch-image-action';
 import { ImageFileData } from 'src/app/types/base/image-file-data';
+import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
+import { SetDrawingToolOptionsAction } from 'src/app/types/actions/set-drawing-tool-options-action';
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
@@ -137,6 +139,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   private clearPreview() {
     this.patchState(new ImageData(1, 1), 'previewImage');
+  }
+
+  setDrawingToolOptions(changedOptions: Partial<DrawingToolOptions>) {
+    const action: SetDrawingToolOptionsAction = new SetDrawingToolOptionsAction(changedOptions);
+    this.executeAction(action);
   }
 
   setColor(selection: ColorSelection) {
