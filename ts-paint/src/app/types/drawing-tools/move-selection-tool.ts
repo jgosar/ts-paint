@@ -1,7 +1,6 @@
 import { TspMouseEvent } from '../mouse-tracker/tsp-mouse-event';
 import { Point } from '../base/point';
 import { MoveSelectionAction } from '../actions/move-selection-action';
-import { TspMouseEvent } from '../mouse-tracker/tsp-mouse-event';
 
 export class MoveSelectionTool {
   constructor(private _addAction: (action: MoveSelectionAction) => void) {}
