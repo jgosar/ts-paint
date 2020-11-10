@@ -119,6 +119,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   pasteFile(pastedFile: File) {
     if (pastedFile !== null) {
       readImageDataFromFile(pastedFile).then((pastedImage) => {
+        this.clearPreview();
+        this.setDrawingTool(DrawingToolType.rectangleSelect);
         const action: PasteImageAction = new PasteImageAction(pastedImage);
         this.executeAction(action);
       });
