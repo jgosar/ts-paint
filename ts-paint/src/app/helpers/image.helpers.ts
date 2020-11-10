@@ -166,3 +166,7 @@ export function constrainPointToImage(image: ImageData, point: Point): Point {
   const h: number = Math.min(Math.max(0, point.h), (image?.height ?? 1) - 1);
   return { w, h };
 }
+
+export function unzoomPoint(zoomedPoint: Point, zoom: number): Point {
+  return { w: Math.floor(zoomedPoint.w / zoom), h: Math.floor(zoomedPoint.h / zoom) };
+}

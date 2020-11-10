@@ -14,7 +14,7 @@ import { OpenFileAction } from '../../types/actions/open-file-action';
 import { ClearImageAction } from '../../types/actions/clear-image-action';
 import { PasteImageAction } from '../../types/actions/paste-image-action';
 import { RectangleArea } from '../../types/base/rectangle-area';
-import { isPointInRectangle, copyImagePart } from '../../helpers/image.helpers';
+import { isPointInRectangle, copyImagePart, unzoomPoint } from '../../helpers/image.helpers';
 import { DeselectSelectionAction } from '../../types/actions/deselect-selection-action';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
 import {
@@ -121,7 +121,10 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
       readImageDataFromFile(pastedFile).then((pastedImage) => {
         this.clearPreview();
         this.setDrawingTool(DrawingToolType.rectangleSelect);
-        const action: PasteImageAction = new PasteImageAction(pastedImage);
+        const action: PasteImageAction = new PasteImageAction(
+          pastedImage,
+          unzoomPoint(this.state.scrollPosition, this.state.zoom)
+        );
         this.executeAction(action);
       });
     }
