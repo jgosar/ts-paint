@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TsPaintStoreState } from './ts-paint.store.state';
-import { Store } from 'rxjs-observable-store';
+import { Store } from './store';
 import { MenuActionType } from '../../types/menu/menu-action-type';
 import { assertUnreachable, isDefined } from '../../helpers/typescript.helpers';
 import { Point } from '../../types/base/point';
