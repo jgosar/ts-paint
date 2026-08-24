@@ -1,7 +1,6 @@
 import { MenuActionType } from './menu-action-type';
 import { MenuItem } from './menu-item';
-import { isEmpty } from 'src/app/helpers/typescript.helpers';
-import { isDefined } from '@angular/compiler/src/util';
+import { isDefined, isEmpty } from 'src/app/helpers/typescript.helpers';
 
 export function findMenuActionTypeByHotkeyEvent(menu: MenuItem[], event: KeyboardEvent): MenuActionType | undefined {
   return findMenuActionTypeByHotkeys(menu, getEventHotkeys(event));

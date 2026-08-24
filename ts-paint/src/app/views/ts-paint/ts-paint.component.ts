@@ -1,8 +1,8 @@
-import { isDefined } from '@angular/compiler/src/util';
 import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
+import { isDefined } from '../../helpers/typescript.helpers';
 
 @Component({
   selector: 'tsp-ts-paint',

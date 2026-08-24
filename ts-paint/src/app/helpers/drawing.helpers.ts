@@ -2,7 +2,7 @@ import { Point } from '../types/base/point';
 import { Color } from '../types/base/color';
 import { fillAreaInOriginalImage, getPixelOffset } from './image.helpers';
 import { RectangleArea } from '../types/base/rectangle-area';
-import { isDefined } from '@angular/compiler/src/util';
+import { isDefined } from './typescript.helpers';
 import { COLOR_WHITE } from '../services/ts-paint/ts-paint.config';
 
 export function drawLine(start: Point, end: Point, color: Color, image: ImageData) {
