@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from 
 import { ALL_FILL_TYPES, FillType } from 'src/app/types/drawing-tools/fill-type';
 
 @Component({
-  selector: 'tsp-fill-type-picker',
-  templateUrl: './fill-type-picker.component.html',
-  styleUrls: ['./fill-type-picker.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-fill-type-picker',
+    templateUrl: './fill-type-picker.component.html',
+    styleUrls: ['./fill-type-picker.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class FillTypePickerComponent {
   availableFillTypes: FillType[] = ALL_FILL_TYPES;

@@ -16,9 +16,10 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Point } from 'src/app/types/base/point';
 
 @Component({
-  selector: 'tsp-image-scroller',
-  templateUrl: './image-scroller.component.html',
-  styleUrls: ['./image-scroller.component.less'],
+    selector: 'tsp-image-scroller',
+    templateUrl: './image-scroller.component.html',
+    styleUrls: ['./image-scroller.component.less'],
+    standalone: false
 })
 export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('scrollerDiv', { static: true })

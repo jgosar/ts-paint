@@ -4,10 +4,11 @@ import { Point } from '../../types/base/point';
 import { drawDashedFrame } from '../../helpers/drawing.helpers';
 
 @Component({
-  selector: 'tsp-selection-frame',
-  templateUrl: './selection-frame.component.html',
-  styleUrls: ['./selection-frame.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-selection-frame',
+    templateUrl: './selection-frame.component.html',
+    styleUrls: ['./selection-frame.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class SelectionFrameComponent implements OnChanges {
   @Input()

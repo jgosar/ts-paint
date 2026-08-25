@@ -5,9 +5,10 @@ import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { isDefined } from '../../helpers/typescript.helpers';
 
 @Component({
-  selector: 'tsp-ts-paint',
-  templateUrl: './ts-paint.component.html',
-  styleUrls: ['./ts-paint.component.less'],
+    selector: 'tsp-ts-paint',
+    templateUrl: './ts-paint.component.html',
+    styleUrls: ['./ts-paint.component.less'],
+    standalone: false
 })
 export class TsPaintComponent implements OnInit {
   constructor(public store: TsPaintStore, private activatedRoute: ActivatedRoute) {

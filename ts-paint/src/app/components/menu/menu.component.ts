@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter, Elemen
 import { MenuItem } from '../../types/menu/menu-item';
 
 @Component({
-  selector: 'tsp-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-menu',
+    templateUrl: './menu.component.html',
+    styleUrls: ['./menu.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class MenuComponent {
   @Input()

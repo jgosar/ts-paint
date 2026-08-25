@@ -12,10 +12,11 @@ import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { FillType } from 'src/app/types/drawing-tools/fill-type';
 
 @Component({
-  selector: 'tsp-drawing-tool-options',
-  templateUrl: './drawing-tool-options.component.html',
-  styleUrls: ['./drawing-tool-options.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-drawing-tool-options',
+    templateUrl: './drawing-tool-options.component.html',
+    styleUrls: ['./drawing-tool-options.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class DrawingToolOptionsComponent implements OnChanges {
   @Input()

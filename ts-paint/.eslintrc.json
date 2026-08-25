@@ -46,7 +46,8 @@
           }
         ],
         "@angular-eslint/no-empty-lifecycle-method": "off",
-        "@angular-eslint/no-output-native": "off"
+        "@angular-eslint/no-output-native": "off",
+        "@angular-eslint/prefer-standalone": "off"
       }
     },
     {

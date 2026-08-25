@@ -3,10 +3,11 @@ import { Color } from '../../types/base/color';
 import { ColorSelection } from '../../types/base/color-selection';
 
 @Component({
-  selector: 'tsp-palette',
-  templateUrl: './palette.component.html',
-  styleUrls: ['./palette.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-palette',
+    templateUrl: './palette.component.html',
+    styleUrls: ['./palette.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class PaletteComponent {
   @Input()

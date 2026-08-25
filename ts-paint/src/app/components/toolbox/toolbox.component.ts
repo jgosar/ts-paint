@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from 
 import { ALL_DRAWING_TOOL_TYPES, DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 
 @Component({
-  selector: 'tsp-toolbox',
-  templateUrl: './toolbox.component.html',
-  styleUrls: ['./toolbox.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-toolbox',
+    templateUrl: './toolbox.component.html',
+    styleUrls: ['./toolbox.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ToolboxComponent {
   availableTools: DrawingToolType[] = ALL_DRAWING_TOOL_TYPES;

@@ -12,10 +12,11 @@ import { Point } from '../../types/base/point';
 import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
 
 @Component({
-  selector: 'tsp-attributes-window',
-  templateUrl: './attributes-window.component.html',
-  styleUrls: ['./attributes-window.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-attributes-window',
+    templateUrl: './attributes-window.component.html',
+    styleUrls: ['./attributes-window.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class AttributesWindowComponent implements OnInit, OnChanges {
   @ViewChild('widthInput', { static: true })

@@ -5,10 +5,11 @@ import { FlipRotateWindowActionOption } from './flip-rotate-window-action-option
 import { FlipRotateWindowAngleOption } from './flip-rotate-window-angle-option';
 
 @Component({
-  selector: 'tsp-flip-rotate-window',
-  templateUrl: './flip-rotate-window.component.html',
-  styleUrls: ['./flip-rotate-window.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-flip-rotate-window',
+    templateUrl: './flip-rotate-window.component.html',
+    styleUrls: ['./flip-rotate-window.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class FlipRotateWindowComponent implements OnInit, OnChanges {
   @Input()
