@@ -11,7 +11,7 @@ function getEventHotkeys(event: KeyboardEvent): string[] {
   if (event.altKey) {
     hotkeys.push('Alt');
   }
-  if (event.ctrlKey) {
+  if (event.ctrlKey || event.metaKey) {
     hotkeys.push('Ctrl');
   }
   if (event.shiftKey) {
@@ -19,7 +19,7 @@ function getEventHotkeys(event: KeyboardEvent): string[] {
   }
 
   const pressedKey: string = event.key.length === 1 ? event.key.toUpperCase() : event.key;
-  if (!['Alt', 'Control', 'Shift'].includes(pressedKey)) {
+  if (!['Alt', 'Control', 'Meta', 'Shift'].includes(pressedKey)) {
     hotkeys.push(pressedKey);
   }
 
