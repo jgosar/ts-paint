@@ -126,8 +126,9 @@
       }
     }
   },
-  "defaultProject": "ts-paint",
   "cli": {
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }
