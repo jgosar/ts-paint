@@ -74,18 +74,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "ts-paint:build"
+            "buildTarget": "ts-paint:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "ts-paint:build:production"
+              "buildTarget": "ts-paint:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ts-paint:build"
+            "buildTarget": "ts-paint:build"
           }
         },
         "test": {
