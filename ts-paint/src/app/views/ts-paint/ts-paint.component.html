@@ -10,13 +10,13 @@
         <tsp-toolbox
           [selectedTool]="store.state.selectedDrawingTool?.type"
           (selectedToolChange)="store.setDrawingTool($event)"
-        >
+          >
         </tsp-toolbox>
         <tsp-drawing-tool-options
           [selectedTool]="store.state.selectedDrawingTool?.type"
           [options]="store.state.drawingToolOptions"
           (optionsChange)="store.setDrawingToolOptions($event)"
-        >
+          >
         </tsp-drawing-tool-options>
       </div>
       <div class="tsp-depressed-item-container tsp-vertical-bar tsp-can-grow">
@@ -26,7 +26,7 @@
           (contextmenu)="$event.preventDefault()"
           (scrollPositionChange)="this.store.setScrollPosition($event)"
           (viewportSizeChange)="this.store.setViewportSize($event)"
-        >
+          >
           <div class="tsp-ts-paint__image-padding">
             <tsp-zoomable-canvas [zoom]="store.state.zoom" [image]="store.state.image"></tsp-zoomable-canvas>
             <tsp-zoomable-canvas
@@ -55,7 +55,7 @@
               (mouseMove)="store.processMouseMove($event)"
               (mouseDown)="store.processMouseDown($event)"
               (mouseUp)="store.processMouseUp($event)"
-            >
+              >
             </tsp-mouse-tracker>
           </div>
         </tsp-image-scroller>
@@ -68,7 +68,7 @@
         [selectedSecondaryColor]="this.store.state.secondaryColor"
         [availableColors]="this.store.state.availableColors"
         (selectedColorChange)="this.store.setColor($event)"
-      >
+        >
       </tsp-palette>
     </div>
 
@@ -82,28 +82,33 @@
   </div>
 </tsp-modal-window>
 
-<tsp-attributes-window
-  *ngIf="store.state.attributesWindowOpen"
-  [image]="store.state.image"
-  (saveChanges)="this.store.changeAttributes($event)"
-  (cancel)="this.store.closeAttributesWindow()"
->
-</tsp-attributes-window>
+@if (store.state.attributesWindowOpen) {
+  <tsp-attributes-window
+    [image]="store.state.image"
+    (saveChanges)="this.store.changeAttributes($event)"
+    (cancel)="this.store.closeAttributesWindow()"
+    >
+  </tsp-attributes-window>
+}
 
-<tsp-flip-rotate-window
-  *ngIf="store.state.flipRotateWindowOpen"
-  [image]="store.state.image"
-  (saveChanges)="this.store.flipRotate($event)"
-  (cancel)="this.store.closeFlipRotateWindow()"
->
-</tsp-flip-rotate-window>
+@if (store.state.flipRotateWindowOpen) {
+  <tsp-flip-rotate-window
+    [image]="store.state.image"
+    (saveChanges)="this.store.flipRotate($event)"
+    (cancel)="this.store.closeFlipRotateWindow()"
+    >
+  </tsp-flip-rotate-window>
+}
 
-<tsp-stretch-skew-window
-  *ngIf="store.state.stretchSkewWindowOpen"
-  (saveChanges)="this.store.stretchSkew($event)"
-  (cancel)="this.store.closeStretchSkewWindow()"
->
-</tsp-stretch-skew-window>
+@if (store.state.stretchSkewWindowOpen) {
+  <tsp-stretch-skew-window
+    (saveChanges)="this.store.stretchSkew($event)"
+    (cancel)="this.store.closeStretchSkewWindow()"
+    >
+  </tsp-stretch-skew-window>
+}
 
-<tsp-about-paint-window *ngIf="store.state.aboutPaintWindowOpen" (ok)="this.store.closeAboutPaintWindow()">
-</tsp-about-paint-window>
+@if (store.state.aboutPaintWindowOpen) {
+  <tsp-about-paint-window (ok)="this.store.closeAboutPaintWindow()">
+  </tsp-about-paint-window>
+}

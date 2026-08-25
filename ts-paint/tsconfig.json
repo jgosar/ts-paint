@@ -12,11 +12,6 @@
     "importHelpers": true,
     "noUnusedLocals": true,
     "target": "ES2022",
-    "lib": [
-      "es2018",
-      "dom",
-      "dom.iterable"
-    ],
     "useDefineForClassFields": false
   },
   "angularCompilerOptions": {

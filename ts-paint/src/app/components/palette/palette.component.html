@@ -15,12 +15,14 @@
       </div>
     </div>
   </div>
-  <div *ngFor="let color of availableColors" class="tsp-depressed-item-container">
-    <div
-      class="tsp-depressed-item tsp-palette__color-button"
-      [style.background-color]="getRgb(color)"
-      (click)="selectColor($event, color)"
-      (contextmenu)="selectColor($event, color)"
-    ></div>
-  </div>
+  @for (color of availableColors; track color) {
+    <div class="tsp-depressed-item-container">
+      <div
+        class="tsp-depressed-item tsp-palette__color-button"
+        [style.background-color]="getRgb(color)"
+        (click)="selectColor($event, color)"
+        (contextmenu)="selectColor($event, color)"
+      ></div>
+    </div>
+  }
 </div>

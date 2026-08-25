@@ -1,6 +1,7 @@
-<div
-  *ngFor="let tool of availableTools"
-  class="tsp-button tsp-toolbox__button"
-  [ngClass]="getNgClass(tool)"
-  (click)="selectTool(tool)"
-></div>
+@for (tool of availableTools; track tool) {
+  <div
+    class="tsp-button tsp-toolbox__button"
+    [ngClass]="getNgClass(tool)"
+    (click)="selectTool(tool)"
+  ></div>
+}

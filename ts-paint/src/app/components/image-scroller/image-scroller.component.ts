@@ -82,7 +82,7 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
     }
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     // @ts-ignore
     const viewportSize: Point = {

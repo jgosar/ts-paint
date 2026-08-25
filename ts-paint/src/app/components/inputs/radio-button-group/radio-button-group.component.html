@@ -1,12 +1,14 @@
-<div class="tsp-horizontal-bar tsp-radio-button-group__item" *ngFor="let option of options; let i = index">
-  <input
-    class="tsp-radio-button"
-    type="radio"
-    name="{{ groupName }}"
-    id="{{ groupName + '-' + i }}"
-    [value]="option"
-    [(ngModel)]="selectedOptionInternal"
-    [attr.disabled]="disabled ? '' : null"
-  />
-  <label for="{{ groupName + '-' + i }}" [attr.disabled]="disabled ? '' : null">{{ option.name }}</label>
-</div>
+@for (option of options; track option; let i = $index) {
+  <div class="tsp-horizontal-bar tsp-radio-button-group__item">
+    <input
+      class="tsp-radio-button"
+      type="radio"
+      name="{{ groupName }}"
+      id="{{ groupName + '-' + i }}"
+      [value]="option"
+      [(ngModel)]="selectedOptionInternal"
+      [attr.disabled]="disabled ? '' : null"
+      />
+    <label for="{{ groupName + '-' + i }}" [attr.disabled]="disabled ? '' : null">{{ option.name }}</label>
+  </div>
+}
