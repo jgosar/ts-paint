@@ -11,8 +11,13 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "noUnusedLocals": true,
-    "target": "es2020",
-    "lib": ["es2018", "dom", "dom.iterable"]
+    "target": "ES2022",
+    "lib": [
+      "es2018",
+      "dom",
+      "dom.iterable"
+    ],
+    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
