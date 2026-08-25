@@ -1,14 +1,21 @@
 import { ImageFileData } from '../types/base/image-file-data';
+import { ImageFileFormat } from '../types/base/image-file-format';
 import { loadImageToCanvas } from './canvas.helpers';
 
 const CORS__PROXY_URL: string = 'https://cors-anywhere.herokuapp.com/';
 
-export function saveFile(fileData: ImageFileData) {
+const IMAGE_FILE_FORMAT_INFO: Record<ImageFileFormat, { extension: string; mimeType: string; quality?: number }> = {
+  png: { extension: 'png', mimeType: 'image/png' },
+  jpeg: { extension: 'jpg', mimeType: 'image/jpeg', quality: 0.9 },
+};
+
+export function saveFile(fileData: ImageFileData, format: ImageFileFormat = 'png') {
+  const { extension, mimeType, quality } = IMAGE_FILE_FORMAT_INFO[format];
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const downloadLink: HTMLAnchorElement = document.createElement('a');
   loadImageToCanvas(fileData.imageData, canvas);
-  downloadLink.href = canvas.toDataURL('image/png');
-  downloadLink.download = fileData.fileName + '.png';
+  downloadLink.href = canvas.toDataURL(mimeType, quality);
+  downloadLink.download = fileData.fileName + '.' + extension;
   downloadLink.click();
 }
 

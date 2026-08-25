@@ -37,6 +37,7 @@ import { CropAction } from 'src/app/types/actions/crop-action';
 import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-params';
 import { StretchImageAction } from 'src/app/types/actions/stretch-image-action';
 import { ImageFileData } from 'src/app/types/base/image-file-data';
+import { ImageFileFormat } from 'src/app/types/base/image-file-format';
 import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
 import { SetDrawingToolOptionsAction } from 'src/app/types/actions/set-drawing-tool-options-action';
 
@@ -178,6 +179,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         return this.openFile.bind(this);
       case MenuActionType.SAVE_FILE:
         return this.saveFile.bind(this);
+      case MenuActionType.SAVE_AS:
+        return this.openSaveAsWindow.bind(this);
       case MenuActionType.UNDO:
         return this.undo.bind(this);
       case MenuActionType.REPEAT:
@@ -358,6 +361,24 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   closeAttributesWindow() {
     this.patchState(false, 'attributesWindowOpen');
+  }
+
+  ////////////////////////////// Save As window //////////////////////////////
+
+  private openSaveAsWindow() {
+    this.patchState(true, 'saveAsWindowOpen');
+  }
+
+  saveFileAs(params: { fileName: string; format: ImageFileFormat }) {
+    this.closeSaveAsWindow();
+    this.deselectIfSelected();
+    this.patchState(params.fileName, 'fileName');
+    saveFile({ imageData: this.state.image, fileName: params.fileName }, params.format);
+    this.patchState(false, 'unsavedChanges');
+  }
+
+  closeSaveAsWindow() {
+    this.patchState(false, 'saveAsWindowOpen');
   }
 
   ////////////////////////////// About Paint window //////////////////////////////

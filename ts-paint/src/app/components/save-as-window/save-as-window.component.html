@@ -1,0 +1,35 @@
+<tsp-modal-window
+  [title]="'Save As'"
+  [closable]="true"
+  (closeClicked)="cancel.emit()"
+  (keyup.enter)="okClicked()"
+  (keyup.escape)="cancel.emit()"
+>
+  <div class="tsp-vertical-bar tsp-save-as-window__container">
+    <label class="tsp-horizontal-bar">
+      <span class="tsp-save-as-window__label">File name:</span>
+      <input
+        #fileNameInput
+        type="text"
+        class="tsp-save-as-window__file-name-input"
+        [value]="fileNameValue()"
+        (input)="fileNameValue.set($any($event.target).value)"
+      />
+    </label>
+    <label class="tsp-horizontal-bar">
+      <span class="tsp-save-as-window__label">Save as type:</span>
+      <select
+        class="tsp-save-as-window__format-select"
+        [value]="format()"
+        (change)="format.set($any($event.target).value)"
+      >
+        <option value="png">PNG</option>
+        <option value="jpeg">JPEG</option>
+      </select>
+    </label>
+    <div class="tsp-horizontal-bar">
+      <button class="tsp-button tsp-text-button" (click)="okClicked()">Save</button>
+      <button class="tsp-button tsp-text-button" (click)="cancel.emit()">Cancel</button>
+    </div>
+  </div>
+</tsp-modal-window>

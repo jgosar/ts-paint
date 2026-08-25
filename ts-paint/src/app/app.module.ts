@@ -12,6 +12,7 @@ import { PaletteComponent } from './components/palette/palette.component';
 import { SelectionFrameComponent } from './components/selection-frame/selection-frame.component';
 import { ModalWindowComponent } from './components/modal-window/modal-window.component';
 import { AttributesWindowComponent } from './components/attributes-window/attributes-window.component';
+import { SaveAsWindowComponent } from './components/save-as-window/save-as-window.component';
 import { FormsModule } from '@angular/forms';
 import { IntegerInputComponent } from './components/inputs/integer-input/integer-input.component';
 import { FooterInfoComponent } from './components/footer-info/footer-info.component';
@@ -37,6 +38,7 @@ import { FillTypePickerComponent } from './components/fill-type-picker/fill-type
     SelectionFrameComponent,
     ModalWindowComponent,
     AttributesWindowComponent,
+    SaveAsWindowComponent,
     FlipRotateWindowComponent,
     StretchSkewWindowComponent,
     AboutPaintWindowComponent,
