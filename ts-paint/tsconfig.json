@@ -8,7 +8,7 @@
     "declaration": false,
     "experimentalDecorators": true,
     "module": "es2020",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "importHelpers": true,
     "noUnusedLocals": true,
     "target": "ES2022",
