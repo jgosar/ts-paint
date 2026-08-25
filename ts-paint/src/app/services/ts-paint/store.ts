@@ -1,20 +1,20 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export abstract class Store<S> {
-  private readonly stateSubject: BehaviorSubject<S>;
+  private readonly _stateSubject: BehaviorSubject<S>;
   readonly state$: Observable<S>;
 
   protected constructor(initialState: S) {
-    this.stateSubject = new BehaviorSubject(initialState);
-    this.state$ = this.stateSubject.asObservable();
+    this._stateSubject = new BehaviorSubject(initialState);
+    this.state$ = this._stateSubject.asObservable();
   }
 
   get state(): S {
-    return this.stateSubject.getValue();
+    return this._stateSubject.getValue();
   }
 
   setState(nextState: S): void {
-    this.stateSubject.next(nextState);
+    this._stateSubject.next(nextState);
   }
 
   patchState(value: any, ...path: Array<string | number>): void {
