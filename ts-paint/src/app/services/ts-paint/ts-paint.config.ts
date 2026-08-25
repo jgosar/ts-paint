@@ -51,7 +51,7 @@ export const MENU_STRUCTURE: MenuItem[] = [
       },
       {
         name: 'Save As...',
-        disabled: true,
+        action: MenuActionType.SAVE_AS,
       },
       {},
       {

@@ -1,0 +1,47 @@
+@import 'variables';
+
+:host(tsp-dropdown) {
+  display: flex;
+  background-color: white;
+}
+
+.tsp-dropdown {
+  position: relative;
+
+  .tsp-dropdown__input {
+    padding-bottom: 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    line-height: 11px;
+  }
+}
+
+.tsp-dropdown__arrow {
+  width: 20px;
+  flex-shrink: 0;
+}
+
+.tsp-dropdown__list-container {
+  position: absolute;
+  z-index: 2;
+  top: 100%;
+  left: 0;
+  right: 0;
+}
+
+.tsp-dropdown__list {
+  background-color: white;
+}
+
+.tsp-dropdown__option {
+  display: flex;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+
+.tsp-dropdown__option:hover {
+  background-color: @color--dark-blue;
+  color: white;
+}

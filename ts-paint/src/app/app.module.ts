@@ -12,11 +12,14 @@ import { PaletteComponent } from './components/palette/palette.component';
 import { SelectionFrameComponent } from './components/selection-frame/selection-frame.component';
 import { ModalWindowComponent } from './components/modal-window/modal-window.component';
 import { AttributesWindowComponent } from './components/attributes-window/attributes-window.component';
+import { SaveAsWindowComponent } from './components/save-as-window/save-as-window.component';
 import { FormsModule } from '@angular/forms';
 import { IntegerInputComponent } from './components/inputs/integer-input/integer-input.component';
 import { FooterInfoComponent } from './components/footer-info/footer-info.component';
 import { FlipRotateWindowComponent } from './components/flip-rotate-window/flip-rotate-window.component';
 import { RadioButtonGroupComponent } from './components/inputs/radio-button-group/radio-button-group.component';
+import { DropdownComponent } from './components/inputs/dropdown/dropdown.component';
+import { TextInputComponent } from './components/inputs/text-input/text-input.component';
 import { AboutPaintWindowComponent } from './components/about-paint-window/about-paint-window.component';
 import { ImageScrollerComponent } from './components/image-scroller/image-scroller.component';
 import { StretchSkewWindowComponent } from './components/stretch-skew-window/stretch-skew-window.component';
@@ -37,6 +40,7 @@ import { FillTypePickerComponent } from './components/fill-type-picker/fill-type
     SelectionFrameComponent,
     ModalWindowComponent,
     AttributesWindowComponent,
+    SaveAsWindowComponent,
     FlipRotateWindowComponent,
     StretchSkewWindowComponent,
     AboutPaintWindowComponent,
@@ -45,6 +49,8 @@ import { FillTypePickerComponent } from './components/fill-type-picker/fill-type
     FillTypePickerComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module
+    DropdownComponent, // TODO: make a separate inputs module
+    TextInputComponent, // TODO: make a separate inputs module
   ],
   imports: [BrowserModule, FormsModule, RouterModule.forRoot([], {})],
   providers: [TsPaintStore],

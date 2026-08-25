@@ -2,6 +2,7 @@ export enum MenuActionType {
   NEW,
   OPEN_FILE,
   SAVE_FILE,
+  SAVE_AS,
   UNDO,
   REPEAT,
   CUT,

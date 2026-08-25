@@ -37,6 +37,7 @@ export class TsPaintStoreState {
   flipRotateWindowOpen: boolean = false;
   aboutPaintWindowOpen: boolean = false;
   stretchSkewWindowOpen: boolean = false;
+  saveAsWindowOpen: boolean = false;
   mousePosition: Point;
   unsavedChanges: boolean = false;
   menuStructure: MenuItem[] = MENU_STRUCTURE;
