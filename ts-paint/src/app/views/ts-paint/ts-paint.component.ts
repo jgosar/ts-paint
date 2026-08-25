@@ -12,8 +12,8 @@ import { isDefined } from '../../helpers/typescript.helpers';
   standalone: false,
 })
 export class TsPaintComponent implements OnInit {
-  constructor(public store: TsPaintStore, private activatedRoute: ActivatedRoute) {
-    this.activatedRoute.queryParams.subscribe((params) => {
+  constructor(public store: TsPaintStore, private _activatedRoute: ActivatedRoute) {
+    this._activatedRoute.queryParams.subscribe((params) => {
       if (isDefined(params['imageUrl'])) {
         store.loadFileFromUrl(params['imageUrl']);
       }
