@@ -18,6 +18,8 @@ import { IntegerInputComponent } from './components/inputs/integer-input/integer
 import { FooterInfoComponent } from './components/footer-info/footer-info.component';
 import { FlipRotateWindowComponent } from './components/flip-rotate-window/flip-rotate-window.component';
 import { RadioButtonGroupComponent } from './components/inputs/radio-button-group/radio-button-group.component';
+import { DropdownComponent } from './components/inputs/dropdown/dropdown.component';
+import { TextInputComponent } from './components/inputs/text-input/text-input.component';
 import { AboutPaintWindowComponent } from './components/about-paint-window/about-paint-window.component';
 import { ImageScrollerComponent } from './components/image-scroller/image-scroller.component';
 import { StretchSkewWindowComponent } from './components/stretch-skew-window/stretch-skew-window.component';
@@ -47,6 +49,8 @@ import { FillTypePickerComponent } from './components/fill-type-picker/fill-type
     FillTypePickerComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module
+    DropdownComponent, // TODO: make a separate inputs module
+    TextInputComponent, // TODO: make a separate inputs module
   ],
   imports: [BrowserModule, FormsModule, RouterModule.forRoot([], {})],
   providers: [TsPaintStore],

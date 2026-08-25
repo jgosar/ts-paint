@@ -1,0 +1,19 @@
+<div class="tsp-horizontal-bar tsp-dropdown" tabindex="0" (blur)="close()" (keyup.escape)="closeOnEscape($any($event))">
+  <div class="tsp-depressed-item-container tsp-can-grow" (click)="toggleOpen()">
+    <div class="tsp-text-input tsp-depressed-item tsp-dropdown__input">{{ selectedLabel() }}
+      <button type="button" class="tsp-button tsp-dropdown__arrow">▼</button>
+    </div>
+  </div>
+  
+  @if (isOpen()) {
+    <div class="tsp-raised-item-container tsp-dropdown__list-container">
+      <div class="tsp-raised-item tsp-dropdown__list">
+        @for (option of options(); track option.value) {
+          <div class="tsp-dropdown__option" [class.tsp-dropdown__option--selected]="option.value === value()" (click)="selectOption(option)">
+            {{ option.label }}
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

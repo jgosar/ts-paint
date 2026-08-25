@@ -8,27 +8,22 @@
   <div class="tsp-vertical-bar tsp-save-as-window__container">
     <label class="tsp-horizontal-bar">
       <span class="tsp-save-as-window__label">File name:</span>
-      <input
+      <tsp-text-input
         #fileNameInput
-        type="text"
-        class="tsp-save-as-window__file-name-input"
+        class="tsp-can-grow"
         [value]="fileNameValue()"
-        (input)="fileNameValue.set($any($event.target).value)"
-      />
-    </label>
-    <label class="tsp-horizontal-bar">
-      <span class="tsp-save-as-window__label">Save as type:</span>
-      <select
-        class="tsp-save-as-window__format-select"
-        [value]="format()"
-        (change)="format.set($any($event.target).value)"
-      >
-        <option value="png">PNG</option>
-        <option value="jpeg">JPEG</option>
-      </select>
+        (valueChange)="fileNameValue.set($event)"
+      ></tsp-text-input>
+      <button class="tsp-button tsp-text-button" (click)="okClicked()">Save</button>
     </label>
     <div class="tsp-horizontal-bar">
-      <button class="tsp-button tsp-text-button" (click)="okClicked()">Save</button>
+      <span class="tsp-save-as-window__label">Save as type:</span>
+      <tsp-dropdown
+        class="tsp-can-grow"
+        [value]="format()"
+        [options]="formatOptions"
+        (valueChange)="format.set($event)"
+      ></tsp-dropdown>
       <button class="tsp-button tsp-text-button" (click)="cancel.emit()">Cancel</button>
     </div>
   </div>
