@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnCha
 import { Point } from '../../types/base/point';
 
 @Component({
-  selector: 'tsp-zoomable-canvas',
-  templateUrl: './zoomable-canvas.component.html',
-  styleUrls: ['./zoomable-canvas.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-zoomable-canvas',
+    templateUrl: './zoomable-canvas.component.html',
+    styleUrls: ['./zoomable-canvas.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ZoomableCanvasComponent implements OnChanges {
   @Input()

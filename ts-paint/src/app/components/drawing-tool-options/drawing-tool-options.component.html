@@ -1,7 +1,8 @@
 <div class="tsp-depressed-item-container tsp-drawing-tool-options__container">
-  <tsp-fill-type-picker
-    *ngIf="displayedPicker === 'fillTypePicker'"
-    [selectedFillType]="selectedFillType"
-    (selectedFillTypeChange)="changeSelectedFillType($event)"
-  ></tsp-fill-type-picker>
+  @if (displayedPicker === 'fillTypePicker') {
+    <tsp-fill-type-picker
+      [selectedFillType]="selectedFillType"
+      (selectedFillTypeChange)="changeSelectedFillType($event)"
+    ></tsp-fill-type-picker>
+  }
 </div>

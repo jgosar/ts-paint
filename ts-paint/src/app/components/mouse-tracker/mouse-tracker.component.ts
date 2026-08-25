@@ -5,10 +5,11 @@ import { MouseButton } from 'src/app/types/mouse-tracker/mouse-button';
 import { constrainPointToImage, unzoomPoint } from 'src/app/helpers/image.helpers';
 
 @Component({
-  selector: 'tsp-mouse-tracker',
-  templateUrl: './mouse-tracker.component.html',
-  styleUrls: ['./mouse-tracker.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-mouse-tracker',
+    templateUrl: './mouse-tracker.component.html',
+    styleUrls: ['./mouse-tracker.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class MouseTrackerComponent implements OnChanges {
   @Input()

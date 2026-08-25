@@ -46,7 +46,7 @@ import { FillTypePickerComponent } from './components/fill-type-picker/fill-type
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module
   ],
-  imports: [BrowserModule, FormsModule, RouterModule.forRoot([])],
+  imports: [BrowserModule, FormsModule, RouterModule.forRoot([], {})],
   providers: [TsPaintStore],
   bootstrap: [AppComponent],
 })

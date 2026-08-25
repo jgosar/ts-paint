@@ -10,10 +10,11 @@ import {
 import { RadioButtonOption } from './radio-button-option';
 
 @Component({
-  selector: 'tsp-radio-button-group',
-  templateUrl: './radio-button-group.component.html',
-  styleUrls: ['./radio-button-group.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-radio-button-group',
+    templateUrl: './radio-button-group.component.html',
+    styleUrls: ['./radio-button-group.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class RadioButtonGroupComponent implements OnChanges {
   @Input()

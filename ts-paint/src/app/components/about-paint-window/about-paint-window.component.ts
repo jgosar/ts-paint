@@ -2,10 +2,11 @@ import { Component, ChangeDetectionStrategy, Output, EventEmitter } from '@angul
 import { getOsVersion } from 'src/app/helpers/environment.helpers';
 
 @Component({
-  selector: 'tsp-about-paint-window',
-  templateUrl: './about-paint-window.component.html',
-  styleUrls: ['./about-paint-window.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-about-paint-window',
+    templateUrl: './about-paint-window.component.html',
+    styleUrls: ['./about-paint-window.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class AboutPaintWindowComponent {
   @Output()

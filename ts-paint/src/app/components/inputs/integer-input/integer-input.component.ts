@@ -13,10 +13,11 @@ import { simulateTextChange } from '../../../helpers/text-input.helpers';
 import { validateMinMax } from '../../../helpers/numeric.helpers';
 
 @Component({
-  selector: 'tsp-integer-input',
-  templateUrl: './integer-input.component.html',
-  styleUrls: ['./integer-input.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-integer-input',
+    templateUrl: './integer-input.component.html',
+    styleUrls: ['./integer-input.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class IntegerInputComponent implements OnChanges {
   @ViewChild('inputElement', { static: true })

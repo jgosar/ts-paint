@@ -1,13 +1,15 @@
-import { isDefined } from '@angular/compiler/src/util';
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectionStrategy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
+import { isDefined } from '../../helpers/typescript.helpers';
 
 @Component({
   selector: 'tsp-ts-paint',
   templateUrl: './ts-paint.component.html',
   styleUrls: ['./ts-paint.component.less'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class TsPaintComponent implements OnInit {
   constructor(public store: TsPaintStore, private activatedRoute: ActivatedRoute) {

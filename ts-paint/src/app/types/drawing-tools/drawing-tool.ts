@@ -7,7 +7,7 @@ import { TspMouseEvent } from '../mouse-tracker/tsp-mouse-event';
 import { DrawingToolConfig, DRAWING_TOOL_CONFIG } from './drawing-tool-config';
 import { calculateShapeDimensions } from 'src/app/helpers/drawing.helpers';
 import { DrawingToolAngleSnap } from './drawing-tool-angle-snap';
-import { isDefined } from '@angular/compiler/src/util';
+import { isDefined } from 'src/app/helpers/typescript.helpers';
 
 export class DrawingTool {
   private readonly _config: DrawingToolConfig;

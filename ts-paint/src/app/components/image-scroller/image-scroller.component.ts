@@ -10,6 +10,7 @@ import {
   Renderer2,
   AfterViewInit,
   HostListener,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -19,6 +20,8 @@ import { Point } from 'src/app/types/base/point';
   selector: 'tsp-image-scroller',
   templateUrl: './image-scroller.component.html',
   styleUrls: ['./image-scroller.component.less'],
+  changeDetection: ChangeDetectionStrategy.Eager,
+  standalone: false,
 })
 export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('scrollerDiv', { static: true })
@@ -81,7 +84,7 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
     }
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     // @ts-ignore
     const viewportSize: Point = {

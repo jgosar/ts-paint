@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TsPaintComponent } from './ts-paint.component';
 
@@ -6,7 +6,7 @@ describe('TsPaintComponent', () => {
   let component: TsPaintComponent;
   let fixture: ComponentFixture<TsPaintComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [TsPaintComponent],
     }).compileComponents();

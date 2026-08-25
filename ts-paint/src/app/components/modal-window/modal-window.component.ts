@@ -1,10 +1,11 @@
 import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmitter } from '@angular/core';
 
 @Component({
-  selector: 'tsp-modal-window',
-  templateUrl: './modal-window.component.html',
-  styleUrls: ['./modal-window.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-modal-window',
+    templateUrl: './modal-window.component.html',
+    styleUrls: ['./modal-window.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class ModalWindowComponent implements OnChanges {
   @Input()

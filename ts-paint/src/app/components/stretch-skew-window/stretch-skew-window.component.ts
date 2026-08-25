@@ -3,10 +3,11 @@ import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-para
 import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
 
 @Component({
-  selector: 'tsp-stretch-skew-window',
-  templateUrl: './stretch-skew-window.component.html',
-  styleUrls: ['./stretch-skew-window.component.less'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'tsp-stretch-skew-window',
+    templateUrl: './stretch-skew-window.component.html',
+    styleUrls: ['./stretch-skew-window.component.less'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class StretchSkewWindowComponent implements OnInit {
   @ViewChild('stretchHorizontalInput', { static: true })
