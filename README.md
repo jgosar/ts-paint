@@ -15,7 +15,7 @@ The project is still at an early stage of development, but the general roadmap i
 - Add lots of new features that MS Paint did not support (the sky is the limit)
 
 ## Chrome extension
-As a fun exercise, I have also implemented an extension for Google Chrome.
+As a fun exercise, I have also implemented an extension for Google Chrome. It uses Manifest V3, so it works in current versions of Chrome.
 It adds the option 'Edit in TS Paint' to the context menu when you right-click on an image on any website, which loads the image into TS Paint in a new tab.
 To install the extension, follow these steps:
 - Go to chrome://extensions

@@ -1,17 +1,15 @@
 {
-    "manifest_version": 2,
-    "name": "TS Paint image opener",
-    "version": "1.0",
-    "description": "Adds the option 'Edit in TS Paint' to the context menu when you right-click on an image.",
-    "permissions": [
-      "contextMenus"
-     ],
-    "background": { 
-      "scripts": ["background.js"]
-    },
-    "icons": {
-      "16": "images/paint16.png",
-      "32": "images/paint32.png",
-      "48": "images/paint32.png"
-    }
+  "manifest_version": 3,
+  "name": "TS Paint image opener",
+  "version": "2.0",
+  "description": "Adds the option 'Edit in TS Paint' to the context menu when you right-click on an image.",
+  "permissions": ["contextMenus"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "images/paint16.png",
+    "32": "images/paint32.png",
+    "48": "images/paint32.png"
+  }
 }
