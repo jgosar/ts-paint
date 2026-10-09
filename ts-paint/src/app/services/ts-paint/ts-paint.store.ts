@@ -22,6 +22,7 @@ import {
   showFileUploadDialog,
   readImageDataFromFile,
   getFileNameWithoutExtension,
+  getImageFileFormat,
   readImageDataFromUrl,
 } from '../../helpers/image-file.helpers';
 import { ResizeImageAction } from '../../types/actions/resize-image-action';
@@ -101,7 +102,11 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   loadFile(file: File) {
     readImageDataFromFile(file).then((imageData) => {
-      const fileData: ImageFileData = { imageData, fileName: getFileNameWithoutExtension(file.name) };
+      const fileData: ImageFileData = {
+        imageData,
+        fileName: getFileNameWithoutExtension(file.name),
+        fileFormat: getImageFileFormat(file.name, file.type),
+      };
       const action: OpenFileAction = new OpenFileAction(fileData);
       this.executeAction(action);
     });
@@ -110,8 +115,9 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   loadFileFromUrl(imageUrl: string) {
     const splitUrl: string[] = imageUrl.split('/');
     const fileName: string = getFileNameWithoutExtension(splitUrl[splitUrl.length - 1]);
+    const fileFormat: ImageFileFormat = getImageFileFormat(splitUrl[splitUrl.length - 1]);
     readImageDataFromUrl(imageUrl).then((imageData) => {
-      const fileData: ImageFileData = { imageData, fileName };
+      const fileData: ImageFileData = { imageData, fileName, fileFormat };
       const action: OpenFileAction = new OpenFileAction(fileData);
       this.executeAction(action);
     });
@@ -227,7 +233,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   private saveFile() {
     this.deselectIfSelected();
-    saveFile({ imageData: this.state.image, fileName: this.state.fileName });
+    saveFile({ imageData: this.state.image, fileName: this.state.fileName, fileFormat: this.state.fileFormat });
     this.patchState(false, 'unsavedChanges');
   }
 
@@ -373,7 +379,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.closeSaveAsWindow();
     this.deselectIfSelected();
     this.patchState(params.fileName, 'fileName');
-    saveFile({ imageData: this.state.image, fileName: params.fileName }, params.format);
+    this.patchState(params.format, 'fileFormat');
+    saveFile({ imageData: this.state.image, fileName: params.fileName, fileFormat: params.format });
     this.patchState(false, 'unsavedChanges');
   }
 

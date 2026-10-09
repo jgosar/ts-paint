@@ -9,8 +9,8 @@ const IMAGE_FILE_FORMAT_INFO: Record<ImageFileFormat, { extension: string; mimeT
   jpeg: { extension: 'jpg', mimeType: 'image/jpeg', quality: 0.9 },
 };
 
-export function saveFile(fileData: ImageFileData, format: ImageFileFormat = 'png') {
-  const { extension, mimeType, quality } = IMAGE_FILE_FORMAT_INFO[format];
+export function saveFile(fileData: ImageFileData) {
+  const { extension, mimeType, quality } = IMAGE_FILE_FORMAT_INFO[fileData.fileFormat];
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const downloadLink: HTMLAnchorElement = document.createElement('a');
   loadImageToCanvas(fileData.imageData, canvas);
@@ -26,10 +26,11 @@ export function showFileUploadDialog(): Promise<ImageFileData> {
     fileInput.onchange = (fileUploadEvent: any) => {
       const uploadedFile: File = fileUploadEvent.target.files[0];
       const fileName: string = getFileNameWithoutExtension(uploadedFile.name);
+      const fileFormat: ImageFileFormat = getImageFileFormat(uploadedFile.name, uploadedFile.type);
       getImageDataFromUpload(
         uploadedFile,
         (imageData: ImageData) => {
-          resolve({ imageData, fileName });
+          resolve({ imageData, fileName, fileFormat });
         },
         reject
       );
@@ -56,6 +57,17 @@ export function getFileNameWithoutExtension(fileName: string): string {
   }
 
   return fileName;
+}
+
+export function getImageFileFormat(fileName: string, mimeType?: string): ImageFileFormat {
+  const extension: string = fileName.includes('.')
+    ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase()
+    : '';
+  if (mimeType === IMAGE_FILE_FORMAT_INFO.jpeg.mimeType || ['jpg', 'jpeg'].includes(extension)) {
+    return 'jpeg';
+  }
+
+  return 'png';
 }
 
 function getImageDataFromUpload(

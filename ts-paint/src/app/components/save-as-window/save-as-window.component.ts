@@ -17,6 +17,7 @@ const FORMAT_OPTIONS: DropdownOption<ImageFileFormat>[] = [
 })
 export class SaveAsWindowComponent implements OnInit, AfterViewInit {
   readonly fileName = input.required<string>();
+  readonly fileFormat = input.required<ImageFileFormat>();
   readonly save = output<{ fileName: string; format: ImageFileFormat }>();
   readonly cancel = output<void>();
 
@@ -28,6 +29,7 @@ export class SaveAsWindowComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.fileNameValue.set(this.fileName());
+    this.format.set(this.fileFormat());
   }
 
   ngAfterViewInit(): void {
