@@ -28,3 +28,17 @@ interface Window {
   showOpenFilePicker?(options?: OpenFilePickerOptions): Promise<FileSystemFileHandle[]>;
   showSaveFilePicker?(options?: SaveFilePickerOptions): Promise<FileSystemFileHandle>;
 }
+
+// Launch Queue (web app manifest file_handlers, Chromium only).
+interface LaunchParams {
+  readonly files: ReadonlyArray<FileSystemHandle>;
+  readonly targetURL?: string;
+}
+
+interface LaunchQueue {
+  setConsumer(consumer: (params: LaunchParams) => void): void;
+}
+
+interface Window {
+  launchQueue?: LaunchQueue;
+}

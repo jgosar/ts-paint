@@ -1,11 +1,9 @@
 @import 'variables';
 
 :host(tsp-modal-window) {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  // Not 100vw/100vh: viewport units are not adjusted by the CSS zoom applied by PixelScalingService
+  position: fixed;
+  inset: 0;
 }
 
 .tsp-modal-window__container {
@@ -22,10 +20,9 @@
 }
 
 .tsp-modal-window__container--fullscreen {
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
+  inset: 0;
+  width: auto;
+  height: auto;
   box-sizing: border-box;
   transform: none;
 }

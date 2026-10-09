@@ -1,15 +1,24 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnChanges,
+  Output,
+  EventEmitter,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { Point } from '../../types/base/point';
 import { TspMouseEvent } from 'src/app/types/mouse-tracker/tsp-mouse-event';
 import { MouseButton } from 'src/app/types/mouse-tracker/mouse-button';
 import { constrainPointToImage, unzoomPoint } from 'src/app/helpers/image.helpers';
 
 @Component({
-    selector: 'tsp-mouse-tracker',
-    templateUrl: './mouse-tracker.component.html',
-    styleUrls: ['./mouse-tracker.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'tsp-mouse-tracker',
+  templateUrl: './mouse-tracker.component.html',
+  styleUrls: ['./mouse-tracker.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class MouseTrackerComponent implements OnChanges {
   @Input()
@@ -29,6 +38,8 @@ export class MouseTrackerComponent implements OnChanges {
   zoomedHeight: number = 0;
   private _mouseIsDown: boolean = false;
   private _lastMouseOut: MouseEvent;
+  @ViewChild('trackerDiv', { static: true })
+  private _trackerDiv: ElementRef<HTMLDivElement>;
 
   ngOnChanges(): void {
     this.zoomedWidth = (this.image?.width ?? 1) * this.zoom;
@@ -90,8 +101,12 @@ export class MouseTrackerComponent implements OnChanges {
   }
 
   private getEventPoint(event: MouseEvent | WheelEvent): Point {
-    // @ts-ignore
-    const eventPoint: Point = unzoomPoint({ w: event.layerX, h: event.layerY }, this.zoom);
+    // The bounding rect is affected by CSS zoom (see PixelScalingService) while zoomedWidth is not, so the ratio
+    // between them converts client coordinates into the tracker's own coordinate space.
+    const rect: DOMRect = this._trackerDiv.nativeElement.getBoundingClientRect();
+    const scale: number = rect.width > 0 ? this.zoomedWidth / rect.width : 1;
+    const localPoint: Point = { w: (event.clientX - rect.left) * scale, h: (event.clientY - rect.top) * scale };
+    const eventPoint: Point = unzoomPoint(localPoint, this.zoom);
     return constrainPointToImage(this.image, eventPoint);
   }
 }
