@@ -11,13 +11,16 @@ export class OpenFileAction extends TsPaintAction {
   }
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
-    const patches: Partial<TsPaintStoreState> = { fileName: this.fileData.fileName };
+    const patches: Partial<TsPaintStoreState> = {
+      fileName: this.fileData.fileName,
+      fileFormat: this.fileData.fileFormat,
+    };
     const image: ImageData = this.fileData.imageData;
 
     return { image, patches };
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
-    return [new OpenFileAction({ imageData: state.image, fileName: state.fileName })];
+    return [new OpenFileAction({ imageData: state.image, fileName: state.fileName, fileFormat: state.fileFormat })];
   }
 }

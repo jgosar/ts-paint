@@ -91,6 +91,16 @@
   </tsp-attributes-window>
 }
 
+@if (store.state.saveAsWindowOpen) {
+  <tsp-save-as-window
+    [fileName]="store.state.fileName"
+    [fileFormat]="store.state.fileFormat"
+    (save)="this.store.saveFileAs($event)"
+    (cancel)="this.store.closeSaveAsWindow()"
+    >
+  </tsp-save-as-window>
+}
+
 @if (store.state.flipRotateWindowOpen) {
   <tsp-flip-rotate-window
     [image]="store.state.image"

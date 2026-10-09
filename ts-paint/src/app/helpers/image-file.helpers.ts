@@ -1,14 +1,21 @@
 import { ImageFileData } from '../types/base/image-file-data';
+import { ImageFileFormat } from '../types/base/image-file-format';
 import { loadImageToCanvas } from './canvas.helpers';
 
 const CORS__PROXY_URL: string = 'https://cors-anywhere.herokuapp.com/';
 
+const IMAGE_FILE_FORMAT_INFO: Record<ImageFileFormat, { extension: string; mimeType: string; quality?: number }> = {
+  png: { extension: 'png', mimeType: 'image/png' },
+  jpeg: { extension: 'jpg', mimeType: 'image/jpeg', quality: 0.9 },
+};
+
 export function saveFile(fileData: ImageFileData) {
+  const { extension, mimeType, quality } = IMAGE_FILE_FORMAT_INFO[fileData.fileFormat];
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const downloadLink: HTMLAnchorElement = document.createElement('a');
   loadImageToCanvas(fileData.imageData, canvas);
-  downloadLink.href = canvas.toDataURL('image/png');
-  downloadLink.download = fileData.fileName + '.png';
+  downloadLink.href = canvas.toDataURL(mimeType, quality);
+  downloadLink.download = fileData.fileName + '.' + extension;
   downloadLink.click();
 }
 
@@ -19,10 +26,11 @@ export function showFileUploadDialog(): Promise<ImageFileData> {
     fileInput.onchange = (fileUploadEvent: any) => {
       const uploadedFile: File = fileUploadEvent.target.files[0];
       const fileName: string = getFileNameWithoutExtension(uploadedFile.name);
+      const fileFormat: ImageFileFormat = getImageFileFormat(uploadedFile.name, uploadedFile.type);
       getImageDataFromUpload(
         uploadedFile,
         (imageData: ImageData) => {
-          resolve({ imageData, fileName });
+          resolve({ imageData, fileName, fileFormat });
         },
         reject
       );
@@ -49,6 +57,17 @@ export function getFileNameWithoutExtension(fileName: string): string {
   }
 
   return fileName;
+}
+
+export function getImageFileFormat(fileName: string, mimeType?: string): ImageFileFormat {
+  const extension: string = fileName.includes('.')
+    ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase()
+    : '';
+  if (mimeType === IMAGE_FILE_FORMAT_INFO.jpeg.mimeType || ['jpg', 'jpeg'].includes(extension)) {
+    return 'jpeg';
+  }
+
+  return 'png';
 }
 
 function getImageDataFromUpload(
