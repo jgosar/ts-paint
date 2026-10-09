@@ -1,7 +1,7 @@
 <div class="tsp-horizontal-bar tsp-dropdown" tabindex="0" (blur)="close()" (keyup.escape)="closeOnEscape($any($event))">
   <div class="tsp-depressed-item-container tsp-can-grow" (click)="toggleOpen()">
     <div class="tsp-text-input tsp-depressed-item tsp-dropdown__input">{{ selectedLabel() }}
-      <button type="button" class="tsp-button tsp-dropdown__arrow">▼</button>
+      <button type="button" class="tsp-button tsp-dropdown__arrow" aria-label="Open list"></button>
     </div>
   </div>
   
