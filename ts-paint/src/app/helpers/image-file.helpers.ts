@@ -1,23 +1,31 @@
 import { ImageFileData } from '../types/base/image-file-data';
-import { ImageFileFormat } from '../types/base/image-file-format';
+import {
+  DEFAULT_IMAGE_FILE_FORMAT,
+  IMAGE_FILE_FORMAT_INFO,
+  IMAGE_FILE_FORMATS,
+  ImageFileFormat,
+} from '../types/base/image-file-format';
 import { loadImageToCanvas } from './canvas.helpers';
 
 const CORS__PROXY_URL: string = 'https://cors-anywhere.herokuapp.com/';
 
-const IMAGE_FILE_FORMAT_INFO: Record<ImageFileFormat, { extension: string; mimeType: string; quality?: number }> = {
-  png: { extension: 'png', mimeType: 'image/png' },
-  jpeg: { extension: 'jpg', mimeType: 'image/jpeg', quality: 0.9 },
-};
-
-const IMAGE_PICKER_ACCEPT_TYPES: Record<ImageFileFormat, FilePickerAcceptType> = {
-  png: { description: 'PNG image', accept: { 'image/png': ['.png'] } },
-  jpeg: { description: 'JPEG image', accept: { 'image/jpeg': ['.jpg', '.jpeg'] } },
-};
+// Formats the browser can decode and the app can open, but cannot save back to.
+const READ_ONLY_IMAGE_EXTENSIONS: string[] = ['gif', 'bmp', 'webp'];
 
 const OPEN_PICKER_ACCEPT_TYPE: FilePickerAcceptType = {
   description: 'Images',
-  accept: { 'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp'] },
+  accept: {
+    'image/*': [
+      ...IMAGE_FILE_FORMATS.flatMap((format) => IMAGE_FILE_FORMAT_INFO[format].extensions),
+      ...READ_ONLY_IMAGE_EXTENSIONS,
+    ].map((extension) => '.' + extension),
+  },
 };
+
+function getPickerAcceptType(format: ImageFileFormat): FilePickerAcceptType {
+  const { description, mimeType, extensions } = IMAGE_FILE_FORMAT_INFO[format];
+  return { description, accept: { [mimeType]: extensions.map((extension) => '.' + extension) } };
+}
 
 export function isFileSystemAccessSupported(): boolean {
   return typeof window.showOpenFilePicker === 'function' && typeof window.showSaveFilePicker === 'function';
@@ -66,11 +74,13 @@ export async function writeImageToFileHandle(
 }
 
 export function showSaveFilePickerForImage(fileName: string, format: ImageFileFormat): Promise<FileSystemFileHandle> {
-  const otherFormat: ImageFileFormat = format === 'png' ? 'jpeg' : 'png';
+  // Current format first, as the picker preselects the first type
+  const formats: ImageFileFormat[] = [format, ...IMAGE_FILE_FORMATS.filter((other) => other !== format)];
 
   return window.showSaveFilePicker({
     suggestedName: fileName + '.' + IMAGE_FILE_FORMAT_INFO[format].extension,
-    types: [IMAGE_PICKER_ACCEPT_TYPES[format], IMAGE_PICKER_ACCEPT_TYPES[otherFormat]],
+    types: formats.map(getPickerAcceptType),
+    excludeAcceptAllOption: true, // the browser then appends a matching extension, so the saved bytes match the name
   });
 }
 
@@ -107,7 +117,8 @@ async function showFileOpenPicker(): Promise<ImageFileData> {
     imageData,
     fileName: getFileNameWithoutExtension(file.name),
     fileFormat: getImageFileFormat(file.name, file.type),
-    fileHandle,
+    // Only keep the handle for formats we can save back to; otherwise Save falls through to the save picker.
+    fileHandle: isWritableImageFileName(file.name) ? fileHandle : undefined,
   };
 }
 
@@ -132,14 +143,26 @@ export function getFileNameWithoutExtension(fileName: string): string {
 }
 
 export function getImageFileFormat(fileName: string, mimeType?: string): ImageFileFormat {
-  const extension: string = fileName.includes('.')
-    ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase()
-    : '';
-  if (mimeType === IMAGE_FILE_FORMAT_INFO.jpeg.mimeType || ['jpg', 'jpeg'].includes(extension)) {
-    return 'jpeg';
-  }
+  return (
+    getImageFileFormatByExtension(fileName) ??
+    IMAGE_FILE_FORMATS.find((format) => IMAGE_FILE_FORMAT_INFO[format].mimeType === mimeType) ??
+    DEFAULT_IMAGE_FILE_FORMAT
+  );
+}
 
-  return 'png';
+// True when the file's extension belongs to a format the app can write back, so that saving to its handle
+// does not put bytes of a different format into e.g. a .gif file.
+export function isWritableImageFileName(fileName: string): boolean {
+  return getImageFileFormatByExtension(fileName) !== undefined;
+}
+
+function getImageFileFormatByExtension(fileName: string): ImageFileFormat | undefined {
+  const extension: string = getFileExtension(fileName);
+  return IMAGE_FILE_FORMATS.find((format) => IMAGE_FILE_FORMAT_INFO[format].extensions.includes(extension));
+}
+
+function getFileExtension(fileName: string): string {
+  return fileName.includes('.') ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() : '';
 }
 
 function getImageDataFromUpload(

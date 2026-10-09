@@ -30,8 +30,6 @@ To install the extension, follow these steps:
 - Add option of using different line thicknesses
 - Text tool
 - Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
-- File/Save as window (Changing save location is not possible, but I can add the options of renaming the file or saving it as a JPG)
-- Use the _File System Access API_ to overwrite files directly, instead of saving changes to a new downloaded file
 - Image/Draw Opaque option
 - View/Zoom/Show Grid option
 

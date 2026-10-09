@@ -26,6 +26,7 @@ import {
   readImageDataFromFile,
   getFileNameWithoutExtension,
   getImageFileFormat,
+  isWritableImageFileName,
   readImageDataFromUrl,
   writeImageToFileHandle,
 } from '../../helpers/image-file.helpers';
@@ -104,13 +105,16 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   ////////////////////////////// File operations //////////////////////////////
 
-  async loadFile(file: File): Promise<void> {
+  async loadFile(file: File, fileHandle: Promise<FileSystemHandle | null> = Promise.resolve(null)): Promise<void> {
     await this.confirmSaveBeforeReplacingImage();
     const imageData: ImageData = await readImageDataFromFile(file);
+    const handle: FileSystemHandle | null = await fileHandle;
     const fileData: ImageFileData = {
       imageData,
       fileName: getFileNameWithoutExtension(file.name),
       fileFormat: getImageFileFormat(file.name, file.type),
+      fileHandle:
+        handle?.kind === 'file' && isWritableImageFileName(file.name) ? (handle as FileSystemFileHandle) : undefined,
     };
     this.executeAction(new OpenFileAction(fileData));
   }

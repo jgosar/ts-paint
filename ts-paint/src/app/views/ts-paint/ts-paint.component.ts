@@ -42,9 +42,14 @@ export class TsPaintComponent implements OnInit {
   onDrop(event: any) {
     event.preventDefault();
     event.stopPropagation();
-    const pastedFile: File = event.dataTransfer.items[0].getAsFile();
+    const droppedItem: DataTransferItem = event.dataTransfer.items[0];
+    const droppedFile: File = droppedItem.getAsFile();
+    // Chromium only: must be requested synchronously inside the drop handler, the promise can be awaited later.
+    const fileHandle: Promise<FileSystemHandle | null> = droppedItem.getAsFileSystemHandle
+      ? droppedItem.getAsFileSystemHandle().catch(() => null)
+      : Promise.resolve(null);
 
-    this.store.loadFile(pastedFile);
+    this.store.loadFile(droppedFile, fileHandle);
   }
 
   @HostListener('window:keydown', ['$event'])
