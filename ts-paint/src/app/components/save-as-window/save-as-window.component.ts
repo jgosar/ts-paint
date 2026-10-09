@@ -37,6 +37,11 @@ export class SaveAsWindowComponent implements OnInit, AfterViewInit {
   }
 
   okClicked() {
-    this.save.emit({ fileName: this.fileNameValue(), format: this.format() });
+    const fileName: string = this.fileNameValue().trim();
+    if (fileName === '') {
+      this._fileNameInput()?.focus();
+      return;
+    }
+    this.save.emit({ fileName, format: this.format() });
   }
 }
