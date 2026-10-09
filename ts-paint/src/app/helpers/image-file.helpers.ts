@@ -2,7 +2,9 @@ import { ImageFileData } from '../types/base/image-file-data';
 import { ImageFileFormat } from '../types/base/image-file-format';
 import { loadImageToCanvas } from './canvas.helpers';
 
-const CORS__PROXY_URL: string = 'https://cors-anywhere.herokuapp.com/';
+// Public image proxy that adds CORS headers, used only when the image's own host refuses a direct cross-origin load.
+// output=png keeps the pixels lossless.
+const CORS_PROXY_URL: string = 'https://images.weserv.nl/?output=png&url=';
 
 const IMAGE_FILE_FORMAT_INFO: Record<ImageFileFormat, { extension: string; mimeType: string; quality?: number }> = {
   png: { extension: 'png', mimeType: 'image/png' },
@@ -91,26 +93,36 @@ function loadImageFromUrl(
   callback: (imageData: ImageData) => void,
   errorCallback: (reason: string) => void
 ) {
+  loadImage(imgUrl)
+    .catch((error: unknown) => {
+      // A web URL fails the direct load when its host does not send CORS headers; retry through the proxy
+      if (imgUrl.startsWith('http')) {
+        return loadImage(CORS_PROXY_URL + encodeURIComponent(imgUrl));
+      }
+      throw error;
+    })
+    .then(
+      (image: HTMLImageElement) => callback(getImageDataFromImage(image)),
+      () => errorCallback('Something went wrong, are you sure you pasted an image?')
+    );
+}
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image: HTMLImageElement = new Image();
+    image.crossOrigin = 'anonymous'; // Must be set before src, otherwise the canvas gets tainted
+    image.onload = () => resolve(image);
+    image.onerror = () => reject(new Error('Could not load image from ' + src));
+    image.src = src;
+  });
+}
+
+function getImageDataFromImage(image: HTMLImageElement): ImageData {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
-  const image: HTMLImageElement = new Image();
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const context: CanvasRenderingContext2D = canvas.getContext('2d');
+  context.drawImage(image, 0, 0);
 
-  if (imgUrl.startsWith('http')) {
-    image.src = CORS__PROXY_URL + imgUrl; // It's a web URL, so we need to access it through a proxy to avoid CORS errors
-  } else {
-    image.src = imgUrl; // It's a data URL, so we can access it directly
-  }
-
-  image.setAttribute('crossOrigin', '');
-  image.onload = () => {
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const context: CanvasRenderingContext2D = canvas.getContext('2d');
-    context.drawImage(image, 0, 0);
-
-    const imageData: ImageData = context.getImageData(0, 0, image.width, image.height);
-    callback(imageData);
-  };
-  image.onerror = () => {
-    errorCallback('Something went wrong, are you sure you pasted an image?');
-  };
+  return context.getImageData(0, 0, image.width, image.height);
 }
