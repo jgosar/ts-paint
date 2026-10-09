@@ -27,6 +27,7 @@ export class TsPaintStoreState {
   moveSelectionTool: MoveSelectionTool;
   fileName: string = 'untitled';
   fileFormat: ImageFileFormat = 'png';
+  fileHandle: FileSystemFileHandle | undefined = undefined;
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = COLOR_WHITE;
   availableColors: Color[] = DEFAULT_AVAILABLE_COLORS;

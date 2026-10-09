@@ -9,7 +9,25 @@ const IMAGE_FILE_FORMAT_INFO: Record<ImageFileFormat, { extension: string; mimeT
   jpeg: { extension: 'jpg', mimeType: 'image/jpeg', quality: 0.9 },
 };
 
-export function saveFile(fileData: ImageFileData) {
+const IMAGE_PICKER_ACCEPT_TYPES: Record<ImageFileFormat, FilePickerAcceptType> = {
+  png: { description: 'PNG image', accept: { 'image/png': ['.png'] } },
+  jpeg: { description: 'JPEG image', accept: { 'image/jpeg': ['.jpg', '.jpeg'] } },
+};
+
+const OPEN_PICKER_ACCEPT_TYPE: FilePickerAcceptType = {
+  description: 'Images',
+  accept: { 'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.bmp', '.webp'] },
+};
+
+export function isFileSystemAccessSupported(): boolean {
+  return typeof window.showOpenFilePicker === 'function' && typeof window.showSaveFilePicker === 'function';
+}
+
+export function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError';
+}
+
+export function downloadFile(fileData: ImageFileData) {
   const { extension, mimeType, quality } = IMAGE_FILE_FORMAT_INFO[fileData.fileFormat];
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const downloadLink: HTMLAnchorElement = document.createElement('a');
@@ -19,7 +37,48 @@ export function saveFile(fileData: ImageFileData) {
   downloadLink.click();
 }
 
+export function renderImageToBlob(imageData: ImageData, format: ImageFileFormat): Promise<Blob> {
+  const { mimeType, quality } = IMAGE_FILE_FORMAT_INFO[format];
+  const canvas: HTMLCanvasElement = document.createElement('canvas');
+  loadImageToCanvas(imageData, canvas);
+
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (blob: Blob | null) => (blob ? resolve(blob) : reject(new Error('Could not encode image as ' + mimeType))),
+      mimeType,
+      quality
+    );
+  });
+}
+
+export async function writeImageToFileHandle(
+  handle: FileSystemFileHandle,
+  imageData: ImageData,
+  format: ImageFileFormat
+): Promise<void> {
+  const blob: Blob = await renderImageToBlob(imageData, format);
+  const writable: FileSystemWritableFileStream = await handle.createWritable();
+  try {
+    await writable.write(blob);
+  } finally {
+    await writable.close();
+  }
+}
+
+export function showSaveFilePickerForImage(fileName: string, format: ImageFileFormat): Promise<FileSystemFileHandle> {
+  const otherFormat: ImageFileFormat = format === 'png' ? 'jpeg' : 'png';
+
+  return window.showSaveFilePicker({
+    suggestedName: fileName + '.' + IMAGE_FILE_FORMAT_INFO[format].extension,
+    types: [IMAGE_PICKER_ACCEPT_TYPES[format], IMAGE_PICKER_ACCEPT_TYPES[otherFormat]],
+  });
+}
+
 export function showFileUploadDialog(): Promise<ImageFileData> {
+  if (isFileSystemAccessSupported()) {
+    return showFileOpenPicker();
+  }
+
   return new Promise<ImageFileData>((resolve, reject) => {
     const fileInput: HTMLInputElement = document.createElement('input');
     fileInput.type = 'file';
@@ -37,6 +96,19 @@ export function showFileUploadDialog(): Promise<ImageFileData> {
     };
     fileInput.click();
   });
+}
+
+async function showFileOpenPicker(): Promise<ImageFileData> {
+  const [fileHandle] = await window.showOpenFilePicker({ types: [OPEN_PICKER_ACCEPT_TYPE] });
+  const file: File = await fileHandle.getFile();
+  const imageData: ImageData = await readImageDataFromFile(file);
+
+  return {
+    imageData,
+    fileName: getFileNameWithoutExtension(file.name),
+    fileFormat: getImageFileFormat(file.name, file.type),
+    fileHandle,
+  };
 }
 
 export function readImageDataFromFile(imageFile: File): Promise<ImageData> {

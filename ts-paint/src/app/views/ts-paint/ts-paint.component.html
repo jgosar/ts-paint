@@ -95,7 +95,7 @@
   <tsp-save-as-window
     [fileName]="store.state.fileName"
     [fileFormat]="store.state.fileFormat"
-    (save)="this.store.saveFileAs($event)"
+    (save)="this.store.saveFileFromSaveAsWindow($event)"
     (cancel)="this.store.closeSaveAsWindow()"
     >
   </tsp-save-as-window>
