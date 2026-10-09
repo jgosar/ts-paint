@@ -18,12 +18,17 @@ import { isPointInRectangle, copyImagePart, unzoomPoint } from '../../helpers/im
 import { DeselectSelectionAction } from '../../types/actions/deselect-selection-action';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
 import {
-  saveFile,
+  downloadFile,
+  isAbortError,
+  isFileSystemAccessSupported,
   showFileUploadDialog,
+  showSaveFilePickerForImage,
   readImageDataFromFile,
   getFileNameWithoutExtension,
   getImageFileFormat,
+  isWritableImageFileName,
   readImageDataFromUrl,
+  writeImageToFileHandle,
 } from '../../helpers/image-file.helpers';
 import { ResizeImageAction } from '../../types/actions/resize-image-action';
 import { findMenuActionTypeByHotkeyEvent } from 'src/app/types/menu/menu-hotkey.helpers';
@@ -100,27 +105,34 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   ////////////////////////////// File operations //////////////////////////////
 
-  loadFile(file: File) {
-    readImageDataFromFile(file).then((imageData) => {
-      const fileData: ImageFileData = {
-        imageData,
-        fileName: getFileNameWithoutExtension(file.name),
-        fileFormat: getImageFileFormat(file.name, file.type),
-      };
-      const action: OpenFileAction = new OpenFileAction(fileData);
-      this.executeAction(action);
-    });
+  async loadFile(file: File, fileHandle: Promise<FileSystemHandle | null> = Promise.resolve(null)): Promise<void> {
+    await this.confirmSaveBeforeReplacingImage();
+    const imageData: ImageData = await readImageDataFromFile(file);
+    const handle: FileSystemHandle | null = await fileHandle;
+    const fileData: ImageFileData = {
+      imageData,
+      fileName: getFileNameWithoutExtension(file.name),
+      fileFormat: getImageFileFormat(file.name, file.type),
+      fileHandle:
+        handle?.kind === 'file' && isWritableImageFileName(file.name) ? (handle as FileSystemFileHandle) : undefined,
+    };
+    this.executeAction(new OpenFileAction(fileData));
   }
 
-  loadFileFromUrl(imageUrl: string) {
+  async loadFileFromUrl(imageUrl: string): Promise<void> {
+    await this.confirmSaveBeforeReplacingImage();
     const splitUrl: string[] = imageUrl.split('/');
     const fileName: string = getFileNameWithoutExtension(splitUrl[splitUrl.length - 1]);
     const fileFormat: ImageFileFormat = getImageFileFormat(splitUrl[splitUrl.length - 1]);
-    readImageDataFromUrl(imageUrl).then((imageData) => {
-      const fileData: ImageFileData = { imageData, fileName, fileFormat };
-      const action: OpenFileAction = new OpenFileAction(fileData);
-      this.executeAction(action);
-    });
+    const imageData: ImageData = await readImageDataFromUrl(imageUrl);
+    const fileData: ImageFileData = { imageData, fileName, fileFormat };
+    this.executeAction(new OpenFileAction(fileData));
+  }
+
+  private async confirmSaveBeforeReplacingImage(): Promise<void> {
+    if (this.state.unsavedChanges && this.userWantsToSaveImage()) {
+      await this.saveFile();
+    }
   }
 
   pasteFile(pastedFile: File) {
@@ -186,7 +198,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
       case MenuActionType.SAVE_FILE:
         return this.saveFile.bind(this);
       case MenuActionType.SAVE_AS:
-        return this.openSaveAsWindow.bind(this);
+        return this.saveFileAs.bind(this);
       case MenuActionType.UNDO:
         return this.undo.bind(this);
       case MenuActionType.REPEAT:
@@ -224,16 +236,70 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     location.reload();
   }
 
-  private openFile() {
-    showFileUploadDialog().then((selectedFile) => {
-      const action: OpenFileAction = new OpenFileAction(selectedFile);
-      this.executeAction(action);
-    });
+  private async openFile(): Promise<void> {
+    await this.confirmSaveBeforeReplacingImage();
+    try {
+      const selectedFile: ImageFileData = await showFileUploadDialog();
+      this.executeAction(new OpenFileAction(selectedFile));
+    } catch (error) {
+      if (!isAbortError(error)) {
+        throw error;
+      }
+    }
   }
 
-  private saveFile() {
+  private async saveFile(): Promise<void> {
     this.deselectIfSelected();
-    saveFile({ imageData: this.state.image, fileName: this.state.fileName, fileFormat: this.state.fileFormat });
+    if (!isFileSystemAccessSupported()) {
+      this.downloadCurrentImage();
+      return;
+    }
+    if (this.state.fileHandle) {
+      await this.writeToHandle(this.state.fileHandle);
+    } else {
+      await this.saveFileAs();
+    }
+  }
+
+  private async saveFileAs(): Promise<void> {
+    if (!isFileSystemAccessSupported()) {
+      this.openSaveAsWindow();
+      return;
+    }
+    this.deselectIfSelected();
+    let fileHandle: FileSystemFileHandle;
+    try {
+      fileHandle = await showSaveFilePickerForImage(this.state.fileName, this.state.fileFormat);
+    } catch (error) {
+      if (isAbortError(error)) {
+        return;
+      }
+      throw error;
+    }
+    this.patchState(getFileNameWithoutExtension(fileHandle.name), 'fileName');
+    this.patchState(getImageFileFormat(fileHandle.name), 'fileFormat');
+    this.patchState(fileHandle, 'fileHandle');
+    await this.writeToHandle(fileHandle);
+  }
+
+  private async writeToHandle(fileHandle: FileSystemFileHandle): Promise<void> {
+    const imageData: ImageData = this.state.image;
+    const fileName: string = this.state.fileName;
+    const fileFormat: ImageFileFormat = this.state.fileFormat;
+    try {
+      await writeImageToFileHandle(fileHandle, imageData, fileFormat);
+    } catch (error) {
+      if (isAbortError(error)) {
+        return;
+      }
+      // Permission denied or write failed: fall back to a download so the work is not lost.
+      downloadFile({ imageData, fileName, fileFormat });
+    }
+    this.patchState(false, 'unsavedChanges');
+  }
+
+  private downloadCurrentImage() {
+    downloadFile({ imageData: this.state.image, fileName: this.state.fileName, fileFormat: this.state.fileFormat });
     this.patchState(false, 'unsavedChanges');
   }
 
@@ -375,13 +441,13 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.patchState(true, 'saveAsWindowOpen');
   }
 
-  saveFileAs(params: { fileName: string; format: ImageFileFormat }) {
+  saveFileFromSaveAsWindow(params: { fileName: string; format: ImageFileFormat }) {
     this.closeSaveAsWindow();
     this.deselectIfSelected();
     this.patchState(params.fileName, 'fileName');
     this.patchState(params.format, 'fileFormat');
-    saveFile({ imageData: this.state.image, fileName: params.fileName, fileFormat: params.format });
-    this.patchState(false, 'unsavedChanges');
+    this.patchState(undefined, 'fileHandle');
+    this.downloadCurrentImage();
   }
 
   closeSaveAsWindow() {
@@ -427,10 +493,6 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     if (logToHistory && action.deselectsSelection) {
       this.deselectIfSelected();
     }
-    if (action.replacesImage && this.state.unsavedChanges && this.userWantsToSaveImage()) {
-      this.saveFile();
-    }
-
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);
 
     this.setState({ ...this.state, ...patches });

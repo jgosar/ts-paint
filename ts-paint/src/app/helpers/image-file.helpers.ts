@@ -1,17 +1,43 @@
 import { ImageFileData } from '../types/base/image-file-data';
-import { ImageFileFormat } from '../types/base/image-file-format';
+import {
+  DEFAULT_IMAGE_FILE_FORMAT,
+  IMAGE_FILE_FORMAT_INFO,
+  IMAGE_FILE_FORMATS,
+  ImageFileFormat,
+} from '../types/base/image-file-format';
 import { loadImageToCanvas } from './canvas.helpers';
 
 // Public image proxy that adds CORS headers, used only when the image's own host refuses a direct cross-origin load.
 // output=png keeps the pixels lossless.
 const CORS_PROXY_URL: string = 'https://images.weserv.nl/?output=png&url=';
 
-const IMAGE_FILE_FORMAT_INFO: Record<ImageFileFormat, { extension: string; mimeType: string; quality?: number }> = {
-  png: { extension: 'png', mimeType: 'image/png' },
-  jpeg: { extension: 'jpg', mimeType: 'image/jpeg', quality: 0.9 },
+// Formats the browser can decode and the app can open, but cannot save back to.
+const READ_ONLY_IMAGE_EXTENSIONS: string[] = ['gif', 'bmp', 'webp'];
+
+const OPEN_PICKER_ACCEPT_TYPE: FilePickerAcceptType = {
+  description: 'Images',
+  accept: {
+    'image/*': [
+      ...IMAGE_FILE_FORMATS.flatMap((format) => IMAGE_FILE_FORMAT_INFO[format].extensions),
+      ...READ_ONLY_IMAGE_EXTENSIONS,
+    ].map((extension) => '.' + extension),
+  },
 };
 
-export function saveFile(fileData: ImageFileData) {
+function getPickerAcceptType(format: ImageFileFormat): FilePickerAcceptType {
+  const { description, mimeType, extensions } = IMAGE_FILE_FORMAT_INFO[format];
+  return { description, accept: { [mimeType]: extensions.map((extension) => '.' + extension) } };
+}
+
+export function isFileSystemAccessSupported(): boolean {
+  return typeof window.showOpenFilePicker === 'function' && typeof window.showSaveFilePicker === 'function';
+}
+
+export function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === 'AbortError';
+}
+
+export function downloadFile(fileData: ImageFileData) {
   const { extension, mimeType, quality } = IMAGE_FILE_FORMAT_INFO[fileData.fileFormat];
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const downloadLink: HTMLAnchorElement = document.createElement('a');
@@ -21,7 +47,50 @@ export function saveFile(fileData: ImageFileData) {
   downloadLink.click();
 }
 
+export function renderImageToBlob(imageData: ImageData, format: ImageFileFormat): Promise<Blob> {
+  const { mimeType, quality } = IMAGE_FILE_FORMAT_INFO[format];
+  const canvas: HTMLCanvasElement = document.createElement('canvas');
+  loadImageToCanvas(imageData, canvas);
+
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (blob: Blob | null) => (blob ? resolve(blob) : reject(new Error('Could not encode image as ' + mimeType))),
+      mimeType,
+      quality
+    );
+  });
+}
+
+export async function writeImageToFileHandle(
+  handle: FileSystemFileHandle,
+  imageData: ImageData,
+  format: ImageFileFormat
+): Promise<void> {
+  const blob: Blob = await renderImageToBlob(imageData, format);
+  const writable: FileSystemWritableFileStream = await handle.createWritable();
+  try {
+    await writable.write(blob);
+  } finally {
+    await writable.close();
+  }
+}
+
+export function showSaveFilePickerForImage(fileName: string, format: ImageFileFormat): Promise<FileSystemFileHandle> {
+  // Current format first, as the picker preselects the first type
+  const formats: ImageFileFormat[] = [format, ...IMAGE_FILE_FORMATS.filter((other) => other !== format)];
+
+  return window.showSaveFilePicker({
+    suggestedName: fileName + '.' + IMAGE_FILE_FORMAT_INFO[format].extension,
+    types: formats.map(getPickerAcceptType),
+    excludeAcceptAllOption: true, // the browser then appends a matching extension, so the saved bytes match the name
+  });
+}
+
 export function showFileUploadDialog(): Promise<ImageFileData> {
+  if (isFileSystemAccessSupported()) {
+    return showFileOpenPicker();
+  }
+
   return new Promise<ImageFileData>((resolve, reject) => {
     const fileInput: HTMLInputElement = document.createElement('input');
     fileInput.type = 'file';
@@ -39,6 +108,20 @@ export function showFileUploadDialog(): Promise<ImageFileData> {
     };
     fileInput.click();
   });
+}
+
+async function showFileOpenPicker(): Promise<ImageFileData> {
+  const [fileHandle] = await window.showOpenFilePicker({ types: [OPEN_PICKER_ACCEPT_TYPE] });
+  const file: File = await fileHandle.getFile();
+  const imageData: ImageData = await readImageDataFromFile(file);
+
+  return {
+    imageData,
+    fileName: getFileNameWithoutExtension(file.name),
+    fileFormat: getImageFileFormat(file.name, file.type),
+    // Only keep the handle for formats we can save back to; otherwise Save falls through to the save picker.
+    fileHandle: isWritableImageFileName(file.name) ? fileHandle : undefined,
+  };
 }
 
 export function readImageDataFromFile(imageFile: File): Promise<ImageData> {
@@ -62,14 +145,26 @@ export function getFileNameWithoutExtension(fileName: string): string {
 }
 
 export function getImageFileFormat(fileName: string, mimeType?: string): ImageFileFormat {
-  const extension: string = fileName.includes('.')
-    ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase()
-    : '';
-  if (mimeType === IMAGE_FILE_FORMAT_INFO.jpeg.mimeType || ['jpg', 'jpeg'].includes(extension)) {
-    return 'jpeg';
-  }
+  return (
+    getImageFileFormatByExtension(fileName) ??
+    IMAGE_FILE_FORMATS.find((format) => IMAGE_FILE_FORMAT_INFO[format].mimeType === mimeType) ??
+    DEFAULT_IMAGE_FILE_FORMAT
+  );
+}
 
-  return 'png';
+// True when the file's extension belongs to a format the app can write back, so that saving to its handle
+// does not put bytes of a different format into e.g. a .gif file.
+export function isWritableImageFileName(fileName: string): boolean {
+  return getImageFileFormatByExtension(fileName) !== undefined;
+}
+
+function getImageFileFormatByExtension(fileName: string): ImageFileFormat | undefined {
+  const extension: string = getFileExtension(fileName);
+  return IMAGE_FILE_FORMATS.find((format) => IMAGE_FILE_FORMAT_INFO[format].extensions.includes(extension));
+}
+
+function getFileExtension(fileName: string): string {
+  return fileName.includes('.') ? fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase() : '';
 }
 
 function getImageDataFromUpload(

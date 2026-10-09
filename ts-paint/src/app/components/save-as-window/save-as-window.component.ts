@@ -1,12 +1,26 @@
-import { Component, ChangeDetectionStrategy, AfterViewInit, OnInit, input, output, signal, viewChild } from '@angular/core';
-import { ImageFileFormat } from '../../types/base/image-file-format';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  AfterViewInit,
+  OnInit,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
+import {
+  DEFAULT_IMAGE_FILE_FORMAT,
+  IMAGE_FILE_FORMAT_INFO,
+  IMAGE_FILE_FORMATS,
+  ImageFileFormat,
+} from '../../types/base/image-file-format';
 import { DropdownOption } from '../../types/base/dropdown-option';
 import { TextInputComponent } from '../inputs/text-input/text-input.component';
 
-const FORMAT_OPTIONS: DropdownOption<ImageFileFormat>[] = [
-  { value: 'png', label: 'PNG' },
-  { value: 'jpeg', label: 'JPEG' },
-];
+const FORMAT_OPTIONS: DropdownOption<ImageFileFormat>[] = IMAGE_FILE_FORMATS.map((format) => ({
+  value: format,
+  label: IMAGE_FILE_FORMAT_INFO[format].label,
+}));
 
 @Component({
   selector: 'tsp-save-as-window',
@@ -24,7 +38,7 @@ export class SaveAsWindowComponent implements OnInit, AfterViewInit {
   private readonly _fileNameInput = viewChild<TextInputComponent>('fileNameInput');
 
   fileNameValue = signal('');
-  format = signal<ImageFileFormat>('png');
+  format = signal<ImageFileFormat>(DEFAULT_IMAGE_FILE_FORMAT);
   readonly formatOptions = FORMAT_OPTIONS;
 
   ngOnInit(): void {

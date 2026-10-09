@@ -1,6 +1,10 @@
 // @ts-ignore
 export function assertUnreachable(x: never) {}
 
+export function recordKeys<K extends string>(record: Record<K, unknown>): K[] {
+  return Object.keys(record) as K[];
+}
+
 export function isDefined(object: any) {
   return object !== null && object !== undefined;
 }

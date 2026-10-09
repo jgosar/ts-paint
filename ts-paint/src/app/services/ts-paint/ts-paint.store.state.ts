@@ -13,7 +13,7 @@ import {
   DEFAULT_DRAWING_TOOL_OPTIONS,
 } from './ts-paint.config';
 import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
-import { ImageFileFormat } from 'src/app/types/base/image-file-format';
+import { DEFAULT_IMAGE_FILE_FORMAT, ImageFileFormat } from 'src/app/types/base/image-file-format';
 
 export class TsPaintStoreState {
   zoom: number = 1;
@@ -26,7 +26,8 @@ export class TsPaintStoreState {
   selectionOffset: Point = { w: 0, h: 0 };
   moveSelectionTool: MoveSelectionTool;
   fileName: string = 'untitled';
-  fileFormat: ImageFileFormat = 'png';
+  fileFormat: ImageFileFormat = DEFAULT_IMAGE_FILE_FORMAT;
+  fileHandle: FileSystemFileHandle | undefined = undefined;
   primaryColor: Color = { r: 0, g: 0, b: 0 };
   secondaryColor: Color = COLOR_WHITE;
   availableColors: Color[] = DEFAULT_AVAILABLE_COLORS;
