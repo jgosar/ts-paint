@@ -18,6 +18,18 @@ export class TsPaintComponent implements OnInit {
         store.loadFileFromUrl(params['imageUrl']);
       }
     });
+    // Files opened with the installed app ("Open with TS Paint") arrive here with a writable handle (Chromium only).
+    window.launchQueue?.setConsumer((launchParams) => this.openLaunchedFile(launchParams));
+  }
+
+  private async openLaunchedFile(launchParams: LaunchParams): Promise<void> {
+    const handle: FileSystemHandle | undefined = launchParams.files[0];
+    if (handle?.kind !== 'file') {
+      return;
+    }
+    const fileHandle: FileSystemFileHandle = handle as FileSystemFileHandle;
+    const file: File = await fileHandle.getFile();
+    await this.store.loadFile(file, Promise.resolve(fileHandle));
   }
 
   ngOnInit(): void {

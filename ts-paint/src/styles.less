@@ -12,6 +12,8 @@ body {
   font-size: 8px;
   margin: 0px;
   color: black;
+  // Inherited by every image, icon and cursor: keeps the pixel art crisp on high-DPI screens
+  image-rendering: pixelated;
 }
 
 button {
@@ -63,25 +65,15 @@ hr {
 }
 
 fieldset {
+  // Etched Windows 95 group box: a white frame shifted 1px down and right of the grey one. Box shadows follow the
+  // border, unlike an absolutely positioned pseudo-element, which Chrome anchors to the content box below the legend.
   border: 1px solid @color--grey;
+  box-shadow: 1px 1px 0 0 white, inset 1px 1px 0 0 white;
   padding: 3px;
-  position: relative;
 }
 
 fieldset legend {
-  position: relative;
   background-color: @color--lighter-grey;
-}
-
-fieldset::before {
-  content: ' ';
-  position: absolute;
-  top: 6px;
-  left: 0px;
-  right: -2px;
-  bottom: -2px;
-  border: 1px solid white;
-  z-index: -1;
 }
 
 .tsp-button {

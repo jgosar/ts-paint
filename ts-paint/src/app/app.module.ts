@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, inject, isDevMode, provideAppInitializer } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { TsPaintComponent } from './views/ts-paint/ts-paint.component';
@@ -26,6 +26,9 @@ import { StretchSkewWindowComponent } from './components/stretch-skew-window/str
 import { RouterModule } from '@angular/router';
 import { DrawingToolOptionsComponent } from './components/drawing-tool-options/drawing-tool-options.component';
 import { FillTypePickerComponent } from './components/fill-type-picker/fill-type-picker.component';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { AppUpdateService } from './services/app-update/app-update.service';
+import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.service';
 
 @NgModule({
   declarations: [
@@ -52,8 +55,24 @@ import { FillTypePickerComponent } from './components/fill-type-picker/fill-type
     DropdownComponent, // TODO: make a separate inputs module
     TextInputComponent, // TODO: make a separate inputs module
   ],
-  imports: [BrowserModule, FormsModule, RouterModule.forRoot([], {})],
-  providers: [TsPaintStore],
+  imports: [
+    BrowserModule,
+    FormsModule,
+    RouterModule.forRoot([], {}),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      // Register the ServiceWorker as soon as the application is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
+  ],
+  providers: [
+    TsPaintStore,
+    provideAppInitializer(() => {
+      inject(AppUpdateService).start();
+      inject(PixelScalingService).start();
+    }),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
