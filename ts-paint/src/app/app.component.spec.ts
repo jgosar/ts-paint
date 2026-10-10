@@ -1,29 +1,15 @@
-import { TestBed, waitForAsync } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { AppModule } from './app.module';
 
 describe('AppComponent', () => {
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      declarations: [AppComponent],
-    }).compileComponents();
-  }));
-
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({ imports: [AppModule] }).compileComponents();
   });
 
-  it(`should have as title 'ts-paint'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('ts-paint');
-  });
-
-  it('should render title', () => {
+  it('renders the paint view', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('ts-paint app is running!');
+    expect(fixture.nativeElement.querySelector('tsp-ts-paint')).not.toBeNull();
   });
 });
