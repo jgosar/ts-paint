@@ -16,6 +16,10 @@ jobs:
         working-directory: ts-paint
     steps:
       - uses: actions/checkout@v4
+      # The image's Node is older than the Angular CLI's minimum
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ts-paint/.nvmrc
       - run: npm ci
       - run: npm run lint
       - run: npm run test:ci
