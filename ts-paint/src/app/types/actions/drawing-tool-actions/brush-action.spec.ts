@@ -33,14 +33,14 @@ describe('BrushAction', () => {
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
     // origin is 1 px in, so the 4x4 box covers 9..12
-    expect(isColor({ w: 9, h: 9 }, patches.image, COLOR_WHITE)).toBeTrue();
-    expect(isColor({ w: 10, h: 9 }, patches.image, RED)).toBeTrue();
-    expect(isColor({ w: 11, h: 9 }, patches.image, RED)).toBeTrue();
-    expect(isColor({ w: 12, h: 9 }, patches.image, COLOR_WHITE)).toBeTrue();
-    expect(isColor({ w: 9, h: 10 }, patches.image, RED)).toBeTrue();
-    expect(isColor({ w: 12, h: 11 }, patches.image, RED)).toBeTrue();
-    expect(isColor({ w: 12, h: 12 }, patches.image, COLOR_WHITE)).toBeTrue();
-    expect(isColor({ w: 13, h: 10 }, patches.image, COLOR_WHITE)).toBeTrue();
+    expect(isColor({ w: 9, h: 9 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 10, h: 9 }, patches.image, RED)).toBe(true);
+    expect(isColor({ w: 11, h: 9 }, patches.image, RED)).toBe(true);
+    expect(isColor({ w: 12, h: 9 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 9, h: 10 }, patches.image, RED)).toBe(true);
+    expect(isColor({ w: 12, h: 11 }, patches.image, RED)).toBe(true);
+    expect(isColor({ w: 12, h: 12 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 13, h: 10 }, patches.image, COLOR_WHITE)).toBe(true);
   });
 
   it('paints with the secondary color for the right button', () => {
@@ -56,9 +56,9 @@ describe('BrushAction', () => {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
-    expect(isColor({ w: 10, h: 10 }, patches.image, BLUE)).toBeTrue();
-    expect(isColor({ w: 16, h: 11 }, patches.image, BLUE)).toBeTrue();
-    expect(isColor({ w: 9, h: 10 }, patches.image, COLOR_WHITE)).toBeTrue();
+    expect(isColor({ w: 10, h: 10 }, patches.image, BLUE)).toBe(true);
+    expect(isColor({ w: 16, h: 11 }, patches.image, BLUE)).toBe(true);
+    expect(isColor({ w: 9, h: 10 }, patches.image, COLOR_WHITE)).toBe(true);
   });
 
   it('pads the preview by 4 px on each side for the 9 px diagonal brush', () => {
@@ -77,8 +77,8 @@ describe('BrushAction', () => {
     expect(patches.previewOffset).toEqual({ w: 16, h: 46 });
     expect(patches.previewImage.width).toBe(19);
     expect(patches.previewImage.height).toBe(9);
-    expect(isColor({ w: 0, h: 0 }, patches.previewImage, RED)).toBeTrue();
-    expect(isColor({ w: 18, h: 8 }, patches.previewImage, RED)).toBeTrue();
+    expect(isColor({ w: 0, h: 0 }, patches.previewImage, RED)).toBe(true);
+    expect(isColor({ w: 18, h: 8 }, patches.previewImage, RED)).toBe(true);
     expect(patches.previewImage.data[4 * 18 + 3]).toBe(0);
   });
 
@@ -88,10 +88,10 @@ describe('BrushAction', () => {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
-    expect(isColor({ w: 9, h: 11 }, patches.image, RED)).toBeTrue();
-    expect(isColor({ w: 10, h: 10 }, patches.image, RED)).toBeTrue();
-    expect(isColor({ w: 11, h: 9 }, patches.image, RED)).toBeTrue();
-    expect(isColor({ w: 9, h: 9 }, patches.image, COLOR_WHITE)).toBeTrue();
-    expect(isColor({ w: 11, h: 11 }, patches.image, COLOR_WHITE)).toBeTrue();
+    expect(isColor({ w: 9, h: 11 }, patches.image, RED)).toBe(true);
+    expect(isColor({ w: 10, h: 10 }, patches.image, RED)).toBe(true);
+    expect(isColor({ w: 11, h: 9 }, patches.image, RED)).toBe(true);
+    expect(isColor({ w: 9, h: 9 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 11, h: 11 }, patches.image, COLOR_WHITE)).toBe(true);
   });
 });

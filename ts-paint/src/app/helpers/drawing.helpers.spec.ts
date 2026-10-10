@@ -36,7 +36,7 @@ describe('drawLine', () => {
     drawLine({ w: 2, h: 5 }, { w: 7, h: 5 }, BLACK, image, 3);
     const painted: Point[] = paintedPoints(image);
     expect(painted.length).toBe(8 * 3);
-    expect(painted.every((p) => p.h >= 4 && p.h <= 6 && p.w >= 1 && p.w <= 8)).toBeTrue();
+    expect(painted.every((p) => p.h >= 4 && p.h <= 6 && p.w >= 1 && p.w <= 8)).toBe(true);
   });
 
   it('paints a 5x5 round brush without corners for a single point at thickness 5', () => {
@@ -44,13 +44,13 @@ describe('drawLine', () => {
     drawLine({ w: 5, h: 5 }, { w: 5, h: 5 }, BLACK, image, 5);
     const painted: Point[] = paintedPoints(image);
     expect(painted.length).toBe(21);
-    expect(isPainted({ w: 3, h: 3 }, image)).toBeFalse();
-    expect(isPainted({ w: 7, h: 7 }, image)).toBeFalse();
-    expect(isPainted({ w: 3, h: 7 }, image)).toBeFalse();
-    expect(isPainted({ w: 7, h: 3 }, image)).toBeFalse();
-    expect(isPainted({ w: 3, h: 4 }, image)).toBeTrue();
-    expect(isPainted({ w: 5, h: 3 }, image)).toBeTrue();
-    expect(isPainted({ w: 7, h: 5 }, image)).toBeTrue();
+    expect(isPainted({ w: 3, h: 3 }, image)).toBe(false);
+    expect(isPainted({ w: 7, h: 7 }, image)).toBe(false);
+    expect(isPainted({ w: 3, h: 7 }, image)).toBe(false);
+    expect(isPainted({ w: 7, h: 3 }, image)).toBe(false);
+    expect(isPainted({ w: 3, h: 4 }, image)).toBe(true);
+    expect(isPainted({ w: 5, h: 3 }, image)).toBe(true);
+    expect(isPainted({ w: 7, h: 5 }, image)).toBe(true);
   });
 
   it('paints a 2x2 square for thickness 2, extending right and down', () => {
@@ -67,9 +67,9 @@ describe('drawLine', () => {
   it('does not throw when a thick line touches the image edge', () => {
     const image: ImageData = createImage(10, 10, COLOR_WHITE);
     expect(() => drawLine({ w: 0, h: 0 }, { w: 9, h: 0 }, BLACK, image, 5)).not.toThrow();
-    expect(isPainted({ w: 0, h: 0 }, image)).toBeTrue();
-    expect(isPainted({ w: 0, h: 2 }, image)).toBeTrue();
-    expect(isPainted({ w: 0, h: 3 }, image)).toBeFalse();
+    expect(isPainted({ w: 0, h: 0 }, image)).toBe(true);
+    expect(isPainted({ w: 0, h: 2 }, image)).toBe(true);
+    expect(isPainted({ w: 0, h: 3 }, image)).toBe(false);
   });
 });
 
@@ -78,7 +78,7 @@ describe('drawThickRectangle', () => {
     const image: ImageData = createImage(20, 20, COLOR_WHITE);
     drawThickRectangle({ start: { w: 2, h: 2 }, end: { w: 6, h: 6 } }, BLACK, image, 1);
     expect(paintedPoints(image).length).toBe(16);
-    expect(isPainted({ w: 3, h: 3 }, image)).toBeFalse();
+    expect(isPainted({ w: 3, h: 3 }, image)).toBe(false);
   });
 
   it('draws the border inward, staying inside the dragged box', () => {
@@ -87,7 +87,7 @@ describe('drawThickRectangle', () => {
     const painted: Point[] = paintedPoints(image);
     const inBox = (p: Point) => p.w >= 10 && p.w <= 50 && p.h >= 10 && p.h <= 50;
     const inHole = (p: Point) => p.w >= 15 && p.w <= 45 && p.h >= 15 && p.h <= 45;
-    expect(painted.every((p) => inBox(p) && !inHole(p))).toBeTrue();
+    expect(painted.every((p) => inBox(p) && !inHole(p))).toBe(true);
     expect(painted.length).toBe(41 * 41 - 31 * 31);
   });
 
@@ -102,7 +102,7 @@ describe('drawThickRectangle', () => {
     drawThickRectangle({ start: { w: 10, h: 10 }, end: { w: 13, h: 49 } }, BLACK, image, 5);
     const painted: Point[] = paintedPoints(image);
     expect(painted.length).toBe(4 * 40);
-    expect(painted.every((p) => p.w >= 10 && p.w <= 13 && p.h >= 10 && p.h <= 49)).toBeTrue();
+    expect(painted.every((p) => p.w >= 10 && p.w <= 13 && p.h >= 10 && p.h <= 49)).toBe(true);
   });
 });
 
@@ -110,9 +110,9 @@ describe('drawEllipse', () => {
   it('paints a 1 pixel outline for thickness 1', () => {
     const image: ImageData = createImage(30, 30, COLOR_WHITE);
     drawEllipse({ w: 5, h: 5 }, { w: 24, h: 14 }, BLACK, image);
-    expect(isPainted({ w: 5, h: 9 }, image)).toBeTrue();
-    expect(isPainted({ w: 6, h: 9 }, image)).toBeFalse();
-    expect(isPainted({ w: 14, h: 9 }, image)).toBeFalse();
+    expect(isPainted({ w: 5, h: 9 }, image)).toBe(true);
+    expect(isPainted({ w: 6, h: 9 }, image)).toBe(false);
+    expect(isPainted({ w: 14, h: 9 }, image)).toBe(false);
   });
 
   it('paints a thick ring that stays inside the dragged box', () => {
@@ -120,28 +120,22 @@ describe('drawEllipse', () => {
     drawEllipse({ w: 10, h: 10 }, { w: 50, h: 40 }, BLACK, image, 5);
     const painted: Point[] = paintedPoints(image);
     expect(painted.length).toBeGreaterThan(0);
-    expect(painted.every((p) => p.w >= 10 && p.w <= 50 && p.h >= 10 && p.h <= 40)).toBeTrue();
+    expect(painted.every((p) => p.w >= 10 && p.w <= 50 && p.h >= 10 && p.h <= 40)).toBe(true);
     // centre row: exactly 5 pixels painted at each end
     for (let w = 10; w <= 14; w++) {
-      expect(isPainted({ w, h: 25 }, image))
-        .withContext(`w=${w}`)
-        .toBeTrue();
+      expect(isPainted({ w, h: 25 }, image), `w=${w}`).toBe(true);
     }
     for (let w = 46; w <= 50; w++) {
-      expect(isPainted({ w, h: 25 }, image))
-        .withContext(`w=${w}`)
-        .toBeTrue();
+      expect(isPainted({ w, h: 25 }, image), `w=${w}`).toBe(true);
     }
-    expect(isPainted({ w: 15, h: 25 }, image)).toBeFalse();
-    expect(isPainted({ w: 45, h: 25 }, image)).toBeFalse();
-    expect(isPainted({ w: 30, h: 25 }, image)).toBeFalse();
+    expect(isPainted({ w: 15, h: 25 }, image)).toBe(false);
+    expect(isPainted({ w: 45, h: 25 }, image)).toBe(false);
+    expect(isPainted({ w: 30, h: 25 }, image)).toBe(false);
     // centre column: exactly 5 pixels painted at each end
     for (let h = 10; h <= 14; h++) {
-      expect(isPainted({ w: 30, h }, image))
-        .withContext(`h=${h}`)
-        .toBeTrue();
+      expect(isPainted({ w: 30, h }, image), `h=${h}`).toBe(true);
     }
-    expect(isPainted({ w: 30, h: 15 }, image)).toBeFalse();
+    expect(isPainted({ w: 30, h: 15 }, image)).toBe(false);
   });
 
   it('has no holes in the ring along the diagonal', () => {
@@ -163,9 +157,9 @@ describe('drawEllipse', () => {
   it('fills the whole ellipse when the box is too small for the ring', () => {
     const image: ImageData = createImage(30, 30, COLOR_WHITE);
     drawEllipse({ w: 5, h: 5 }, { w: 12, h: 12 }, BLACK, image, 5);
-    expect(isPainted({ w: 8, h: 8 }, image)).toBeTrue();
-    expect(isPainted({ w: 9, h: 9 }, image)).toBeTrue();
-    expect(paintedPoints(image).every((p) => p.w >= 5 && p.w <= 12 && p.h >= 5 && p.h <= 12)).toBeTrue();
+    expect(isPainted({ w: 8, h: 8 }, image)).toBe(true);
+    expect(isPainted({ w: 9, h: 9 }, image)).toBe(true);
+    expect(paintedPoints(image).every((p) => p.w >= 5 && p.w <= 12 && p.h >= 5 && p.h <= 12)).toBe(true);
   });
 });
 
@@ -195,9 +189,9 @@ describe('drawLinesWithBrush', () => {
     const painted: Point[] = paintedPoints(image);
     // horizontal segment: 11 columns (1..11) x 3 rows (1..3); vertical: 3 columns (9..11) x 8 more rows (4..11)
     expect(painted.length).toBe(11 * 3 + 3 * 8);
-    expect(isPainted({ w: 1, h: 1 }, image)).toBeTrue();
-    expect(isPainted({ w: 11, h: 11 }, image)).toBeTrue();
-    expect(isPainted({ w: 8, h: 5 }, image)).toBeFalse();
+    expect(isPainted({ w: 1, h: 1 }, image)).toBe(true);
+    expect(isPainted({ w: 11, h: 11 }, image)).toBe(true);
+    expect(isPainted({ w: 8, h: 5 }, image)).toBe(false);
   });
 
   it('only replaces pixels of the replaceOnly color', () => {

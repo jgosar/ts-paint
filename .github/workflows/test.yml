@@ -1,0 +1,31 @@
+name: Tests
+
+on:
+  pull_request:
+  workflow_call:
+
+jobs:
+  lint-and-unit:
+    runs-on: ubuntu-latest
+    # Same pinned Playwright image as the e2e tests: Chromium is preinstalled for Vitest's browser mode.
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
+      options: --ipc=host
+    defaults:
+      run:
+        working-directory: ts-paint
+    steps:
+      - uses: actions/checkout@v4
+      # The image's Node is older than the Angular CLI's minimum
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ts-paint/.nvmrc
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run test:ci
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: coverage
+          path: ts-paint/coverage/
+          retention-days: 14

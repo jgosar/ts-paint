@@ -40,12 +40,12 @@ describe('EraserAction', () => {
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
     // size 8 extends 3 px before and 4 px after the mouse pixel
-    expect(isColor({ w: 17, h: 47 }, patches.image, BLUE)).toBeTrue();
-    expect(isColor({ w: 34, h: 54 }, patches.image, BLUE)).toBeTrue();
-    expect(isColor({ w: 16, h: 50 }, patches.image, BLACK)).toBeTrue();
-    expect(isColor({ w: 35, h: 50 }, patches.image, BLACK)).toBeTrue();
-    expect(isColor({ w: 25, h: 46 }, patches.image, BLACK)).toBeTrue();
-    expect(isColor({ w: 25, h: 55 }, patches.image, BLACK)).toBeTrue();
+    expect(isColor({ w: 17, h: 47 }, patches.image, BLUE)).toBe(true);
+    expect(isColor({ w: 34, h: 54 }, patches.image, BLUE)).toBe(true);
+    expect(isColor({ w: 16, h: 50 }, patches.image, BLACK)).toBe(true);
+    expect(isColor({ w: 35, h: 50 }, patches.image, BLACK)).toBe(true);
+    expect(isColor({ w: 25, h: 46 }, patches.image, BLACK)).toBe(true);
+    expect(isColor({ w: 25, h: 55 }, patches.image, BLACK)).toBe(true);
   });
 
   it('erases a single click as one square stamp', () => {
@@ -54,10 +54,10 @@ describe('EraserAction', () => {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
-    expect(isColor({ w: 9, h: 9 }, patches.image, BLUE)).toBeTrue();
-    expect(isColor({ w: 12, h: 12 }, patches.image, BLUE)).toBeTrue();
-    expect(isColor({ w: 8, h: 10 }, patches.image, BLACK)).toBeTrue();
-    expect(isColor({ w: 13, h: 10 }, patches.image, BLACK)).toBeTrue();
+    expect(isColor({ w: 9, h: 9 }, patches.image, BLUE)).toBe(true);
+    expect(isColor({ w: 12, h: 12 }, patches.image, BLUE)).toBe(true);
+    expect(isColor({ w: 8, h: 10 }, patches.image, BLACK)).toBe(true);
+    expect(isColor({ w: 13, h: 10 }, patches.image, BLACK)).toBe(true);
   });
 
   it('pads the preview by the eraser size and paints it with the secondary color', () => {
@@ -76,8 +76,8 @@ describe('EraserAction', () => {
     expect(patches.previewOffset).toEqual({ w: 17, h: 47 });
     expect(patches.previewImage.width).toBe(18);
     expect(patches.previewImage.height).toBe(8);
-    expect(isColor({ w: 0, h: 0 }, patches.previewImage, BLUE)).toBeTrue();
-    expect(isColor({ w: 17, h: 7 }, patches.previewImage, BLUE)).toBeTrue();
+    expect(isColor({ w: 0, h: 0 }, patches.previewImage, BLUE)).toBe(true);
+    expect(isColor({ w: 17, h: 7 }, patches.previewImage, BLUE)).toBe(true);
   });
 
   it('with the right button only replaces primary-colored pixels with the secondary color', () => {
@@ -95,9 +95,9 @@ describe('EraserAction', () => {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
-    expect(isColor({ w: 25, h: 50 }, patches.image, BLUE)).toBeTrue();
-    expect(isColor({ w: 26, h: 50 }, patches.image, COLOR_WHITE)).toBeTrue();
-    expect(isColor({ w: 24, h: 50 }, patches.image, BLACK)).toBeTrue();
+    expect(isColor({ w: 25, h: 50 }, patches.image, BLUE)).toBe(true);
+    expect(isColor({ w: 26, h: 50 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 24, h: 50 }, patches.image, BLACK)).toBe(true);
   });
 
   it('with the right button the preview shows the untouched pixels of the affected area', () => {
@@ -115,8 +115,8 @@ describe('EraserAction', () => {
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
     expect(patches.previewOffset).toEqual({ w: 17, h: 47 });
-    expect(isColor({ w: 8, h: 3 }, patches.previewImage, BLUE)).toBeTrue();
-    expect(isColor({ w: 0, h: 0 }, patches.previewImage, BLACK)).toBeTrue();
+    expect(isColor({ w: 8, h: 3 }, patches.previewImage, BLUE)).toBe(true);
+    expect(isColor({ w: 0, h: 0 }, patches.previewImage, BLACK)).toBe(true);
     expect(patches.previewImage.data[3]).toBe(255);
   });
 

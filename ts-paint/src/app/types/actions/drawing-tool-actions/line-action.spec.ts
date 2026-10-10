@@ -37,9 +37,9 @@ describe('LineAction', () => {
     expect(patches.previewOffset).toEqual({ w: 18, h: 48 });
     expect(patches.previewImage.width).toBe(25);
     expect(patches.previewImage.height).toBe(5);
-    expect(isBlack({ w: 0, h: 2 }, patches.previewImage)).toBeTrue();
-    expect(isBlack({ w: 12, h: 0 }, patches.previewImage)).toBeTrue();
-    expect(isBlack({ w: 12, h: 4 }, patches.previewImage)).toBeTrue();
+    expect(isBlack({ w: 0, h: 2 }, patches.previewImage)).toBe(true);
+    expect(isBlack({ w: 12, h: 0 }, patches.previewImage)).toBe(true);
+    expect(isBlack({ w: 12, h: 4 }, patches.previewImage)).toBe(true);
   });
 
   it('never lets the preview offset go negative at the image edge', () => {
@@ -58,7 +58,7 @@ describe('LineAction', () => {
     expect(patches.previewOffset).toEqual({ w: 0, h: 0 });
     expect(patches.previewImage.width).toBe(13);
     expect(patches.previewImage.height).toBe(3);
-    expect(isBlack({ w: 0, h: 0 }, patches.previewImage)).toBeTrue();
+    expect(isBlack({ w: 0, h: 0 }, patches.previewImage)).toBe(true);
   });
 
   it('draws a thick line into the image', () => {
@@ -74,9 +74,9 @@ describe('LineAction', () => {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
-    expect(isBlack({ w: 30, h: 49 }, patches.image)).toBeTrue();
-    expect(isBlack({ w: 30, h: 51 }, patches.image)).toBeTrue();
-    expect(isBlack({ w: 30, h: 52 }, patches.image)).toBeFalse();
+    expect(isBlack({ w: 30, h: 49 }, patches.image)).toBe(true);
+    expect(isBlack({ w: 30, h: 51 }, patches.image)).toBe(true);
+    expect(isBlack({ w: 30, h: 52 }, patches.image)).toBe(false);
   });
 
   it('undo restores the pixels covered by the thick line', () => {
@@ -112,10 +112,10 @@ describe('RectangleAction', () => {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
-    expect(isBlack({ w: 10, h: 30 }, patches.image)).toBeTrue();
-    expect(isBlack({ w: 14, h: 30 }, patches.image)).toBeTrue();
-    expect(isBlack({ w: 15, h: 30 }, patches.image)).toBeFalse();
-    expect(isBlack({ w: 9, h: 30 }, patches.image)).toBeFalse();
+    expect(isBlack({ w: 10, h: 30 }, patches.image)).toBe(true);
+    expect(isBlack({ w: 14, h: 30 }, patches.image)).toBe(true);
+    expect(isBlack({ w: 15, h: 30 }, patches.image)).toBe(false);
+    expect(isBlack({ w: 9, h: 30 }, patches.image)).toBe(false);
   });
 
   it('keeps the preview inside the dragged box', () => {
@@ -133,8 +133,8 @@ describe('RectangleAction', () => {
 
     expect(patches.previewOffset).toEqual({ w: 10, h: 10 });
     expect(patches.previewImage.width).toBe(41);
-    expect(isBlack({ w: 4, h: 20 }, patches.previewImage)).toBeTrue();
-    expect(isBlack({ w: 5, h: 20 }, patches.previewImage)).toBeFalse();
+    expect(isBlack({ w: 4, h: 20 }, patches.previewImage)).toBe(true);
+    expect(isBlack({ w: 5, h: 20 }, patches.previewImage)).toBe(false);
   });
 });
 
@@ -152,8 +152,8 @@ describe('EllipseAction', () => {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
-    expect(isBlack({ w: 10, h: 25 }, patches.image)).toBeTrue();
-    expect(isBlack({ w: 14, h: 25 }, patches.image)).toBeTrue();
-    expect(isBlack({ w: 15, h: 25 }, patches.image)).toBeFalse();
+    expect(isBlack({ w: 10, h: 25 }, patches.image)).toBe(true);
+    expect(isBlack({ w: 14, h: 25 }, patches.image)).toBe(true);
+    expect(isBlack({ w: 15, h: 25 }, patches.image)).toBe(false);
   });
 });

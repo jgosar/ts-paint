@@ -91,27 +91,27 @@ describe('applyBrush', () => {
   it('paints the brush pixels around the origin', () => {
     const image: ImageData = createImage(10, 10, COLOR_WHITE);
     applyBrush({ w: 5, h: 5 }, createRoundBrush(3, BLACK), image);
-    expect(isColor({ w: 4, h: 4 }, image, BLACK)).toBeTrue();
-    expect(isColor({ w: 6, h: 6 }, image, BLACK)).toBeTrue();
-    expect(isColor({ w: 3, h: 5 }, image, BLACK)).toBeFalse();
-    expect(isColor({ w: 7, h: 5 }, image, BLACK)).toBeFalse();
+    expect(isColor({ w: 4, h: 4 }, image, BLACK)).toBe(true);
+    expect(isColor({ w: 6, h: 6 }, image, BLACK)).toBe(true);
+    expect(isColor({ w: 3, h: 5 }, image, BLACK)).toBe(false);
+    expect(isColor({ w: 7, h: 5 }, image, BLACK)).toBe(false);
   });
 
   it('leaves the image untouched under null brush pixels', () => {
     const image: ImageData = createImage(10, 10, COLOR_WHITE);
     const brush: Brush = { pixels: [[BLACK, null, RED]], origin: { w: 0, h: 0 } };
     applyBrush({ w: 2, h: 2 }, brush, image);
-    expect(isColor({ w: 2, h: 2 }, image, BLACK)).toBeTrue();
-    expect(isColor({ w: 3, h: 2 }, image, COLOR_WHITE)).toBeTrue();
-    expect(isColor({ w: 4, h: 2 }, image, RED)).toBeTrue();
+    expect(isColor({ w: 2, h: 2 }, image, BLACK)).toBe(true);
+    expect(isColor({ w: 3, h: 2 }, image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 4, h: 2 }, image, RED)).toBe(true);
   });
 
   it('does not throw when part of the brush falls outside the image', () => {
     const image: ImageData = createImage(10, 10, COLOR_WHITE);
     expect(() => applyBrush({ w: 0, h: 0 }, createRoundBrush(5, BLACK), image)).not.toThrow();
-    expect(isColor({ w: 0, h: 0 }, image, BLACK)).toBeTrue();
-    expect(isColor({ w: 2, h: 0 }, image, BLACK)).toBeTrue();
-    expect(isColor({ w: 3, h: 0 }, image, BLACK)).toBeFalse();
+    expect(isColor({ w: 0, h: 0 }, image, BLACK)).toBe(true);
+    expect(isColor({ w: 2, h: 0 }, image, BLACK)).toBe(true);
+    expect(isColor({ w: 3, h: 0 }, image, BLACK)).toBe(false);
   });
 });
 
@@ -185,8 +185,8 @@ describe('applyBrush with replaceOnly', () => {
     const image: ImageData = createImage(10, 10, COLOR_WHITE);
     image.data.set([255, 0, 0, 255], 4 * (5 + 10 * 5)); // (5,5) is red
     applyBrush({ w: 5, h: 5 }, createSquareBrush(3, BLACK), image, RED);
-    expect(isColor({ w: 5, h: 5 }, image, BLACK)).toBeTrue();
-    expect(isColor({ w: 4, h: 4 }, image, COLOR_WHITE)).toBeTrue();
-    expect(isColor({ w: 6, h: 6 }, image, COLOR_WHITE)).toBeTrue();
+    expect(isColor({ w: 5, h: 5 }, image, BLACK)).toBe(true);
+    expect(isColor({ w: 4, h: 4 }, image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 6, h: 6 }, image, COLOR_WHITE)).toBe(true);
   });
 });
