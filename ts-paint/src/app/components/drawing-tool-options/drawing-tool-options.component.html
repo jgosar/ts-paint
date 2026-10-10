@@ -4,5 +4,10 @@
       [selectedFillType]="selectedFillType"
       (selectedFillTypeChange)="changeSelectedFillType($event)"
     ></tsp-fill-type-picker>
+  } @else if (displayedPicker === 'lineThicknessPicker') {
+    <tsp-line-thickness-picker
+      [selectedThickness]="selectedLineThickness"
+      (selectedThicknessChange)="changeSelectedLineThickness($event)"
+    ></tsp-line-thickness-picker>
   }
 </div>

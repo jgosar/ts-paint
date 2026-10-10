@@ -1,0 +1,22 @@
+@import 'variables';
+
+.tsp-line-thickness-picker__option {
+  width: 31px;
+  height: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tsp-line-thickness-picker__bar {
+  width: 22px;
+  background-color: black;
+}
+
+.tsp-line-thickness-picker__option--selected {
+  background-color: @color--dark-blue;
+}
+
+.tsp-line-thickness-picker__option--selected .tsp-line-thickness-picker__bar {
+  background-color: white;
+}

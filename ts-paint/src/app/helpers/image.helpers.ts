@@ -88,6 +88,18 @@ export function getPixelOffset(point: Point, image: ImageData): number | undefin
   }
 }
 
+export function setPixelInOriginalImage(point: Point, color: Color, image: ImageData) {
+  const pixelOffset = getPixelOffset(point, image);
+  if (pixelOffset !== undefined) {
+    [image.data[pixelOffset], image.data[pixelOffset + 1], image.data[pixelOffset + 2], image.data[pixelOffset + 3]] = [
+      color.r,
+      color.g,
+      color.b,
+      255,
+    ];
+  }
+}
+
 export function getImagePart(area: RectangleArea, image: ImageData): ImageData {
   const areaInImage: RectangleArea = getAreaInImage(area, image);
   const imagePart: ImageData = new ImageData(getAreaWidth(areaInImage), getAreaHeight(areaInImage));
@@ -118,6 +130,21 @@ export function getAreaInImage(area: RectangleArea, image: ImageData): Rectangle
   const endH: number = Math.min(image.height - 1, Math.max(area.start.h, area.end.h));
 
   return { start: { w: startW, h: startH }, end: { w: endW, h: endH } };
+}
+
+/** Expands the area by `before` pixels towards the top left and `after` pixels towards the bottom right,
+ * then clips the result to the image. */
+export function expandAreaWithinImage(
+  area: RectangleArea,
+  before: number,
+  after: number,
+  image: ImageData
+): RectangleArea {
+  const expanded: RectangleArea = {
+    start: { w: Math.min(area.start.w, area.end.w) - before, h: Math.min(area.start.h, area.end.h) - before },
+    end: { w: Math.max(area.start.w, area.end.w) + after, h: Math.max(area.start.h, area.end.h) + after },
+  };
+  return getAreaInImage(expanded, image);
 }
 
 export function getAreaWidth(area: RectangleArea): number {

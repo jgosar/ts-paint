@@ -28,6 +28,7 @@ export const DEFAULT_AVAILABLE_COLORS: Color[] = [
 
 export const DEFAULT_DRAWING_TOOL_OPTIONS: DrawingToolOptions = {
   [DrawingToolType.rectangle]: { fillType: FillType.EMPTY },
+  [DrawingToolType.line]: { thickness: 1 },
 };
 
 export const MENU_STRUCTURE: MenuItem[] = [

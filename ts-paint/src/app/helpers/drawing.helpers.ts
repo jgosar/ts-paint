@@ -1,13 +1,25 @@
 import { Point } from '../types/base/point';
 import { Color } from '../types/base/color';
-import { fillAreaInOriginalImage, getPixelOffset } from './image.helpers';
+import { fillAreaInOriginalImage, getPixelOffset, setPixelInOriginalImage } from './image.helpers';
+
 import { RectangleArea } from '../types/base/rectangle-area';
 import { isDefined } from './typescript.helpers';
 import { COLOR_WHITE } from '../services/ts-paint/ts-paint.config';
+import { Brush } from '../types/base/brush';
+import { applyBrush, createRoundBrush } from './brush.helpers';
 
-export function drawLine(start: Point, end: Point, color: Color, image: ImageData) {
+/** Re-exported because the drawing tools have always imported it from here */
+export { setPixelInOriginalImage };
+
+export function drawLine(start: Point, end: Point, color: Color, image: ImageData, thickness: number = 1) {
+  drawLineWithBrush(start, end, createRoundBrush(thickness, color), image);
+}
+
+/** Applies the brush at every pixel of the line, which is how thick lines, the brush tool and
+ * "use selection as a brush" all work. */
+export function drawLineWithBrush(start: Point, end: Point, brush: Brush, image: ImageData) {
   const [x0, y0, x1, y1]: number[] = [start.w, start.h, end.w, end.h];
-  bresenhamLinePlot([x0, y0, x1, y1], (x, y) => setPixelInOriginalImage({ w: x, h: y }, color, image));
+  bresenhamLinePlot([x0, y0, x1, y1], (x, y) => applyBrush({ w: x, h: y }, brush, image));
 }
 
 export function drawRectangle(
@@ -29,30 +41,38 @@ export function drawRectangle(
   drawLineFunction(corner4, corner1, color, image);
 }
 
+/** Draws a rectangle whose border is `thickness` pixels wide and lies entirely inside the given area. */
+export function drawThickRectangle(area: RectangleArea, color: Color, image: ImageData, thickness: number) {
+  const minW: number = Math.min(area.start.w, area.end.w);
+  const maxW: number = Math.max(area.start.w, area.end.w);
+  const minH: number = Math.min(area.start.h, area.end.h);
+  const maxH: number = Math.max(area.start.h, area.end.h);
+  const midW: number = Math.floor((minW + maxW) / 2);
+  const midH: number = Math.floor((minH + maxH) / 2);
+
+  for (let inset = 0; inset < thickness; inset++) {
+    const start: Point = { w: Math.min(minW + inset, midW), h: Math.min(minH + inset, midH) };
+    const end: Point = { w: Math.max(maxW - inset, midW), h: Math.max(maxH - inset, midH) };
+    drawRectangle({ start, end }, color, image);
+  }
+}
+
 export function fillRectangle(area: RectangleArea, color: Color, image: ImageData) {
   fillAreaInOriginalImage(image, color, area);
 }
 
-export function drawEllipse(start: Point, end: Point, color: Color, image: ImageData) {
+export function drawEllipse(start: Point, end: Point, color: Color, image: ImageData, thickness: number = 1) {
   const [x0, y0, x1, y1]: number[] = [start.w, start.h, end.w, end.h];
   ellipsePlot([x0, y0, x1, y1], (x, y) => setPixelInOriginalImage({ w: x, h: y }, color, image));
+
+  if (thickness > 1) {
+    fillEllipseRing([x0, y0, x1, y1], thickness, (x, y) => setPixelInOriginalImage({ w: x, h: y }, color, image));
+  }
 }
 
 export function drawLines(points: Point[], color: Color, image: ImageData) {
   for (let i = 0; i < points.length - 1; i++) {
     drawLine(points[i], points[i + 1], color, image);
-  }
-}
-
-export function setPixelInOriginalImage(point: Point, color: Color, image: ImageData) {
-  const pixelOffset = getPixelOffset(point, image);
-  if (pixelOffset !== undefined) {
-    [image.data[pixelOffset], image.data[pixelOffset + 1], image.data[pixelOffset + 2], image.data[pixelOffset + 3]] = [
-      color.r,
-      color.g,
-      color.b,
-      255,
-    ];
   }
 }
 
@@ -141,6 +161,29 @@ function horizontalBresenhamLinePlot([x0, y0, x1, y1]: number[], plot: (x, y) =>
     if (error >= 0.5) {
       y = y + Math.sign(deltay) * 1;
       error = error - 1.0;
+    }
+  }
+}
+
+/** Fills the ring between the ellipse inscribed in the given box and the ellipse inscribed in the same box
+ * inset by `thickness` on every side, so the ring never leaves the box. */
+function fillEllipseRing([x0, y0, x1, y1]: number[], thickness: number, plot: (x, y) => void) {
+  const rx: number = Math.abs(x0 - x1) / 2;
+  const ry: number = Math.abs(y0 - y1) / 2;
+  const xc: number = (x0 + x1) / 2;
+  const yc: number = (y0 + y1) / 2;
+  const innerRx: number = rx - thickness;
+  const innerRy: number = ry - thickness;
+  const hasHole: boolean = innerRx > 0 && innerRy > 0;
+
+  const isInside = (x: number, y: number, radiusX: number, radiusY: number): boolean =>
+    ((x - xc) / radiusX) ** 2 + ((y - yc) / radiusY) ** 2 <= 1;
+
+  for (let y = Math.min(y0, y1); y <= Math.max(y0, y1); y++) {
+    for (let x = Math.min(x0, x1); x <= Math.max(x0, x1); x++) {
+      if (isInside(x, y, rx, ry) && !(hasHole && isInside(x, y, innerRx, innerRy))) {
+        plot(x, y);
+      }
     }
   }
 }

@@ -34,7 +34,6 @@ To install the extension, follow these steps:
 
 ### Immediate TODO list
 - Eraser tool
-- Add option of using different line thicknesses
 - Text tool
 - Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
 - Image/Draw Opaque option
