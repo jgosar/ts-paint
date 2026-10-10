@@ -16,19 +16,23 @@ describe('validateMinMax', () => {
     expect(validateMinMax(11, 1, 10)).toBe(false);
   });
 
-  it('treats a minimum of 0 as "no lower limit"', () => {
-    // Quirk: 0 is falsy, so a minimum of 0 does not reject negative numbers
-    expect(validateMinMax(-5, 0, 10)).toBe(true);
+  it('enforces a minimum of 0', () => {
+    expect(validateMinMax(-5, 0, 10)).toBe(false);
+    expect(validateMinMax(0, 0, 10)).toBe(true);
+    expect(validateMinMax(5, 0, 10)).toBe(true);
   });
 
-  it('treats a maximum of 0 as "no upper limit"', () => {
-    // Quirk: 0 is falsy, so a maximum of 0 does not reject positive numbers
-    expect(validateMinMax(500, 1, 0)).toBe(true);
+  it('enforces a maximum of 0', () => {
+    expect(validateMinMax(500, -10, 0)).toBe(false);
+    expect(validateMinMax(0, -10, 0)).toBe(true);
+    expect(validateMinMax(-5, -10, 0)).toBe(true);
   });
 
-  it('treats undefined bounds as no limit', () => {
+  it('treats undefined and null bounds as no limit', () => {
     expect(validateMinMax(-500, undefined, undefined)).toBe(true);
     expect(validateMinMax(500, undefined, undefined)).toBe(true);
+    expect(validateMinMax(-500, null, null)).toBe(true);
+    expect(validateMinMax(500, null, null)).toBe(true);
   });
 
   it('accepts NaN regardless of the bounds', () => {
