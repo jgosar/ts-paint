@@ -1,7 +1,8 @@
 import { Brush } from '../types/base/brush';
 import { Color } from '../types/base/color';
 import { Point } from '../types/base/point';
-import { calculateLocation, setPixelInOriginalImage } from './image.helpers';
+import { calculateLocation, getPixelOffset, setPixelInOriginalImage } from './image.helpers';
+import { BrushForm, BrushShape } from '../types/drawing-tools/brush-shape';
 
 /** Builds a brush from a boolean mask (indexed mask[h][w]); true cells get the color, false cells stay transparent. */
 export function createBrushFromMask(mask: boolean[][], origin: Point, color: Color): Brush {
@@ -29,6 +30,37 @@ export function createSquareBrush(size: number, color: Color): Brush {
   return createBrushFromMask(mask, getCenteredOrigin(size), color);
 }
 
+/** A 1 px wide diagonal line of `length` pixels: 'forward' runs from bottom left to top right (like "/"),
+ * 'backward' from top left to bottom right (like "\\"). */
+export function createDiagonalBrush(length: number, direction: 'forward' | 'backward', color: Color): Brush {
+  const mask: boolean[][] = [];
+  for (let h = 0; h < length; h++) {
+    const paintedW: number = direction === 'forward' ? length - 1 - h : h;
+    mask.push(Array.from({ length }, (_, w) => w === paintedW));
+  }
+  return createBrushFromMask(mask, getCenteredOrigin(length), color);
+}
+
+/** Builds one of the brushes of the brush tool */
+export function createBrushForShape(shape: BrushShape, color: Color): Brush {
+  switch (shape.form) {
+    case BrushForm.ROUND:
+      return createRoundBrush(shape.size, color);
+    case BrushForm.SQUARE:
+      return createSquareBrush(shape.size, color);
+    case BrushForm.FORWARD_DIAGONAL:
+      return createDiagonalBrush(shape.size, 'forward', color);
+    case BrushForm.BACKWARD_DIAGONAL:
+      return createDiagonalBrush(shape.size, 'backward', color);
+  }
+}
+
+/** How far the brush reaches before (up/left of) and after (down/right of) the point it is applied to */
+export function getBrushPadding(brush: Brush): { before: number; after: number } {
+  const size: number = brush.pixels.length;
+  return { before: brush.origin.w, after: size - 1 - brush.origin.w };
+}
+
 /** Turns an image (e.g. the current selection) into a brush. Pixels of `transparentColor` become holes, which is
  * what the "Draw Opaque" option in MS Paint does when it is switched off. */
 export function createBrushFromImage(image: ImageData, transparentColor?: Color): Brush {
@@ -46,16 +78,26 @@ export function createBrushFromImage(image: ImageData, transparentColor?: Color)
   return { pixels, origin: { w: 0, h: 0 } };
 }
 
-/** Stamps the brush onto the image so that the brush origin lands on the given point. Pixels outside the image are ignored. */
-export function applyBrush(point: Point, brush: Brush, image: ImageData) {
+/** Stamps the brush onto the image so that the brush origin lands on the given point. Pixels outside the image are ignored.
+ * With `replaceOnly` set, only image pixels of that color are painted over (the "color eraser" of MS Paint). */
+export function applyBrush(point: Point, brush: Brush, image: ImageData, replaceOnly?: Color) {
   for (let h = 0; h < brush.pixels.length; h++) {
     for (let w = 0; w < brush.pixels[h].length; w++) {
       const color: Color | null = brush.pixels[h][w];
-      if (color !== null) {
-        setPixelInOriginalImage({ w: point.w + w - brush.origin.w, h: point.h + h - brush.origin.h }, color, image);
+      const target: Point = { w: point.w + w - brush.origin.w, h: point.h + h - brush.origin.h };
+      if (color !== null && (replaceOnly === undefined || hasColor(target, replaceOnly, image))) {
+        setPixelInOriginalImage(target, color, image);
       }
     }
   }
+}
+
+function hasColor(point: Point, color: Color, image: ImageData): boolean {
+  if (point.w < 0 || point.h < 0 || point.w >= image.width || point.h >= image.height) {
+    return false;
+  }
+  const offset: number = getPixelOffset(point, image);
+  return image.data[offset] === color.r && image.data[offset + 1] === color.g && image.data[offset + 2] === color.b;
 }
 
 /** For odd sizes the origin is the exact centre; for even sizes it is the pixel above left of the centre,

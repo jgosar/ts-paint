@@ -1,13 +1,23 @@
 <div class="tsp-depressed-item-container tsp-drawing-tool-options__container">
   @if (displayedPicker === 'fillTypePicker') {
-    <tsp-fill-type-picker
-      [selectedFillType]="selectedFillType"
-      (selectedFillTypeChange)="changeSelectedFillType($event)"
-    ></tsp-fill-type-picker>
+  <tsp-fill-type-picker
+    [selectedFillType]="selectedFillType"
+    (selectedFillTypeChange)="changeSelectedFillType($event)"
+  ></tsp-fill-type-picker>
   } @else if (displayedPicker === 'lineThicknessPicker') {
-    <tsp-line-thickness-picker
-      [selectedThickness]="selectedLineThickness"
-      (selectedThicknessChange)="changeSelectedLineThickness($event)"
-    ></tsp-line-thickness-picker>
+  <tsp-line-thickness-picker
+    [selectedThickness]="selectedLineThickness"
+    (selectedThicknessChange)="changeSelectedLineThickness($event)"
+  ></tsp-line-thickness-picker>
+  } @else if (displayedPicker === 'eraserSizePicker') {
+  <tsp-eraser-size-picker
+    [selectedSize]="selectedEraserSize"
+    (selectedSizeChange)="changeSelectedEraserSize($event)"
+  ></tsp-eraser-size-picker>
+  } @else if (displayedPicker === 'brushShapePicker') {
+  <tsp-brush-shape-picker
+    [selectedShape]="selectedBrushShape"
+    (selectedShapeChange)="changeSelectedBrushShape($event)"
+  ></tsp-brush-shape-picker>
   }
 </div>

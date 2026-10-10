@@ -1,0 +1,24 @@
+@import 'variables';
+
+// Each row is 39x16; the 1px left padding puts the even-sized squares at the same integer offsets as MS Paint
+.tsp-eraser-size-picker__option {
+  box-sizing: border-box;
+  width: 39px;
+  height: 16px;
+  padding-left: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tsp-eraser-size-picker__square {
+  background-color: black;
+}
+
+.tsp-eraser-size-picker__option--selected {
+  background-color: @color--dark-blue;
+}
+
+.tsp-eraser-size-picker__option--selected .tsp-eraser-size-picker__square {
+  background-color: white;
+}

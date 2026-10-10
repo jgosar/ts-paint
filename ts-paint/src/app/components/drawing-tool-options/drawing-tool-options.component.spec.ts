@@ -2,10 +2,13 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DrawingToolOptionsComponent } from './drawing-tool-options.component';
 import { FillTypePickerComponent } from '../fill-type-picker/fill-type-picker.component';
 import { LineThicknessPickerComponent } from '../line-thickness-picker/line-thickness-picker.component';
+import { EraserSizePickerComponent } from '../eraser-size-picker/eraser-size-picker.component';
+import { BrushShapePickerComponent } from '../brush-shape-picker/brush-shape-picker.component';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { DrawingToolOptions } from '../../types/drawing-tools/drawing-tool-options';
 import { FillType } from '../../types/drawing-tools/fill-type';
 import { SimpleChange } from '@angular/core';
+import { BrushForm } from '../../types/drawing-tools/brush-shape';
 
 describe('DrawingToolOptionsComponent', () => {
   let fixture: ComponentFixture<DrawingToolOptionsComponent>;
@@ -13,11 +16,19 @@ describe('DrawingToolOptionsComponent', () => {
   const options: DrawingToolOptions = {
     [DrawingToolType.rectangle]: { fillType: FillType.EMPTY },
     [DrawingToolType.line]: { thickness: 4 },
+    [DrawingToolType.eraser]: { size: 8 },
+    [DrawingToolType.brush]: { shape: { form: BrushForm.ROUND, size: 4 } },
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [DrawingToolOptionsComponent, FillTypePickerComponent, LineThicknessPickerComponent],
+      declarations: [
+        DrawingToolOptionsComponent,
+        FillTypePickerComponent,
+        LineThicknessPickerComponent,
+        EraserSizePickerComponent,
+        BrushShapePickerComponent,
+      ],
     }).compileComponents();
     fixture = TestBed.createComponent(DrawingToolOptionsComponent);
     component = fixture.componentInstance;
@@ -62,5 +73,33 @@ describe('DrawingToolOptionsComponent', () => {
     bars[1].click();
 
     expect(emitted).toEqual({ [DrawingToolType.line]: { thickness: 2 } });
+  });
+
+  it('shows the eraser size picker for the eraser tool and emits the clicked size', () => {
+    selectTool(DrawingToolType.eraser);
+    const picker: HTMLElement = fixture.nativeElement.querySelector('tsp-eraser-size-picker');
+    expect(picker).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('tsp-brush-shape-picker')).toBeNull();
+    expect(picker.querySelectorAll('.tsp-eraser-size-picker__option--selected').length).toBe(1);
+    let emitted: Partial<DrawingToolOptions>;
+    component.optionsChange.subscribe((changes) => (emitted = changes));
+
+    picker.querySelectorAll<HTMLElement>('.tsp-eraser-size-picker__option')[3].click();
+
+    expect(emitted).toEqual({ [DrawingToolType.eraser]: { size: 10 } });
+  });
+
+  it('shows the brush shape picker for the brush tool and emits the clicked shape', () => {
+    selectTool(DrawingToolType.brush);
+    const picker: HTMLElement = fixture.nativeElement.querySelector('tsp-brush-shape-picker');
+    expect(picker).not.toBeNull();
+    expect(fixture.nativeElement.querySelector('tsp-eraser-size-picker')).toBeNull();
+    expect(picker.querySelectorAll('.tsp-brush-shape-picker__option--selected').length).toBe(1);
+    let emitted: Partial<DrawingToolOptions>;
+    component.optionsChange.subscribe((changes) => (emitted = changes));
+
+    picker.querySelectorAll<HTMLElement>('.tsp-brush-shape-picker__option')[3].click();
+
+    expect(emitted).toEqual({ [DrawingToolType.brush]: { shape: { form: BrushForm.SQUARE, size: 8 } } });
   });
 });

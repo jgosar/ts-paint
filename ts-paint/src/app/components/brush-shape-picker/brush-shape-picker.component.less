@@ -1,0 +1,31 @@
+@import 'variables';
+
+// A 39x64 grid of 13x16 cells, laid out exactly like the brush box of MS Paint
+.tsp-brush-shape-picker {
+  position: relative;
+  width: 39px;
+  height: 64px;
+}
+
+.tsp-brush-shape-picker__option {
+  position: absolute;
+  width: 13px;
+  height: 16px;
+}
+
+.tsp-brush-shape-picker__highlight {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  display: none;
+}
+
+.tsp-brush-shape-picker__option--selected .tsp-brush-shape-picker__highlight {
+  display: block;
+  background-color: @color--dark-blue;
+}
+
+.tsp-brush-shape-picker__brush {
+  position: absolute;
+  display: block;
+}

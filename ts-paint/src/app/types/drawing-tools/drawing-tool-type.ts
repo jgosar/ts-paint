@@ -1,13 +1,13 @@
 export enum DrawingToolType {
   /*freeFormSelect,*/
   rectangleSelect,
-  /*eraser,*/
+  eraser,
   colorFiller,
   colorPicker,
   magnifier,
   pencil,
-  /*brush,
-  airbrush,
+  brush,
+  /*airbrush,
   text,*/
   line,
   /*curve,*/

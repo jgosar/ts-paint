@@ -1,0 +1,5 @@
+@for (size of availableSizes; track size) {
+<div class="tsp-eraser-size-picker__option" [ngClass]="getNgClass(size)" (click)="selectSize(size)">
+  <div class="tsp-eraser-size-picker__square" [style.width.px]="size" [style.height.px]="size"></div>
+</div>
+}

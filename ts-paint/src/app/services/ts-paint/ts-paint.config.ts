@@ -2,6 +2,7 @@ import { Color } from 'src/app/types/base/color';
 import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { FillType } from 'src/app/types/drawing-tools/fill-type';
+import { BrushForm } from 'src/app/types/drawing-tools/brush-shape';
 import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { MenuItem } from 'src/app/types/menu/menu-item';
 
@@ -29,6 +30,8 @@ export const DEFAULT_AVAILABLE_COLORS: Color[] = [
 export const DEFAULT_DRAWING_TOOL_OPTIONS: DrawingToolOptions = {
   [DrawingToolType.rectangle]: { fillType: FillType.EMPTY },
   [DrawingToolType.line]: { thickness: 1 },
+  [DrawingToolType.eraser]: { size: 8 },
+  [DrawingToolType.brush]: { shape: { form: BrushForm.ROUND, size: 4 } },
 };
 
 export const MENU_STRUCTURE: MenuItem[] = [

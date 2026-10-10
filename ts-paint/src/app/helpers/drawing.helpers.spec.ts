@@ -1,4 +1,5 @@
-import { drawLine, drawThickRectangle, drawEllipse, getPixel } from './drawing.helpers';
+import { drawLine, drawLinesWithBrush, drawThickRectangle, drawEllipse, getPixel } from './drawing.helpers';
+import { createSquareBrush } from './brush.helpers';
 import { createImage } from './image.helpers';
 import { Color } from '../types/base/color';
 import { Point } from '../types/base/point';
@@ -165,5 +166,53 @@ describe('drawEllipse', () => {
     expect(isPainted({ w: 8, h: 8 }, image)).toBeTrue();
     expect(isPainted({ w: 9, h: 9 }, image)).toBeTrue();
     expect(paintedPoints(image).every((p) => p.w >= 5 && p.w <= 12 && p.h >= 5 && p.h <= 12)).toBeTrue();
+  });
+});
+
+describe('drawLinesWithBrush', () => {
+  it('stamps the brush once for a single point', () => {
+    const image: ImageData = createImage(10, 10, COLOR_WHITE);
+    drawLinesWithBrush([{ w: 5, h: 5 }], createSquareBrush(2, BLACK), image);
+    expect(paintedPoints(image)).toEqual([
+      { w: 5, h: 5 },
+      { w: 6, h: 5 },
+      { w: 5, h: 6 },
+      { w: 6, h: 6 },
+    ]);
+  });
+
+  it('stamps the brush along every segment of a polyline', () => {
+    const image: ImageData = createImage(20, 20, COLOR_WHITE);
+    drawLinesWithBrush(
+      [
+        { w: 2, h: 2 },
+        { w: 10, h: 2 },
+        { w: 10, h: 10 },
+      ],
+      createSquareBrush(3, BLACK),
+      image
+    );
+    const painted: Point[] = paintedPoints(image);
+    // horizontal segment: 11 columns (1..11) x 3 rows (1..3); vertical: 3 columns (9..11) x 8 more rows (4..11)
+    expect(painted.length).toBe(11 * 3 + 3 * 8);
+    expect(isPainted({ w: 1, h: 1 }, image)).toBeTrue();
+    expect(isPainted({ w: 11, h: 11 }, image)).toBeTrue();
+    expect(isPainted({ w: 8, h: 5 }, image)).toBeFalse();
+  });
+
+  it('only replaces pixels of the replaceOnly color', () => {
+    const image: ImageData = createImage(10, 10, COLOR_WHITE);
+    image.data.set([255, 0, 0, 255], 4 * (3 + 10 * 2)); // (3,2) is red
+    const red: Color = { r: 255, g: 0, b: 0 };
+    drawLinesWithBrush(
+      [
+        { w: 1, h: 2 },
+        { w: 6, h: 2 },
+      ],
+      createSquareBrush(3, BLACK),
+      image,
+      red
+    );
+    expect(paintedPoints(image)).toEqual([{ w: 3, h: 2 }]);
   });
 });

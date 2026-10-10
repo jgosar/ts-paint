@@ -1,6 +1,8 @@
+import { BrushAction } from '../actions/drawing-tool-actions/brush-action';
 import { ColorFillerAction } from '../actions/drawing-tool-actions/color-filler-action';
 import { ColorPickerAction } from '../actions/drawing-tool-actions/color-picker-action';
 import { DrawingToolAction } from '../actions/drawing-tool-actions/drawing-tool-action';
+import { EraserAction } from '../actions/drawing-tool-actions/eraser-action';
 import { EllipseAction } from '../actions/drawing-tool-actions/ellipse-action';
 import { LineAction } from '../actions/drawing-tool-actions/line-action';
 import { MagnifierAction } from '../actions/drawing-tool-actions/magnifier-action';
@@ -40,6 +42,11 @@ export const DRAWING_TOOL_CONFIG: { [key in DrawingToolType]: DrawingToolConfig 
     invertedPreview: true,
     actionClass: RectangleSelectAction,
   },
+  [DrawingToolType.eraser]: {
+    ...DRAWING_TOOL_CONFIG_DEFAULTS,
+    behaviour: DrawingToolBehaviour.FREE_DRAW,
+    actionClass: EraserAction,
+  },
   [DrawingToolType.colorFiller]: {
     ...DRAWING_TOOL_CONFIG_DEFAULTS,
     actionClass: ColorFillerAction,
@@ -59,6 +66,11 @@ export const DRAWING_TOOL_CONFIG: { [key in DrawingToolType]: DrawingToolConfig 
     ...DRAWING_TOOL_CONFIG_DEFAULTS,
     behaviour: DrawingToolBehaviour.FREE_DRAW,
     actionClass: PencilAction,
+  },
+  [DrawingToolType.brush]: {
+    ...DRAWING_TOOL_CONFIG_DEFAULTS,
+    behaviour: DrawingToolBehaviour.FREE_DRAW,
+    actionClass: BrushAction,
   },
   [DrawingToolType.line]: {
     ...DRAWING_TOOL_CONFIG_DEFAULTS,

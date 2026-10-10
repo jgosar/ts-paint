@@ -27,6 +27,8 @@ import { RouterModule } from '@angular/router';
 import { DrawingToolOptionsComponent } from './components/drawing-tool-options/drawing-tool-options.component';
 import { FillTypePickerComponent } from './components/fill-type-picker/fill-type-picker.component';
 import { LineThicknessPickerComponent } from './components/line-thickness-picker/line-thickness-picker.component';
+import { EraserSizePickerComponent } from './components/eraser-size-picker/eraser-size-picker.component';
+import { BrushShapePickerComponent } from './components/brush-shape-picker/brush-shape-picker.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppUpdateService } from './services/app-update/app-update.service';
 import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.service';
@@ -52,6 +54,8 @@ import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.serv
     DrawingToolOptionsComponent,
     FillTypePickerComponent,
     LineThicknessPickerComponent,
+    EraserSizePickerComponent,
+    BrushShapePickerComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module
     DropdownComponent, // TODO: make a separate inputs module

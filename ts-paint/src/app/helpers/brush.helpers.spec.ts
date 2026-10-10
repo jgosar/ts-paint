@@ -1,4 +1,13 @@
-import { applyBrush, createBrushFromImage, createRoundBrush, createSquareBrush } from './brush.helpers';
+import {
+  applyBrush,
+  createBrushForShape,
+  createBrushFromImage,
+  createDiagonalBrush,
+  createRoundBrush,
+  createSquareBrush,
+  getBrushPadding,
+} from './brush.helpers';
+import { BrushForm } from '../types/drawing-tools/brush-shape';
 import { Brush } from '../types/base/brush';
 import { createImage } from './image.helpers';
 import { Color } from '../types/base/color';
@@ -103,5 +112,81 @@ describe('applyBrush', () => {
     expect(isColor({ w: 0, h: 0 }, image, BLACK)).toBeTrue();
     expect(isColor({ w: 2, h: 0 }, image, BLACK)).toBeTrue();
     expect(isColor({ w: 3, h: 0 }, image, BLACK)).toBeFalse();
+  });
+});
+
+describe('createDiagonalBrush', () => {
+  it('is a 1px line from bottom left to top right for the forward direction', () => {
+    const brush: Brush = createDiagonalBrush(3, 'forward', BLACK);
+    expect(maskOf(brush)).toEqual(['..#', '.#.', '#..']);
+    expect(brush.origin).toEqual({ w: 1, h: 1 });
+  });
+
+  it('is a 1px line from top left to bottom right for the backward direction', () => {
+    const brush: Brush = createDiagonalBrush(5, 'backward', BLACK);
+    expect(maskOf(brush)).toEqual(['#....', '.#...', '..#..', '...#.', '....#']);
+    expect(brush.origin).toEqual({ w: 2, h: 2 });
+  });
+
+  it('has its origin 4 pixels in for the 9 pixel brush', () => {
+    const brush: Brush = createDiagonalBrush(9, 'forward', BLACK);
+    expect(brush.pixels.length).toBe(9);
+    expect(brush.origin).toEqual({ w: 4, h: 4 });
+  });
+});
+
+describe('createBrushForShape', () => {
+  it('builds the large round brush with row widths 3,5,7,7,7,5,3', () => {
+    const brush: Brush = createBrushForShape({ form: BrushForm.ROUND, size: 7 }, BLACK);
+    expect(maskOf(brush)).toEqual(['..###..', '.#####.', '#######', '#######', '#######', '.#####.', '..###..']);
+  });
+
+  it('builds the medium round brush with row widths 2,4,4,2', () => {
+    const brush: Brush = createBrushForShape({ form: BrushForm.ROUND, size: 4 }, BLACK);
+    expect(maskOf(brush)).toEqual(['.##.', '####', '####', '.##.']);
+  });
+
+  it('builds a filled square for the square form', () => {
+    const brush: Brush = createBrushForShape({ form: BrushForm.SQUARE, size: 2 }, RED);
+    expect(maskOf(brush)).toEqual(['##', '##']);
+    expect(brush.pixels[0][0]).toEqual(RED);
+  });
+
+  it('builds the diagonal brushes', () => {
+    expect(maskOf(createBrushForShape({ form: BrushForm.FORWARD_DIAGONAL, size: 3 }, BLACK))).toEqual([
+      '..#',
+      '.#.',
+      '#..',
+    ]);
+    expect(maskOf(createBrushForShape({ form: BrushForm.BACKWARD_DIAGONAL, size: 3 }, BLACK))).toEqual([
+      '#..',
+      '.#.',
+      '..#',
+    ]);
+  });
+});
+
+describe('getBrushPadding', () => {
+  it('is 0 before and after for a single pixel', () => {
+    expect(getBrushPadding(createRoundBrush(1, BLACK))).toEqual({ before: 0, after: 0 });
+  });
+
+  it('is 3 before and 4 after for the 8 pixel eraser square', () => {
+    expect(getBrushPadding(createSquareBrush(8, BLACK))).toEqual({ before: 3, after: 4 });
+  });
+
+  it('is 4 on both sides for the 9 pixel diagonal', () => {
+    expect(getBrushPadding(createDiagonalBrush(9, 'backward', BLACK))).toEqual({ before: 4, after: 4 });
+  });
+});
+
+describe('applyBrush with replaceOnly', () => {
+  it('only overwrites pixels that have the given color', () => {
+    const image: ImageData = createImage(10, 10, COLOR_WHITE);
+    image.data.set([255, 0, 0, 255], 4 * (5 + 10 * 5)); // (5,5) is red
+    applyBrush({ w: 5, h: 5 }, createSquareBrush(3, BLACK), image, RED);
+    expect(isColor({ w: 5, h: 5 }, image, BLACK)).toBeTrue();
+    expect(isColor({ w: 4, h: 4 }, image, COLOR_WHITE)).toBeTrue();
+    expect(isColor({ w: 6, h: 6 }, image, COLOR_WHITE)).toBeTrue();
   });
 });

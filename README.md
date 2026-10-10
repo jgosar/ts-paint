@@ -33,7 +33,6 @@ To install the extension, follow these steps:
 ## Future plans
 
 ### Immediate TODO list
-- Eraser tool
 - Text tool
 - Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
 - Image/Draw Opaque option
@@ -43,7 +42,6 @@ To install the extension, follow these steps:
 - Different mouse cursors for different drawing tools
 - Polygon tool
 - Curve tool
-- Brush tool
 - Airbrush tool
 - View/View Bitmap option
 - File/Print (Possibility of printing the image without the UI)

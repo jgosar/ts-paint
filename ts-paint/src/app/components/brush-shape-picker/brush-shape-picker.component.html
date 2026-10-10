@@ -1,0 +1,25 @@
+<div class="tsp-brush-shape-picker">
+  @for (option of options; track option.shape.form + '-' + option.shape.size) {
+  <div
+    class="tsp-brush-shape-picker__option"
+    [ngClass]="getNgClass(option.shape)"
+    [style.left.px]="option.cell.w"
+    [style.top.px]="option.cell.h"
+    (click)="selectShape(option.shape)"
+  >
+    <div
+      class="tsp-brush-shape-picker__highlight"
+      [style.left.px]="option.highlight.w"
+      [style.top.px]="option.highlight.h"
+    ></div>
+    <canvas
+      #brushCanvas
+      class="tsp-brush-shape-picker__brush"
+      [width]="option.shape.size"
+      [height]="option.shape.size"
+      [style.left.px]="option.brush.w"
+      [style.top.px]="option.brush.h"
+    ></canvas>
+  </div>
+  }
+</div>

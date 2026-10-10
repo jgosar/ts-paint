@@ -17,9 +17,19 @@ export function drawLine(start: Point, end: Point, color: Color, image: ImageDat
 
 /** Applies the brush at every pixel of the line, which is how thick lines, the brush tool and
  * "use selection as a brush" all work. */
-export function drawLineWithBrush(start: Point, end: Point, brush: Brush, image: ImageData) {
+export function drawLineWithBrush(start: Point, end: Point, brush: Brush, image: ImageData, replaceOnly?: Color) {
   const [x0, y0, x1, y1]: number[] = [start.w, start.h, end.w, end.h];
-  bresenhamLinePlot([x0, y0, x1, y1], (x, y) => applyBrush({ w: x, h: y }, brush, image));
+  bresenhamLinePlot([x0, y0, x1, y1], (x, y) => applyBrush({ w: x, h: y }, brush, image, replaceOnly));
+}
+
+/** Applies the brush along a polyline (the mouse path of a free-hand tool). A single point stamps the brush once. */
+export function drawLinesWithBrush(points: Point[], brush: Brush, image: ImageData, replaceOnly?: Color) {
+  if (points.length === 1) {
+    applyBrush(points[0], brush, image, replaceOnly);
+  }
+  for (let i = 0; i < points.length - 1; i++) {
+    drawLineWithBrush(points[i], points[i + 1], brush, image, replaceOnly);
+  }
 }
 
 export function drawRectangle(
@@ -71,9 +81,7 @@ export function drawEllipse(start: Point, end: Point, color: Color, image: Image
 }
 
 export function drawLines(points: Point[], color: Color, image: ImageData) {
-  for (let i = 0; i < points.length - 1; i++) {
-    drawLine(points[i], points[i + 1], color, image);
-  }
+  drawLinesWithBrush(points, createRoundBrush(1, color), image);
 }
 
 export function getPixel(point: Point, image: ImageData): Color {
