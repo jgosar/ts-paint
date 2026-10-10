@@ -2,27 +2,17 @@ import { EraserAction } from './eraser-action';
 import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
 import { DrawingToolType } from '../../drawing-tools/drawing-tool-type';
 import { createImage } from '../../../helpers/image.helpers';
-import { Point } from '../../base/point';
-import { Color } from '../../base/color';
-import { COLOR_WHITE, DEFAULT_DRAWING_TOOL_OPTIONS } from '../../../services/ts-paint/ts-paint.config';
-import { getPixel } from '../../../helpers/drawing.helpers';
-
-const BLACK: Color = { r: 0, g: 0, b: 0 };
-const RED: Color = { r: 255, g: 0, b: 0 };
-const BLUE: Color = { r: 0, g: 0, b: 255 };
+import { DEFAULT_DRAWING_TOOL_OPTIONS } from '../../../services/ts-paint/ts-paint.config';
+import { createTestState } from '../../../../testing/state.factory';
+import { BLACK, BLUE, isColor, RED, setPixel, WHITE } from '../../../../testing/image-test.helpers';
 
 function stateWithEraserSize(size: number): TsPaintStoreState {
-  const state: TsPaintStoreState = new TsPaintStoreState();
-  state.image = createImage(100, 100, BLACK);
-  state.primaryColor = RED;
-  state.secondaryColor = BLUE;
-  state.drawingToolOptions = { ...DEFAULT_DRAWING_TOOL_OPTIONS, [DrawingToolType.eraser]: { size } };
-  return state;
-}
-
-function isColor(point: Point, image: ImageData, color: Color): boolean {
-  const c: Color = getPixel(point, image);
-  return c.r === color.r && c.g === color.g && c.b === color.b;
+  return createTestState({
+    image: createImage(100, 100, BLACK),
+    primaryColor: RED,
+    secondaryColor: BLUE,
+    drawingToolOptions: { ...DEFAULT_DRAWING_TOOL_OPTIONS, [DrawingToolType.eraser]: { size } },
+  });
 }
 
 describe('EraserAction', () => {
@@ -82,8 +72,8 @@ describe('EraserAction', () => {
 
   it('with the right button only replaces primary-colored pixels with the secondary color', () => {
     const state: TsPaintStoreState = stateWithEraserSize(8);
-    state.image.data.set([255, 0, 0, 255], 4 * (25 + 100 * 50)); // (25,50) is red (primary)
-    state.image.data.set([255, 255, 255, 255], 4 * (26 + 100 * 50)); // (26,50) is white
+    setPixel(state.image, { w: 25, h: 50 }, RED); // (25,50) is red (primary)
+    setPixel(state.image, { w: 26, h: 50 }, WHITE); // (26,50) is white
     const action: EraserAction = new EraserAction(
       [
         { w: 20, h: 50 },
@@ -96,13 +86,13 @@ describe('EraserAction', () => {
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
     expect(isColor({ w: 25, h: 50 }, patches.image, BLUE)).toBe(true);
-    expect(isColor({ w: 26, h: 50 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 26, h: 50 }, patches.image, WHITE)).toBe(true);
     expect(isColor({ w: 24, h: 50 }, patches.image, BLACK)).toBe(true);
   });
 
   it('with the right button the preview shows the untouched pixels of the affected area', () => {
     const state: TsPaintStoreState = stateWithEraserSize(8);
-    state.image.data.set([255, 0, 0, 255], 4 * (25 + 100 * 50)); // (25,50) is red (primary)
+    setPixel(state.image, { w: 25, h: 50 }, RED); // (25,50) is red (primary)
     const action: EraserAction = new EraserAction(
       [
         { w: 20, h: 50 },

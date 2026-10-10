@@ -78,7 +78,8 @@ export abstract class TsPaintAction {
     return (
       this._overridesPreviousActionOfSameType &&
       !isEmpty(actions) &&
-      actions.length > undoPointer - 1 &&
+      undoPointer >= 0 &&
+      undoPointer < actions.length &&
       actions[undoPointer].constructor === this.constructor
     );
   }

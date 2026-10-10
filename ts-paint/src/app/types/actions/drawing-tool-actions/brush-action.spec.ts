@@ -2,27 +2,16 @@ import { BrushAction } from './brush-action';
 import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
 import { DrawingToolType } from '../../drawing-tools/drawing-tool-type';
 import { BrushForm, BrushShape } from '../../drawing-tools/brush-shape';
-import { createImage } from '../../../helpers/image.helpers';
-import { Point } from '../../base/point';
-import { Color } from '../../base/color';
-import { COLOR_WHITE, DEFAULT_DRAWING_TOOL_OPTIONS } from '../../../services/ts-paint/ts-paint.config';
-import { getPixel } from '../../../helpers/drawing.helpers';
-
-const RED: Color = { r: 255, g: 0, b: 0 };
-const BLUE: Color = { r: 0, g: 0, b: 255 };
+import { DEFAULT_DRAWING_TOOL_OPTIONS } from '../../../services/ts-paint/ts-paint.config';
+import { createTestState } from '../../../../testing/state.factory';
+import { alphaAt, BLUE, isColor, RED, WHITE } from '../../../../testing/image-test.helpers';
 
 function stateWithBrush(shape: BrushShape): TsPaintStoreState {
-  const state: TsPaintStoreState = new TsPaintStoreState();
-  state.image = createImage(100, 100, COLOR_WHITE);
-  state.primaryColor = RED;
-  state.secondaryColor = BLUE;
-  state.drawingToolOptions = { ...DEFAULT_DRAWING_TOOL_OPTIONS, [DrawingToolType.brush]: { shape } };
-  return state;
-}
-
-function isColor(point: Point, image: ImageData, color: Color): boolean {
-  const c: Color = getPixel(point, image);
-  return c.r === color.r && c.g === color.g && c.b === color.b;
+  return createTestState({
+    primaryColor: RED,
+    secondaryColor: BLUE,
+    drawingToolOptions: { ...DEFAULT_DRAWING_TOOL_OPTIONS, [DrawingToolType.brush]: { shape } },
+  });
 }
 
 describe('BrushAction', () => {
@@ -33,14 +22,14 @@ describe('BrushAction', () => {
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
     // origin is 1 px in, so the 4x4 box covers 9..12
-    expect(isColor({ w: 9, h: 9 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 9, h: 9 }, patches.image, WHITE)).toBe(true);
     expect(isColor({ w: 10, h: 9 }, patches.image, RED)).toBe(true);
     expect(isColor({ w: 11, h: 9 }, patches.image, RED)).toBe(true);
-    expect(isColor({ w: 12, h: 9 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 12, h: 9 }, patches.image, WHITE)).toBe(true);
     expect(isColor({ w: 9, h: 10 }, patches.image, RED)).toBe(true);
     expect(isColor({ w: 12, h: 11 }, patches.image, RED)).toBe(true);
-    expect(isColor({ w: 12, h: 12 }, patches.image, COLOR_WHITE)).toBe(true);
-    expect(isColor({ w: 13, h: 10 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 12, h: 12 }, patches.image, WHITE)).toBe(true);
+    expect(isColor({ w: 13, h: 10 }, patches.image, WHITE)).toBe(true);
   });
 
   it('paints with the secondary color for the right button', () => {
@@ -58,7 +47,7 @@ describe('BrushAction', () => {
 
     expect(isColor({ w: 10, h: 10 }, patches.image, BLUE)).toBe(true);
     expect(isColor({ w: 16, h: 11 }, patches.image, BLUE)).toBe(true);
-    expect(isColor({ w: 9, h: 10 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 9, h: 10 }, patches.image, WHITE)).toBe(true);
   });
 
   it('pads the preview by 4 px on each side for the 9 px diagonal brush', () => {
@@ -79,7 +68,7 @@ describe('BrushAction', () => {
     expect(patches.previewImage.height).toBe(9);
     expect(isColor({ w: 0, h: 0 }, patches.previewImage, RED)).toBe(true);
     expect(isColor({ w: 18, h: 8 }, patches.previewImage, RED)).toBe(true);
-    expect(patches.previewImage.data[4 * 18 + 3]).toBe(0);
+    expect(alphaAt({ w: 18, h: 0 }, patches.previewImage)).toBe(0);
   });
 
   it('draws the forward diagonal from bottom left to top right', () => {
@@ -91,7 +80,7 @@ describe('BrushAction', () => {
     expect(isColor({ w: 9, h: 11 }, patches.image, RED)).toBe(true);
     expect(isColor({ w: 10, h: 10 }, patches.image, RED)).toBe(true);
     expect(isColor({ w: 11, h: 9 }, patches.image, RED)).toBe(true);
-    expect(isColor({ w: 9, h: 9 }, patches.image, COLOR_WHITE)).toBe(true);
-    expect(isColor({ w: 11, h: 11 }, patches.image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 9, h: 9 }, patches.image, WHITE)).toBe(true);
+    expect(isColor({ w: 11, h: 11 }, patches.image, WHITE)).toBe(true);
   });
 });

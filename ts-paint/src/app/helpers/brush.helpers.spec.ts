@@ -10,18 +10,7 @@ import {
 import { BrushForm } from '../types/drawing-tools/brush-shape';
 import { Brush } from '../types/base/brush';
 import { createImage } from './image.helpers';
-import { Color } from '../types/base/color';
-import { Point } from '../types/base/point';
-import { COLOR_WHITE } from '../services/ts-paint/ts-paint.config';
-import { getPixel } from './drawing.helpers';
-
-const BLACK: Color = { r: 0, g: 0, b: 0 };
-const RED: Color = { r: 255, g: 0, b: 0 };
-
-function isColor(point: Point, image: ImageData, color: Color): boolean {
-  const c: Color = getPixel(point, image);
-  return c.r === color.r && c.g === color.g && c.b === color.b;
-}
+import { BLACK, RED, WHITE, isColor, setPixel } from '../../testing/image-test.helpers';
 
 function maskOf(brush: Brush): string[] {
   return brush.pixels.map((row) => row.map((p) => (p === null ? '.' : '#')).join(''));
@@ -81,15 +70,15 @@ describe('createBrushFromImage', () => {
 
   it('turns pixels of the transparent color into holes', () => {
     const image: ImageData = createImage(2, 1, RED);
-    image.data.set([255, 255, 255, 255], 4);
-    const brush: Brush = createBrushFromImage(image, COLOR_WHITE);
+    setPixel(image, { w: 1, h: 0 }, WHITE);
+    const brush: Brush = createBrushFromImage(image, WHITE);
     expect(brush.pixels).toEqual([[RED, null]]);
   });
 });
 
 describe('applyBrush', () => {
   it('paints the brush pixels around the origin', () => {
-    const image: ImageData = createImage(10, 10, COLOR_WHITE);
+    const image: ImageData = createImage(10, 10, WHITE);
     applyBrush({ w: 5, h: 5 }, createRoundBrush(3, BLACK), image);
     expect(isColor({ w: 4, h: 4 }, image, BLACK)).toBe(true);
     expect(isColor({ w: 6, h: 6 }, image, BLACK)).toBe(true);
@@ -98,16 +87,16 @@ describe('applyBrush', () => {
   });
 
   it('leaves the image untouched under null brush pixels', () => {
-    const image: ImageData = createImage(10, 10, COLOR_WHITE);
+    const image: ImageData = createImage(10, 10, WHITE);
     const brush: Brush = { pixels: [[BLACK, null, RED]], origin: { w: 0, h: 0 } };
     applyBrush({ w: 2, h: 2 }, brush, image);
     expect(isColor({ w: 2, h: 2 }, image, BLACK)).toBe(true);
-    expect(isColor({ w: 3, h: 2 }, image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 3, h: 2 }, image, WHITE)).toBe(true);
     expect(isColor({ w: 4, h: 2 }, image, RED)).toBe(true);
   });
 
   it('does not throw when part of the brush falls outside the image', () => {
-    const image: ImageData = createImage(10, 10, COLOR_WHITE);
+    const image: ImageData = createImage(10, 10, WHITE);
     expect(() => applyBrush({ w: 0, h: 0 }, createRoundBrush(5, BLACK), image)).not.toThrow();
     expect(isColor({ w: 0, h: 0 }, image, BLACK)).toBe(true);
     expect(isColor({ w: 2, h: 0 }, image, BLACK)).toBe(true);
@@ -182,11 +171,11 @@ describe('getBrushPadding', () => {
 
 describe('applyBrush with replaceOnly', () => {
   it('only overwrites pixels that have the given color', () => {
-    const image: ImageData = createImage(10, 10, COLOR_WHITE);
-    image.data.set([255, 0, 0, 255], 4 * (5 + 10 * 5)); // (5,5) is red
+    const image: ImageData = createImage(10, 10, WHITE);
+    setPixel(image, { w: 5, h: 5 }, RED);
     applyBrush({ w: 5, h: 5 }, createSquareBrush(3, BLACK), image, RED);
     expect(isColor({ w: 5, h: 5 }, image, BLACK)).toBe(true);
-    expect(isColor({ w: 4, h: 4 }, image, COLOR_WHITE)).toBe(true);
-    expect(isColor({ w: 6, h: 6 }, image, COLOR_WHITE)).toBe(true);
+    expect(isColor({ w: 4, h: 4 }, image, WHITE)).toBe(true);
+    expect(isColor({ w: 6, h: 6 }, image, WHITE)).toBe(true);
   });
 });

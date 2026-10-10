@@ -34,3 +34,8 @@ const OS_VERSTION_USER_AGENTS: { osName: string; userAgentRegex: RegExp }[] = [
 export function getOsVersion(): string {
   return OS_VERSTION_USER_AGENTS.find((x) => x.userAgentRegex.test(window.navigator.userAgent))?.osName;
 }
+
+/** The single place that reloads the page (location.reload itself cannot be spied on or replaced in tests) */
+export function reloadPage(): void {
+  location.reload();
+}
