@@ -26,17 +26,28 @@ export class DrawingToolOptionsComponent implements OnChanges {
   @Output()
   optionsChange: EventEmitter<Partial<DrawingToolOptions>> = new EventEmitter<Partial<DrawingToolOptions>>();
 
-  displayedPicker: 'fillTypePicker' | undefined = undefined;
+  displayedPicker: 'fillTypePicker' | 'lineThicknessPicker' | undefined = undefined;
   selectedFillType: FillType = undefined;
+  selectedLineThickness: number = undefined;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.displayedPicker = undefined;
     this.selectedFillType = undefined;
+    this.selectedLineThickness = undefined;
 
     if ([DrawingToolType.rectangle].includes(this.selectedTool)) {
       this.displayedPicker = 'fillTypePicker';
-      this.selectedFillType = this.options[this.selectedTool].fillType;
+      this.selectedFillType = this.options[DrawingToolType.rectangle].fillType;
+    } else if ([DrawingToolType.line].includes(this.selectedTool)) {
+      this.displayedPicker = 'lineThicknessPicker';
+      this.selectedLineThickness = this.options[DrawingToolType.line].thickness;
     }
+  }
+
+  changeSelectedLineThickness(thickness: number) {
+    const changes: Partial<DrawingToolOptions> = { [DrawingToolType.line]: { thickness } };
+
+    this.optionsChange.emit(changes);
   }
 
   changeSelectedFillType(fillType: FillType) {

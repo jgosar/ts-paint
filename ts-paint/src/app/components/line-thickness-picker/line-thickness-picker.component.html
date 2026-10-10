@@ -1,0 +1,5 @@
+@for (thickness of availableThicknesses; track thickness) {
+<div class="tsp-line-thickness-picker__option" [ngClass]="getNgClass(thickness)" (click)="selectThickness(thickness)">
+  <div class="tsp-line-thickness-picker__bar" [style.height.px]="thickness"></div>
+</div>
+}

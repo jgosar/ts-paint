@@ -26,6 +26,7 @@ import { StretchSkewWindowComponent } from './components/stretch-skew-window/str
 import { RouterModule } from '@angular/router';
 import { DrawingToolOptionsComponent } from './components/drawing-tool-options/drawing-tool-options.component';
 import { FillTypePickerComponent } from './components/fill-type-picker/fill-type-picker.component';
+import { LineThicknessPickerComponent } from './components/line-thickness-picker/line-thickness-picker.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppUpdateService } from './services/app-update/app-update.service';
 import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.service';
@@ -50,6 +51,7 @@ import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.serv
     FooterInfoComponent,
     DrawingToolOptionsComponent,
     FillTypePickerComponent,
+    LineThicknessPickerComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module
     DropdownComponent, // TODO: make a separate inputs module
