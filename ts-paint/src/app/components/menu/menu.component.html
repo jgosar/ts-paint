@@ -9,7 +9,7 @@
               <div
                 class="tsp-menu__menu-level-2"
                 [ngClass]="{ 'tsp-menu__menu-level-2--disabled': menu2.disabled }"
-                (click)="itemSelected.emit(menu2)"
+                (click)="selectItem(menu2)"
                 >
                 <div>{{ menu2.name }}</div>
                 @if (menu2.hotkeys) {

@@ -19,9 +19,15 @@ export class DeleteSelectionAction extends TsPaintAction {
 
       return { patches };
     }
+
+    return {};
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
+    if (state.selectionImage === undefined) {
+      return [];
+    }
+
     return [new PasteImageUndoAction(state.selectionImage), new MoveSelectionAction(state.selectionOffset)];
   }
 }

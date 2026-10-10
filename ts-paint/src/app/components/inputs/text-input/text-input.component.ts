@@ -17,6 +17,11 @@ export class TextInputComponent {
     this.valueChange.emit((event.target as HTMLInputElement).value);
   }
 
+  onKeydown(event: KeyboardEvent) {
+    // Keys typed into the field (Delete, Ctrl+A, ...) must not reach the window hotkey handler
+    event.stopPropagation();
+  }
+
   focus() {
     setTimeout(() => this._inputElement()?.nativeElement.select());
   }

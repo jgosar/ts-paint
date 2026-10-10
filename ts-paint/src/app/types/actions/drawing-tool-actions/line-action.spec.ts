@@ -3,21 +3,20 @@ import { RectangleAction } from './rectangle-action';
 import { EllipseAction } from './ellipse-action';
 import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
 import { DrawingToolType } from '../../drawing-tools/drawing-tool-type';
-import { createImage } from '../../../helpers/image.helpers';
 import { Point } from '../../base/point';
-import { COLOR_WHITE, DEFAULT_DRAWING_TOOL_OPTIONS } from '../../../services/ts-paint/ts-paint.config';
+import { DEFAULT_DRAWING_TOOL_OPTIONS } from '../../../services/ts-paint/ts-paint.config';
+import { createTestState } from '../../../../testing/state.factory';
+import { alphaAt, BLACK, isColor } from '../../../../testing/image-test.helpers';
 
 function stateWithThickness(thickness: number): TsPaintStoreState {
-  const state: TsPaintStoreState = new TsPaintStoreState();
-  state.image = createImage(100, 100, COLOR_WHITE);
-  state.drawingToolOptions = { ...DEFAULT_DRAWING_TOOL_OPTIONS, [DrawingToolType.line]: { thickness } };
-  return state;
+  return createTestState({
+    drawingToolOptions: { ...DEFAULT_DRAWING_TOOL_OPTIONS, [DrawingToolType.line]: { thickness } },
+  });
 }
 
+/** Opaque black, so that the transparent background of a preview does not count as black */
 function isBlack(point: Point, image: ImageData): boolean {
-  const offset: number = 4 * (point.w + image.width * point.h);
-  const [r, g, b, a]: number[] = Array.from(image.data.slice(offset, offset + 4));
-  return r === 0 && g === 0 && b === 0 && a === 255;
+  return isColor(point, image, BLACK) && alphaAt(point, image) === 255;
 }
 
 describe('LineAction', () => {

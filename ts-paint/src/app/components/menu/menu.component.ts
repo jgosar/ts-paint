@@ -21,4 +21,10 @@ export class MenuComponent {
   focusMenu() {
     this._element.nativeElement.focus();
   }
+
+  selectItem(item: MenuItem) {
+    if (!item.disabled) {
+      this.itemSelected.emit(item);
+    }
+  }
 }

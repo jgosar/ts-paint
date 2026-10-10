@@ -3,6 +3,7 @@ import { TsPaintStoreState } from './ts-paint.store.state';
 import { Store } from './store';
 import { MenuActionType } from '../../types/menu/menu-action-type';
 import { assertUnreachable, isDefined } from '../../helpers/typescript.helpers';
+import { reloadPage } from '../../helpers/environment.helpers';
 import { Point } from '../../types/base/point';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { DrawingTool } from '../../types/drawing-tools/drawing-tool';
@@ -185,6 +186,9 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   ////////////////////////////// Menu actions //////////////////////////////
 
   executeMenuAction(menuAction: MenuActionType) {
+    if (!isDefined(menuAction)) {
+      return;
+    }
     const menuActionFunction: () => void = this.getMenuActionFunction(menuAction);
     menuActionFunction();
   }
@@ -233,7 +237,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   private newFile() {
-    location.reload();
+    reloadPage();
   }
 
   private async openFile(): Promise<void> {
@@ -390,7 +394,9 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     } else if (params.skew) {
       //TODO: action = new SkewImageAction(params.skew);
     }
-    this.executeAction(action);
+    if (isDefined(action)) {
+      this.executeAction(action);
+    }
   }
 
   closeStretchSkewWindow() {
@@ -412,7 +418,9 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     } else if (params.rotate) {
       action = new RotateImageAction(params.rotate);
     }
-    this.executeAction(action);
+    if (isDefined(action)) {
+      this.executeAction(action);
+    }
   }
 
   closeFlipRotateWindow() {

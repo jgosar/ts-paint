@@ -2,6 +2,7 @@ import { ApplicationRef, Injectable } from '@angular/core';
 import { SwUpdate } from '@angular/service-worker';
 import { interval } from 'rxjs';
 import { first, switchMap } from 'rxjs/operators';
+import { reloadPage } from '../../helpers/environment.helpers';
 
 const UPDATE_CHECK_INTERVAL_MS: number = 60 * 60 * 1000;
 
@@ -19,7 +20,7 @@ export class AppUpdateService {
       return;
     }
 
-    this._swUpdate.unrecoverable.subscribe(() => location.reload());
+    this._swUpdate.unrecoverable.subscribe(() => reloadPage());
 
     // The timer is created only once the app is stable, otherwise it would postpone service worker registration
     this._appRef.isStable

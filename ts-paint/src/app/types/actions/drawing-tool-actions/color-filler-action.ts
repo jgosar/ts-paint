@@ -20,6 +20,10 @@ export class ColorFillerAction extends DrawingToolAction {
     if (isEmpty(this._sameColorPixels)) {
       this._sameColorPixels = this.getSameColorPixels(this.points[0], newColor, state.image);
     }
+    if (isEmpty(this._sameColorPixels)) {
+      // The clicked pixel already has the fill color, so nothing changes: use the clicked pixel as the area
+      return { start: this.points[0], end: this.points[0] };
+    }
     const minW: number = min(this._sameColorPixels.map((w) => w.w));
     const maxW: number = max(this._sameColorPixels.map((w) => w.w));
     const minH: number = min(this._sameColorPixels.map((w) => w.h));
