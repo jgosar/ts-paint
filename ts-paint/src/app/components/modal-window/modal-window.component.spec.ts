@@ -88,4 +88,26 @@ describe('ModalWindowComponent', () => {
     expect(element.querySelector('.tsp-can-grow').textContent.trim()).toBe('Projected');
     ref.destroy();
   });
+
+  it('is centred on whole pixels, like a Windows dialog, even when its size is odd', () => {
+    // Half-pixel positions make the pixel font blurry (or illegible without anti-aliasing)
+    const content: HTMLDivElement = document.createElement('div');
+    content.style.width = '301px';
+    content.style.height = '77px';
+    const ref: ComponentRef<ModalWindowComponent> = createComponent(ModalWindowComponent, {
+      environmentInjector: TestBed.inject(EnvironmentInjector),
+      projectableNodes: [[content]],
+    });
+    ref.setInput('title', 'Odd');
+    document.body.appendChild(ref.location.nativeElement);
+    ref.changeDetectorRef.detectChanges();
+
+    const container: HTMLElement = ref.location.nativeElement.querySelector('.tsp-modal-window__container');
+    const rect: DOMRect = container.getBoundingClientRect();
+    expect(rect.width % 2, 'the test needs an odd width').toBe(1);
+    expect(rect.height % 2, 'the test needs an odd height').toBe(1);
+    expect(rect.left).toBe(Math.floor((window.innerWidth - rect.width) / 2));
+    expect(rect.top).toBe(Math.floor((window.innerHeight - rect.height) / 2));
+    ref.destroy();
+  });
 });

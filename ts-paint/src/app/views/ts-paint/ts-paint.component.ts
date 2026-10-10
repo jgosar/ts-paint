@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectionStrategy, NgZone } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TsPaintStore } from '../../services/ts-paint/ts-paint.store';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
@@ -12,14 +12,15 @@ import { isDefined } from '../../helpers/typescript.helpers';
   standalone: false,
 })
 export class TsPaintComponent implements OnInit {
-  constructor(public store: TsPaintStore, private _activatedRoute: ActivatedRoute) {
+  constructor(public store: TsPaintStore, private _activatedRoute: ActivatedRoute, private _ngZone: NgZone) {
     this._activatedRoute.queryParams.subscribe((params) => {
       if (isDefined(params['imageUrl'])) {
         store.loadFileFromUrl(params['imageUrl']);
       }
     });
     // Files opened with the installed app ("Open with TS Paint") arrive here with a writable handle (Chromium only).
-    window.launchQueue?.setConsumer((launchParams) => this.openLaunchedFile(launchParams));
+    // The consumer is called from outside the Angular zone, so the UI would not update until the next event without ngZone.run.
+    window.launchQueue?.setConsumer((launchParams) => this._ngZone.run(() => this.openLaunchedFile(launchParams)));
   }
 
   private async openLaunchedFile(launchParams: LaunchParams): Promise<void> {
