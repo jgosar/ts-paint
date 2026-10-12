@@ -15,36 +15,8 @@ import { ALL_BRUSH_SHAPES, BrushShape, brushShapesEqual } from 'src/app/types/dr
 import { createBrushForShape } from 'src/app/helpers/brush.helpers';
 import { Brush } from 'src/app/types/base/brush';
 import { Color } from 'src/app/types/base/color';
-import { Point } from 'src/app/types/base/point';
-import { COLOR_WHITE } from 'src/app/services/ts-paint/ts-paint.config';
 
 const COLOR_BLACK: Color = { r: 0, g: 0, b: 0 };
-
-// A 39x64 grid of 13x16 cells, like the brush box of MS Paint
-const CELL_WIDTH: number = 13;
-const CELL_HEIGHT: number = 16;
-/**
- * MS Paint marks the selection with a narrow bar; a square looks better. Like the brushes, it is centred, an odd
- * leftover pixel going right and down, which keeps every marker at least 1px inside the frame.
- */
-const HIGHLIGHT_SIZE: number = 10;
-
-export interface BrushShapePickerOption {
-  shape: BrushShape;
-  cell: Point;
-  highlight: Point;
-  brush: Point;
-}
-
-/** MS Paint centres every brush in its cell, rounding down: the extra pixel of an odd gap goes right and below */
-function centreInCell(size: number): Point {
-  return { w: Math.floor((CELL_WIDTH - size) / 2), h: Math.floor((CELL_HEIGHT - size) / 2) };
-}
-
-function centreHighlightOn(brush: Point, size: number): Point {
-  const margin: number = Math.floor((HIGHLIGHT_SIZE - size) / 2);
-  return { w: brush.w - margin, h: brush.h - margin };
-}
 
 @Component({
   selector: 'tsp-brush-shape-picker',
@@ -54,28 +26,20 @@ function centreHighlightOn(brush: Point, size: number): Point {
   standalone: false,
 })
 export class BrushShapePickerComponent implements OnChanges, AfterViewInit {
-  options: BrushShapePickerOption[] = ALL_BRUSH_SHAPES.map((shape, index) => {
-    const column: number = index % 3;
-    const row: number = Math.floor(index / 3);
-    const brush: Point = centreInCell(shape.size);
-    return {
-      shape,
-      cell: { w: column * CELL_WIDTH, h: row * CELL_HEIGHT },
-      highlight: centreHighlightOn(brush, shape.size),
-      brush,
-    };
-  });
+  readonly shapes: BrushShape[] = ALL_BRUSH_SHAPES;
 
   @Input()
   selectedShape: BrushShape;
   @Output()
   selectedShapeChange: EventEmitter<BrushShape> = new EventEmitter<BrushShape>();
 
+  selectedIndex: number = -1;
+
   @ViewChildren('brushCanvas')
   private _canvases: QueryList<ElementRef<HTMLCanvasElement>>;
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.drawBrushes();
+    this.selectedIndex = this.shapes.findIndex((shape) => brushShapesEqual(shape, this.selectedShape));
   }
 
   ngAfterViewInit(): void {
@@ -86,27 +50,11 @@ export class BrushShapePickerComponent implements OnChanges, AfterViewInit {
     this.selectedShapeChange.emit(shape);
   }
 
-  isSelected(shape: BrushShape): boolean {
-    return brushShapesEqual(shape, this.selectedShape);
-  }
-
-  getNgClass(shape: BrushShape) {
-    const ngClass = {};
-    ngClass['tsp-brush-shape-picker__option--selected'] = this.isSelected(shape);
-
-    return ngClass;
-  }
-
-  /** Draws every brush the way the tool paints it: black normally, white on the selected (dark blue) option */
+  /** Draws every brush the way the tool paints it, in black; the stylesheet shows the selected one in white */
   private drawBrushes() {
-    if (this._canvases === undefined) {
-      return;
-    }
     this._canvases.forEach((canvasRef, index) => {
-      const shape: BrushShape = this.options[index].shape;
-      const brush: Brush = createBrushForShape(shape, this.isSelected(shape) ? COLOR_WHITE : COLOR_BLACK);
-      const canvas: HTMLCanvasElement = canvasRef.nativeElement;
-      canvas.getContext('2d').putImageData(this.brushToImageData(brush), 0, 0);
+      const brush: Brush = createBrushForShape(this.shapes[index], COLOR_BLACK);
+      canvasRef.nativeElement.getContext('2d').putImageData(this.brushToImageData(brush), 0, 0);
     });
   }
 

@@ -10,7 +10,7 @@ describe('BrushShapePickerComponent', () => {
     await TestBed.configureTestingModule({ declarations: [BrushShapePickerComponent] }).compileComponents();
     fixture = TestBed.createComponent(BrushShapePickerComponent);
     component = fixture.componentInstance;
-    component.selectedShape = { form: BrushForm.ROUND, size: 4 };
+    fixture.componentRef.setInput('selectedShape', { form: BrushForm.ROUND, size: 4 });
     fixture.detectChanges();
   });
 
@@ -39,21 +39,27 @@ describe('BrushShapePickerComponent', () => {
     expect(pixelAt(canvas, 2, 0)).toEqual([0, 0, 0, 255]);
   });
 
-  it('marks the selected shape and draws it in white', () => {
+  /** The brushes are drawn in black once; the selected one is shown in white by a CSS filter */
+  function shownInWhite(option: HTMLElement): boolean {
+    return getComputedStyle(canvasOf(option)).filter === 'invert(1)';
+  }
+
+  it('marks the selected shape and shows it in white', () => {
     const selected: HTMLElement[] = Array.from(options()).filter((o) =>
       o.classList.contains('tsp-brush-shape-picker__option--selected')
     );
     expect(selected.length).toBe(1);
     expect(selected[0]).toBe(options()[1]);
-    expect(pixelAt(canvasOf(selected[0]), 1, 1)).toEqual([255, 255, 255, 255]);
+    expect(pixelAt(canvasOf(selected[0]), 1, 1)).toEqual([0, 0, 0, 255]);
+    expect(Array.from(options()).map(shownInWhite)).toEqual([false, true, ...Array(10).fill(false)]);
   });
 
-  it('redraws when the selection changes', () => {
-    component.selectedShape = { form: BrushForm.SQUARE, size: 8 };
-    component.ngOnChanges({});
+  it('moves the white rendering when the selection changes', () => {
+    fixture.componentRef.setInput('selectedShape', { form: BrushForm.SQUARE, size: 8 });
     fixture.detectChanges();
-    expect(pixelAt(canvasOf(options()[1]), 1, 1)).toEqual([0, 0, 0, 255]);
-    expect(pixelAt(canvasOf(options()[3]), 0, 0)).toEqual([255, 255, 255, 255]);
+    expect(shownInWhite(options()[1])).toBe(false);
+    expect(shownInWhite(options()[3])).toBe(true);
+    expect(pixelAt(canvasOf(options()[3]), 0, 0)).toEqual([0, 0, 0, 255]);
   });
 
   it('emits the shape of a clicked option', () => {
