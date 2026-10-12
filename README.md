@@ -54,10 +54,12 @@ To install the extension, follow these steps:
 ## Future plans
 
 ### Immediate TODO list
-- Text tool
-- Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
 - Image/Draw Opaque option
 - View/Zoom/Show Grid option
+- Text tool
+- Touchscreen support
+- Modernize Angular code: signals, standalone components
+- Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
 
 ### Nice to have
 - Different mouse cursors for different drawing tools
