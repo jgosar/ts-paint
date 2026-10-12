@@ -20,26 +20,12 @@ import { COLOR_WHITE } from 'src/app/services/ts-paint/ts-paint.config';
 
 const COLOR_BLACK: Color = { r: 0, g: 0, b: 0 };
 
-/** Where each brush is drawn inside its 13x16 cell, as measured in MS Paint (picker order) */
-const BRUSH_OFFSETS_IN_CELL: Point[] = [
-  { w: 3, h: 4 },
-  { w: 4, h: 6 },
-  { w: 6, h: 7 },
-  { w: 2, h: 4 },
-  { w: 4, h: 5 },
-  { w: 5, h: 7 },
-  { w: 2, h: 4 },
-  { w: 4, h: 5 },
-  { w: 5, h: 7 },
-  { w: 2, h: 4 },
-  { w: 4, h: 5 },
-  { w: 5, h: 7 },
-];
+// A 39x64 grid of 13x16 cells, like the brush box of MS Paint
 const CELL_WIDTH: number = 13;
 const CELL_HEIGHT: number = 16;
 /**
- * MS Paint marks the selection with a narrow bar; a square looks better. It is centred on the brush, an odd leftover
- * pixel going right and down, which keeps every marker at least 1px inside the frame.
+ * MS Paint marks the selection with a narrow bar; a square looks better. Like the brushes, it is centred, an odd
+ * leftover pixel going right and down, which keeps every marker at least 1px inside the frame.
  */
 const HIGHLIGHT_SIZE: number = 10;
 
@@ -48,6 +34,11 @@ export interface BrushShapePickerOption {
   cell: Point;
   highlight: Point;
   brush: Point;
+}
+
+/** MS Paint centres every brush in its cell, rounding down: the extra pixel of an odd gap goes right and below */
+function centreInCell(size: number): Point {
+  return { w: Math.floor((CELL_WIDTH - size) / 2), h: Math.floor((CELL_HEIGHT - size) / 2) };
 }
 
 function centreHighlightOn(brush: Point, size: number): Point {
@@ -66,11 +57,12 @@ export class BrushShapePickerComponent implements OnChanges, AfterViewInit {
   options: BrushShapePickerOption[] = ALL_BRUSH_SHAPES.map((shape, index) => {
     const column: number = index % 3;
     const row: number = Math.floor(index / 3);
+    const brush: Point = centreInCell(shape.size);
     return {
       shape,
       cell: { w: column * CELL_WIDTH, h: row * CELL_HEIGHT },
-      highlight: centreHighlightOn(BRUSH_OFFSETS_IN_CELL[index], shape.size),
-      brush: BRUSH_OFFSETS_IN_CELL[index],
+      highlight: centreHighlightOn(brush, shape.size),
+      brush,
     };
   });
 
