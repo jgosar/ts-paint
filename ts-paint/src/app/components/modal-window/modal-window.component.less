@@ -10,12 +10,9 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate3d(
-    -50%,
-    -50%,
-    0px
-  ); // https://stackoverflow.com/questions/27385126/chrome-font-appears-blurry#answer-27464561
-  //transform: translate(-50%, -50%);
+  // Rounded down to whole pixels (integer division, like Windows): a window with an odd width or height would
+  // otherwise sit on a half pixel and its text would render blurry. Escaped because Less has a round() of its own.
+  transform: translate(~'round(down, -50%, 1px)', ~'round(down, -50%, 1px)');
   background-color: @color--lighter-grey;
 }
 

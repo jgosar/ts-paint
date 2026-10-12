@@ -41,6 +41,13 @@ module.exports = tseslint.config(
     },
   },
   {
+    // Playwright tests are plain TypeScript: no Angular naming conventions, no inline templates
+    files: ["e2e/**/*.ts"],
+    rules: {
+      "@typescript-eslint/naming-convention": "off",
+    },
+  },
+  {
     files: ["**/*.html"],
     extends: [...angular.configs.templateRecommended],
     rules: {},

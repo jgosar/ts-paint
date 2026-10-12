@@ -29,3 +29,38 @@ jobs:
           name: coverage
           path: ts-paint/coverage/
           retention-days: 14
+
+  e2e:
+    runs-on: ubuntu-latest
+    # The visual baselines in e2e/*-snapshots are generated in this exact image (see ts-paint/e2e/README.md)
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
+      options: --ipc=host
+    defaults:
+      run:
+        working-directory: ts-paint
+    steps:
+      - uses: actions/checkout@v4
+      # The image's Node is older than the Angular CLI's minimum
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ts-paint/.nvmrc
+      - run: npm ci
+      - run: npm run test:e2e:ci
+        env:
+          CI: true
+          # Text without anti-aliasing, the same as scripts/e2e-docker.sh (see e2e/fonts.conf)
+          FONTCONFIG_FILE: ${{ github.workspace }}/ts-paint/e2e/fonts.conf
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: ts-paint/playwright-report/
+          retention-days: 14
+      - name: Upload failure screenshots, diffs and traces
+        uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: playwright-results
+          path: ts-paint/test-results/
+          retention-days: 14

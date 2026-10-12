@@ -10,6 +10,10 @@
     "build": "ng build",
     "test": "ng test",
     "test:ci": "ng test --watch=false --coverage",
+    "test:e2e": "playwright test --project=chromium",
+    "test:e2e:ci": "playwright test",
+    "test:e2e:docker": "bash ../scripts/e2e-docker.sh",
+    "test:e2e:update": "bash ../scripts/e2e-docker.sh --update-snapshots",
     "lint": "ng lint"
   },
   "private": true,

@@ -1,3 +1,4 @@
+import { NgZone } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Params } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
@@ -124,6 +125,20 @@ describe('TsPaintComponent', () => {
       expect(loadFile).toHaveBeenCalledTimes(1);
       expect(loadFile.mock.calls[0][0]).toBe(file);
       await expect(loadFile.mock.calls[0][1]).resolves.toBe(handle);
+    });
+
+    it('loads the launched file inside the Angular zone, so that the UI updates', async () => {
+      // Chromium delivers launch events from outside the zone; without NgZone.run the loaded image appears only on the next event.
+      let loadedInsideAngularZone: boolean | undefined;
+      vi.spyOn(store, 'loadFile').mockImplementation(() => {
+        loadedInsideAngularZone = NgZone.isInAngularZone();
+        return Promise.resolve();
+      });
+      const handle: FileSystemFileHandle = createFileHandleStub(createTestFile('launched.png'));
+      createComponent();
+      const consumer: (params: LaunchParams) => void = registeredConsumer();
+      await TestBed.inject(NgZone).runOutsideAngular(() => consumer({ files: [handle] }));
+      expect(loadedInsideAngularZone).toBe(true);
     });
 
     it('ignores launches without a file handle', async () => {
