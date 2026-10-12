@@ -4,25 +4,25 @@
       <div class="tsp-raised-item tsp-palette__color-sample-container" style="bottom: 3px; right: 3px;">
         <div
           class="tsp-palette__selected-color-container tsp-palette__color-sample"
-          [style.background-color]="getRgb(selectedSecondaryColor)"
+          [style.background-color]="secondaryCss"
         ></div>
       </div>
       <div class="tsp-raised-item tsp-palette__color-sample-container" style="top: 3px; left: 2px;">
         <div
           class="tsp-palette__selected-color-container tsp-palette__color-sample"
-          [style.background-color]="getRgb(selectedPrimaryColor)"
+          [style.background-color]="primaryCss"
         ></div>
       </div>
     </div>
   </div>
-  @for (color of availableColors; track color) {
-    <div class="tsp-depressed-item-container">
-      <div
-        class="tsp-depressed-item tsp-palette__color-button"
-        [style.background-color]="getRgb(color)"
-        (click)="selectColor($event, color)"
-        (contextmenu)="selectColor($event, color)"
-      ></div>
-    </div>
+  @for (swatch of swatches; track swatch.color) {
+  <div class="tsp-depressed-item-container">
+    <div
+      class="tsp-depressed-item tsp-palette__color-button"
+      [style.background-color]="swatch.css"
+      (click)="selectColor($event, swatch.color)"
+      (contextmenu)="selectColor($event, swatch.color)"
+    ></div>
+  </div>
   }
 </div>
