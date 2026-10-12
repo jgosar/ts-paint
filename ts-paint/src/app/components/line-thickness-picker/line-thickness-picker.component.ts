@@ -3,6 +3,17 @@ import { ALL_LINE_THICKNESSES } from 'src/app/types/drawing-tools/line-thickness
 
 const OPTION_HEIGHT: number = 10;
 
+export interface LineThicknessOption {
+  thickness: number;
+  /** MS Paint leaves the extra pixel of an odd gap below the bar */
+  barTop: number;
+}
+
+const LINE_THICKNESS_OPTIONS: LineThicknessOption[] = ALL_LINE_THICKNESSES.map((thickness) => ({
+  thickness,
+  barTop: Math.floor((OPTION_HEIGHT - thickness) / 2),
+}));
+
 @Component({
   selector: 'tsp-line-thickness-picker',
   templateUrl: './line-thickness-picker.component.html',
@@ -11,7 +22,7 @@ const OPTION_HEIGHT: number = 10;
   standalone: false,
 })
 export class LineThicknessPickerComponent {
-  availableThicknesses: number[] = ALL_LINE_THICKNESSES;
+  readonly options: LineThicknessOption[] = LINE_THICKNESS_OPTIONS;
 
   @Input()
   selectedThickness: number;
@@ -20,17 +31,5 @@ export class LineThicknessPickerComponent {
 
   selectThickness(thickness: number) {
     this.selectedThicknessChange.emit(thickness);
-  }
-
-  /** MS Paint leaves the extra pixel of an odd gap below the bar */
-  getBarTop(thickness: number): number {
-    return Math.floor((OPTION_HEIGHT - thickness) / 2);
-  }
-
-  getNgClass(thickness: number) {
-    const ngClass = {};
-    ngClass['tsp-line-thickness-picker__option--selected'] = this.selectedThickness === thickness;
-
-    return ngClass;
   }
 }
