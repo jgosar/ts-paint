@@ -7,17 +7,21 @@
 }
 
 .tsp-line-thickness-picker__option {
+  --option-height: 10px;
   width: 35px;
-  height: 10px;
+  height: var(--option-height);
   margin-bottom: 2px;
   // Keeps the bar's top margin inside the option instead of collapsing through it
   display: flow-root;
 }
 
-// The vertical position comes from barTop in the component: flex centring would put odd gaps on half pixels
+// --thickness is set per bar. The top is rounded down because MS Paint leaves the extra pixel of an odd gap below the
+// bar (flex centring would put it on a half pixel). Escaped because Less has a round() of its own.
 .tsp-line-thickness-picker__bar {
   width: 27px;
+  height: var(--thickness);
   margin-left: 4px;
+  margin-top: ~'round(down, (var(--option-height) - var(--thickness)) / 2, 1px)';
   background-color: black;
 }
 

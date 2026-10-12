@@ -50,7 +50,7 @@ describe('DrawingToolOptionsComponent', () => {
     expect(picker.querySelectorAll('.tsp-line-thickness-picker__option').length).toBe(5);
     const selected: HTMLElement = picker.querySelector('.tsp-line-thickness-picker__option--selected');
     const bar: HTMLElement = selected.querySelector('.tsp-line-thickness-picker__bar');
-    expect(bar.style.height).toBe('4px');
+    expect(bar.getBoundingClientRect().height).toBe(4);
   });
 
   it('shows no picker for the pencil tool', () => {

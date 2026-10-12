@@ -22,7 +22,7 @@ describe('LineThicknessPickerComponent', () => {
   }
 
   function barHeight(option: HTMLElement): string {
-    return option.querySelector<HTMLElement>('.tsp-line-thickness-picker__bar').style.height;
+    return `${option.querySelector('.tsp-line-thickness-picker__bar').getBoundingClientRect().height}px`;
   }
 
   it('shows the five thicknesses as bars of 1 to 5 px', () => {

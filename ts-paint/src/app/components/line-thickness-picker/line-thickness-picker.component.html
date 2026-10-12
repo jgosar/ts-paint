@@ -1,13 +1,9 @@
-@for (option of options; track option.thickness) {
+@for (thickness of thicknesses; track thickness) {
 <div
   class="tsp-line-thickness-picker__option"
-  [class.tsp-line-thickness-picker__option--selected]="option.thickness === selectedThickness"
-  (click)="selectThickness(option.thickness)"
+  [class.tsp-line-thickness-picker__option--selected]="thickness === selectedThickness"
+  (click)="selectThickness(thickness)"
 >
-  <div
-    class="tsp-line-thickness-picker__bar"
-    [style.height.px]="option.thickness"
-    [style.margin-top.px]="option.barTop"
-  ></div>
+  <div class="tsp-line-thickness-picker__bar" [style.--thickness.px]="thickness"></div>
 </div>
 }
