@@ -38,4 +38,22 @@ describe('EraserSizePickerComponent', () => {
     options()[3].click();
     expect(emitted).toBe(10);
   });
+
+  it('marks the selected size with a 14x14 square centred on the eraser, like MS Paint', () => {
+    for (const size of [4, 6, 8, 10]) {
+      fixture.componentRef.setInput('selectedSize', size);
+      fixture.detectChanges();
+      const option: HTMLElement = fixture.nativeElement.querySelector('.tsp-eraser-size-picker__option--selected');
+      const optionRect: DOMRect = option.getBoundingClientRect();
+      const marker: DOMRect = option.querySelector('.tsp-eraser-size-picker__highlight').getBoundingClientRect();
+      const square: DOMRect = option.querySelector('.tsp-eraser-size-picker__square').getBoundingClientRect();
+      expect([optionRect.width, optionRect.height], `option ${size}`).toEqual([39, 16]);
+      expect(
+        [marker.left - optionRect.left, marker.top - optionRect.top, marker.width, marker.height],
+        `marker ${size}`
+      ).toEqual([13, 1, 14, 14]);
+      const offset: number = (14 - size) / 2;
+      expect([square.left - marker.left, square.top - marker.top], `square ${size}`).toEqual([offset, offset]);
+    }
+  });
 });

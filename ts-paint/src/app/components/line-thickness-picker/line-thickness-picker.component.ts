@@ -1,6 +1,8 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { ALL_LINE_THICKNESSES } from 'src/app/types/drawing-tools/line-thickness';
 
+const OPTION_HEIGHT: number = 10;
+
 @Component({
   selector: 'tsp-line-thickness-picker',
   templateUrl: './line-thickness-picker.component.html',
@@ -18,6 +20,11 @@ export class LineThicknessPickerComponent {
 
   selectThickness(thickness: number) {
     this.selectedThicknessChange.emit(thickness);
+  }
+
+  /** MS Paint leaves the extra pixel of an odd gap below the bar */
+  getBarTop(thickness: number): number {
+    return Math.floor((OPTION_HEIGHT - thickness) / 2);
   }
 
   getNgClass(thickness: number) {

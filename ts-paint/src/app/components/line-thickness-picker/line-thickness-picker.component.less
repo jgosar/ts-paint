@@ -1,15 +1,23 @@
 @import 'variables';
 
-.tsp-line-thickness-picker__option {
-  width: 31px;
-  height: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// Options of 35x10 every 12px, starting at (2,3) of the 39x64 box, like MS Paint
+:host(tsp-line-thickness-picker) {
+  display: block;
+  padding: 3px 0px 0px 2px;
 }
 
+.tsp-line-thickness-picker__option {
+  width: 35px;
+  height: 10px;
+  margin-bottom: 2px;
+  // Keeps the bar's top margin inside the option instead of collapsing through it
+  display: flow-root;
+}
+
+// The vertical position comes from getBarTop: flex centring would put odd gaps on half pixels
 .tsp-line-thickness-picker__bar {
-  width: 22px;
+  width: 27px;
+  margin-left: 4px;
   background-color: black;
 }
 

@@ -50,8 +50,8 @@ describe('BrushAction', () => {
     expect(isColor({ w: 9, h: 10 }, patches.image, WHITE)).toBe(true);
   });
 
-  it('pads the preview by 4 px on each side for the 9 px diagonal brush', () => {
-    const state: TsPaintStoreState = stateWithBrush({ form: BrushForm.BACKWARD_DIAGONAL, size: 9 });
+  it('pads the preview by 3 px before and 4 px after for the 8 px diagonal brush', () => {
+    const state: TsPaintStoreState = stateWithBrush({ form: BrushForm.BACKWARD_DIAGONAL, size: 8 });
     const action: BrushAction = new BrushAction(
       [
         { w: 20, h: 50 },
@@ -63,12 +63,12 @@ describe('BrushAction', () => {
 
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(state);
 
-    expect(patches.previewOffset).toEqual({ w: 16, h: 46 });
-    expect(patches.previewImage.width).toBe(19);
-    expect(patches.previewImage.height).toBe(9);
+    expect(patches.previewOffset).toEqual({ w: 17, h: 47 });
+    expect(patches.previewImage.width).toBe(18);
+    expect(patches.previewImage.height).toBe(8);
     expect(isColor({ w: 0, h: 0 }, patches.previewImage, RED)).toBe(true);
-    expect(isColor({ w: 18, h: 8 }, patches.previewImage, RED)).toBe(true);
-    expect(alphaAt({ w: 18, h: 0 }, patches.previewImage)).toBe(0);
+    expect(isColor({ w: 17, h: 7 }, patches.previewImage, RED)).toBe(true);
+    expect(alphaAt({ w: 17, h: 0 }, patches.previewImage)).toBe(0);
   });
 
   it('draws the forward diagonal from bottom left to top right', () => {

@@ -50,4 +50,18 @@ describe('LineThicknessPickerComponent', () => {
 
     expect(emitted).toEqual([5, 1]);
   });
+
+  it('lays out 35x10 options with 27 px bars, positioned like MS Paint', () => {
+    const tops: number[] = options().map((option) => {
+      const optionRect: DOMRect = option.getBoundingClientRect();
+      const bar: DOMRect = option.querySelector('.tsp-line-thickness-picker__bar').getBoundingClientRect();
+      expect([optionRect.width, optionRect.height]).toEqual([35, 10]);
+      expect([bar.left - optionRect.left, bar.width]).toEqual([4, 27]);
+      return bar.top - optionRect.top;
+    });
+    // floor((10 - thickness) / 2): odd thicknesses leave the extra pixel below the bar
+    expect(tops).toEqual([4, 4, 3, 3, 2]);
+    const optionTops: number[] = options().map((option) => option.getBoundingClientRect().top);
+    expect(optionTops.map((top) => top - optionTops[0])).toEqual([0, 12, 24, 36, 48]);
+  });
 });

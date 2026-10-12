@@ -214,16 +214,16 @@ test.describe('drawing tools', () => {
 
     await paint.selectPickerOption(9);
     await paint.clickCanvas(150, 100);
-    expect(await imageMask(page, { w: 146, h: 96, width: 9, height: 9 }, BLUE)).toEqual([
-      '#........',
-      '.#.......',
-      '..#......',
-      '...#.....',
-      '....#....',
-      '.....#...',
-      '......#..',
-      '.......#.',
-      '........#',
+    // 8 px backward diagonal, centred like the even-sized square brushes: 3 px before the point, 4 after
+    expect(await imageMask(page, { w: 147, h: 97, width: 8, height: 8 }, BLUE)).toEqual([
+      '#.......',
+      '.#......',
+      '..#.....',
+      '...#....',
+      '....#...',
+      '.....#..',
+      '......#.',
+      '.......#',
     ]);
 
     await paint.selectPickerOption(3);

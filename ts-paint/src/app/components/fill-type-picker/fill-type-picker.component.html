@@ -1,7 +1,3 @@
 @for (fillType of availableFillTypes; track fillType) {
-  <div
-    class="tsp-fill-type-picker__option"
-    [ngClass]="getNgClass(fillType)"
-    (click)="selectFillType(fillType)"
-  ></div>
+<div class="tsp-fill-type-picker__option" [ngClass]="getNgClass(fillType)" (click)="selectFillType(fillType)"></div>
 }

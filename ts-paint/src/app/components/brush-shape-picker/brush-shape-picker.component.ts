@@ -22,29 +22,37 @@ const COLOR_BLACK: Color = { r: 0, g: 0, b: 0 };
 
 /** Where each brush is drawn inside its 13x16 cell, as measured in MS Paint (picker order) */
 const BRUSH_OFFSETS_IN_CELL: Point[] = [
+  { w: 3, h: 4 },
+  { w: 4, h: 6 },
+  { w: 6, h: 7 },
+  { w: 2, h: 4 },
   { w: 4, h: 5 },
-  { w: 5, h: 6 },
-  { w: 8, h: 8 },
-  { w: 3, h: 4 },
-  { w: 5, h: 6 },
-  { w: 7, h: 7 },
-  { w: 3, h: 4 },
-  { w: 5, h: 6 },
-  { w: 6, h: 7 },
-  { w: 3, h: 4 },
-  { w: 5, h: 6 },
-  { w: 6, h: 7 },
+  { w: 5, h: 7 },
+  { w: 2, h: 4 },
+  { w: 4, h: 5 },
+  { w: 5, h: 7 },
+  { w: 2, h: 4 },
+  { w: 4, h: 5 },
+  { w: 5, h: 7 },
 ];
 const CELL_WIDTH: number = 13;
 const CELL_HEIGHT: number = 16;
-const HIGHLIGHT_LEFT_IN_CELL: number[] = [2, 2, 3];
-const HIGHLIGHT_TOP_IN_CELL: number = 3;
+/**
+ * MS Paint marks the selection with a narrow bar; a square looks better. It is centred on the brush, an odd leftover
+ * pixel going right and down, which keeps every marker at least 1px inside the frame.
+ */
+const HIGHLIGHT_SIZE: number = 10;
 
 export interface BrushShapePickerOption {
   shape: BrushShape;
   cell: Point;
   highlight: Point;
   brush: Point;
+}
+
+function centreHighlightOn(brush: Point, size: number): Point {
+  const margin: number = Math.floor((HIGHLIGHT_SIZE - size) / 2);
+  return { w: brush.w - margin, h: brush.h - margin };
 }
 
 @Component({
@@ -61,7 +69,7 @@ export class BrushShapePickerComponent implements OnChanges, AfterViewInit {
     return {
       shape,
       cell: { w: column * CELL_WIDTH, h: row * CELL_HEIGHT },
-      highlight: { w: HIGHLIGHT_LEFT_IN_CELL[column], h: HIGHLIGHT_TOP_IN_CELL },
+      highlight: centreHighlightOn(BRUSH_OFFSETS_IN_CELL[index], shape.size),
       brush: BRUSH_OFFSETS_IN_CELL[index],
     };
   });
