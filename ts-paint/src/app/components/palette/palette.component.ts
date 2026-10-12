@@ -1,12 +1,4 @@
-import {
-  Component,
-  ChangeDetectionStrategy,
-  Input,
-  Output,
-  EventEmitter,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, ChangeDetectionStrategy, computed, input, output } from '@angular/core';
 import { Color } from '../../types/base/color';
 import { ColorSelection } from '../../types/base/color-selection';
 import { colorToCss } from '../../helpers/color.helpers';
@@ -23,31 +15,17 @@ export interface PaletteSwatch {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class PaletteComponent implements OnChanges {
-  @Input()
-  selectedPrimaryColor: Color;
-  @Input()
-  selectedSecondaryColor: Color;
-  @Input()
-  availableColors: Color[];
-  @Output()
-  selectedColorChange: EventEmitter<ColorSelection> = new EventEmitter<ColorSelection>();
+export class PaletteComponent {
+  readonly selectedPrimaryColor = input.required<Color>();
+  readonly selectedSecondaryColor = input.required<Color>();
+  readonly availableColors = input.required<Color[]>();
+  readonly selectedColorChange = output<ColorSelection>();
 
-  swatches: PaletteSwatch[] = [];
-  primaryCss: string;
-  secondaryCss: string;
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.availableColors) {
-      this.swatches = (this.availableColors ?? []).map((color) => ({ color, css: colorToCss(color) }));
-    }
-    if (changes.selectedPrimaryColor) {
-      this.primaryCss = colorToCss(this.selectedPrimaryColor);
-    }
-    if (changes.selectedSecondaryColor) {
-      this.secondaryCss = colorToCss(this.selectedSecondaryColor);
-    }
-  }
+  protected readonly swatches = computed<PaletteSwatch[]>(() =>
+    this.availableColors().map((color) => ({ color, css: colorToCss(color) }))
+  );
+  protected readonly primaryCss = computed(() => colorToCss(this.selectedPrimaryColor()));
+  protected readonly secondaryCss = computed(() => colorToCss(this.selectedSecondaryColor()));
 
   selectColor(event: MouseEvent, color: Color) {
     event.preventDefault();
