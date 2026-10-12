@@ -4,7 +4,8 @@
   display: block;
 }
 
-// Rows of 39x16 like MS Paint; the 1px left padding puts the 14x14 marker at x=13 instead of a half pixel
+// Rows of 39x16 like MS Paint; the 1px left padding puts the 14x14 marker at x=13 instead of a half pixel.
+// --size is the eraser size, set per option.
 .tsp-eraser-size-picker__option {
   box-sizing: border-box;
   width: 39px;
@@ -25,6 +26,8 @@
 }
 
 .tsp-eraser-size-picker__square {
+  width: var(--size);
+  height: var(--size);
   background-color: black;
 }
 

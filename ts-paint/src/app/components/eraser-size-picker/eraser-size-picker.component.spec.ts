@@ -20,8 +20,8 @@ describe('EraserSizePickerComponent', () => {
   it('shows the four eraser sizes as squares of 4, 6, 8 and 10 px', () => {
     expect(options().length).toBe(4);
     const squares: HTMLElement[] = Array.from(options()).map((o) => o.querySelector('.tsp-eraser-size-picker__square'));
-    expect(squares.map((s) => s.style.width)).toEqual(['4px', '6px', '8px', '10px']);
-    expect(squares.map((s) => s.style.height)).toEqual(['4px', '6px', '8px', '10px']);
+    expect(squares.map((s) => s.getBoundingClientRect().width)).toEqual([4, 6, 8, 10]);
+    expect(squares.map((s) => s.getBoundingClientRect().height)).toEqual([4, 6, 8, 10]);
   });
 
   it('marks the selected size', () => {
@@ -29,7 +29,7 @@ describe('EraserSizePickerComponent', () => {
       o.classList.contains('tsp-eraser-size-picker__option--selected')
     );
     expect(selected.length).toBe(1);
-    expect(selected[0].querySelector<HTMLElement>('.tsp-eraser-size-picker__square').style.width).toBe('8px');
+    expect(selected[0].querySelector('.tsp-eraser-size-picker__square').getBoundingClientRect().width).toBe(8);
   });
 
   it('emits the size of a clicked option', () => {
