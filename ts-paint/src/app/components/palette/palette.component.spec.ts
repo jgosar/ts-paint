@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PaletteComponent } from './palette.component';
 import { Color } from '../../types/base/color';
 import { ColorSelection } from '../../types/base/color-selection';
-import { BLACK, BLUE, GREEN, RED, WHITE } from '../../../testing/image-test.helpers';
+import { BLUE, GREEN, RED, WHITE } from '../../../testing/image-test.helpers';
 
 describe('PaletteComponent', () => {
   let fixture: ComponentFixture<PaletteComponent>;
@@ -45,11 +45,6 @@ describe('PaletteComponent', () => {
     fixture.detectChanges();
     expect(samples()[0].style.backgroundColor).toBe('rgb(255, 255, 255)');
     expect(samples()[1].style.backgroundColor).toBe('rgb(0, 128, 0)');
-  });
-
-  it('formats a color as a css rgb() string', () => {
-    expect(component.getRgb(BLACK)).toBe('rgb(0,0,0)');
-    expect(component.getRgb({ r: 1, g: 2, b: 3 })).toBe('rgb(1,2,3)');
   });
 
   it('emits a primary selection on left click and prevents the default action', () => {

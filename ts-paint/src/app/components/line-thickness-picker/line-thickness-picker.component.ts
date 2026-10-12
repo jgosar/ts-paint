@@ -9,7 +9,7 @@ import { ALL_LINE_THICKNESSES } from 'src/app/types/drawing-tools/line-thickness
   standalone: false,
 })
 export class LineThicknessPickerComponent {
-  availableThicknesses: number[] = ALL_LINE_THICKNESSES;
+  readonly thicknesses: number[] = ALL_LINE_THICKNESSES;
 
   @Input()
   selectedThickness: number;
@@ -18,12 +18,5 @@ export class LineThicknessPickerComponent {
 
   selectThickness(thickness: number) {
     this.selectedThicknessChange.emit(thickness);
-  }
-
-  getNgClass(thickness: number) {
-    const ngClass = {};
-    ngClass['tsp-line-thickness-picker__option--selected'] = this.selectedThickness === thickness;
-
-    return ngClass;
   }
 }

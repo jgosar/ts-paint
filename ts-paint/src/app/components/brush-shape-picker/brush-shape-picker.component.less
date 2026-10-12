@@ -2,21 +2,37 @@
 
 // A 39x64 grid of 13x16 cells, laid out exactly like the brush box of MS Paint
 .tsp-brush-shape-picker {
-  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 13px);
+  grid-auto-rows: 16px;
   width: 39px;
   height: 64px;
 }
 
+// --size is the brush size, set per option. MS Paint centres every brush in its cell rounding down: the extra pixel
+// of an odd gap goes right and below. The 10x10 marker is centred on the brush the same way, which keeps it at least
+// 1px inside the frame. round() is escaped because Less has a round() of its own.
 .tsp-brush-shape-picker__option {
-  position: absolute;
-  width: 13px;
-  height: 16px;
+  position: relative;
+  --brush-left: ~'round(down, (13px - var(--size)) / 2, 1px)';
+  --brush-top: ~'round(down, (16px - var(--size)) / 2, 1px)';
+  --marker-margin: ~'round(down, (10px - var(--size)) / 2, 1px)';
 }
 
+.tsp-brush-shape-picker__brush {
+  position: absolute;
+  display: block;
+  left: var(--brush-left);
+  top: var(--brush-top);
+}
+
+// MS Paint marks the selection with a narrow bar; a square looks better
 .tsp-brush-shape-picker__highlight {
   position: absolute;
   width: 10px;
   height: 10px;
+  left: calc(var(--brush-left) - var(--marker-margin));
+  top: calc(var(--brush-top) - var(--marker-margin));
   display: none;
 }
 
@@ -25,7 +41,7 @@
   background-color: @color--dark-blue;
 }
 
-.tsp-brush-shape-picker__brush {
-  position: absolute;
-  display: block;
+// The brushes are drawn in black; inverting the selected one shows it in white on the dark blue marker
+.tsp-brush-shape-picker__option--selected .tsp-brush-shape-picker__brush {
+  filter: invert(1);
 }

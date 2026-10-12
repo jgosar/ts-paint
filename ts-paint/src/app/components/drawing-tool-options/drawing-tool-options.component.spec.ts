@@ -6,9 +6,10 @@ import { EraserSizePickerComponent } from '../eraser-size-picker/eraser-size-pic
 import { BrushShapePickerComponent } from '../brush-shape-picker/brush-shape-picker.component';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { DrawingToolOptions } from '../../types/drawing-tools/drawing-tool-options';
-import { FillType } from '../../types/drawing-tools/fill-type';
+import { ALL_FILL_TYPES, FillType } from '../../types/drawing-tools/fill-type';
 import { SimpleChange } from '@angular/core';
-import { BrushForm } from '../../types/drawing-tools/brush-shape';
+import { ALL_BRUSH_SHAPES, BrushForm } from '../../types/drawing-tools/brush-shape';
+import { ALL_ERASER_SIZES } from '../../types/drawing-tools/eraser-size';
 
 describe('DrawingToolOptionsComponent', () => {
   let fixture: ComponentFixture<DrawingToolOptionsComponent>;
@@ -49,7 +50,7 @@ describe('DrawingToolOptionsComponent', () => {
     expect(picker.querySelectorAll('.tsp-line-thickness-picker__option').length).toBe(5);
     const selected: HTMLElement = picker.querySelector('.tsp-line-thickness-picker__option--selected');
     const bar: HTMLElement = selected.querySelector('.tsp-line-thickness-picker__bar');
-    expect(bar.style.height).toBe('4px');
+    expect(bar.getBoundingClientRect().height).toBe(4);
   });
 
   it('shows no picker for the pencil tool', () => {
@@ -101,5 +102,47 @@ describe('DrawingToolOptionsComponent', () => {
     picker.querySelectorAll<HTMLElement>('.tsp-brush-shape-picker__option')[3].click();
 
     expect(emitted).toEqual({ [DrawingToolType.brush]: { shape: { form: BrushForm.SQUARE, size: 8 } } });
+  });
+
+  describe('every picker state fits inside the sunken frame', () => {
+    function showOption(tool: DrawingToolType, toolOptions: DrawingToolOptions[keyof DrawingToolOptions]) {
+      component.selectedTool = tool;
+      component.options = { ...options, [tool]: toolOptions };
+      component.ngOnChanges({ options: new SimpleChange(undefined, component.options, false) });
+      fixture.componentRef.changeDetectorRef.markForCheck();
+      fixture.detectChanges();
+    }
+
+    /** Elements that paint something and lie outside the frame's inner (padding) box */
+    function elementsOutsideFrame(): string[] {
+      const frame: HTMLElement = fixture.nativeElement.querySelector('.tsp-drawing-tool-options__container');
+      const frameRect: DOMRect = frame.getBoundingClientRect();
+      const left: number = frameRect.left + frame.clientLeft;
+      const top: number = frameRect.top + frame.clientTop;
+      const right: number = left + frame.clientWidth;
+      const bottom: number = top + frame.clientHeight;
+      return Array.from<HTMLElement>(frame.querySelectorAll('div, canvas'))
+        .filter((element) => {
+          const rect: DOMRect = element.getBoundingClientRect();
+          const paints: boolean = rect.width > 0 && rect.height > 0 && getComputedStyle(element).display !== 'none';
+          return paints && (rect.left < left || rect.top < top || rect.right > right || rect.bottom > bottom);
+        })
+        .map((element) => element.className);
+    }
+
+    const cases: [string, DrawingToolType, DrawingToolOptions[keyof DrawingToolOptions][]][] = [
+      ['fill types', DrawingToolType.rectangle, ALL_FILL_TYPES.map((fillType) => ({ fillType }))],
+      ['line thicknesses', DrawingToolType.line, [1, 2, 3, 4, 5].map((thickness) => ({ thickness }))],
+      ['eraser sizes', DrawingToolType.eraser, ALL_ERASER_SIZES.map((size) => ({ size }))],
+      ['brush shapes', DrawingToolType.brush, ALL_BRUSH_SHAPES.map((shape) => ({ shape }))],
+    ];
+    for (const [name, tool, values] of cases) {
+      it(name, () => {
+        for (const value of values) {
+          showOption(tool, value);
+          expect(elementsOutsideFrame(), JSON.stringify(value)).toEqual([]);
+        }
+      });
+    }
   });
 });

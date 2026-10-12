@@ -1,7 +1,8 @@
-@for (fillType of availableFillTypes; track fillType) {
-  <div
-    class="tsp-fill-type-picker__option"
-    [ngClass]="getNgClass(fillType)"
-    (click)="selectFillType(fillType)"
-  ></div>
+@for (option of options; track option.fillType) {
+<div
+  class="tsp-fill-type-picker__option"
+  [ngClass]="option.iconClass"
+  [class.tsp-fill-type-picker__option--selected]="option.fillType === selectedFillType"
+  (click)="selectFillType(option.fillType)"
+></div>
 }

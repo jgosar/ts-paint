@@ -1,15 +1,27 @@
 @import 'variables';
 
-.tsp-line-thickness-picker__option {
-  width: 31px;
-  height: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+// Options of 35x10 every 12px, starting at (2,3) of the 39x64 box, like MS Paint
+:host(tsp-line-thickness-picker) {
+  display: block;
+  padding: 3px 0px 0px 2px;
 }
 
+.tsp-line-thickness-picker__option {
+  --option-height: 10px;
+  width: 35px;
+  height: var(--option-height);
+  margin-bottom: 2px;
+  // Keeps the bar's top margin inside the option instead of collapsing through it
+  display: flow-root;
+}
+
+// --thickness is set per bar. The top is rounded down because MS Paint leaves the extra pixel of an odd gap below the
+// bar (flex centring would put it on a half pixel). Escaped because Less has a round() of its own.
 .tsp-line-thickness-picker__bar {
-  width: 22px;
+  width: 27px;
+  height: var(--thickness);
+  margin-left: 4px;
+  margin-top: ~'round(down, (var(--option-height) - var(--thickness)) / 2, 1px)';
   background-color: black;
 }
 

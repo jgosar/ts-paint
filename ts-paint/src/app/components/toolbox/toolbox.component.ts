@@ -1,15 +1,25 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { ALL_DRAWING_TOOL_TYPES, DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 
+export interface ToolboxButton {
+  tool: DrawingToolType;
+  iconClass: string;
+}
+
+const TOOLBOX_BUTTONS: ToolboxButton[] = ALL_DRAWING_TOOL_TYPES.map((tool) => ({
+  tool,
+  iconClass: 'tsp-toolbox__button--' + DrawingToolType[tool] + 'Icon',
+}));
+
 @Component({
-    selector: 'tsp-toolbox',
-    templateUrl: './toolbox.component.html',
-    styleUrls: ['./toolbox.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'tsp-toolbox',
+  templateUrl: './toolbox.component.html',
+  styleUrls: ['./toolbox.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ToolboxComponent {
-  availableTools: DrawingToolType[] = ALL_DRAWING_TOOL_TYPES;
+  readonly buttons: ToolboxButton[] = TOOLBOX_BUTTONS;
 
   @Input()
   selectedTool: DrawingToolType;
@@ -18,13 +28,5 @@ export class ToolboxComponent {
 
   selectTool(tool: DrawingToolType) {
     this.selectedToolChange.emit(tool);
-  }
-
-  getNgClass(tool: DrawingToolType) {
-    const ngClass = {};
-    ngClass['tsp-toolbox__button--selected'] = this.selectedTool === tool;
-    ngClass['tsp-toolbox__button--' + DrawingToolType[tool] + 'Icon'] = true;
-
-    return ngClass;
   }
 }

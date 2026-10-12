@@ -9,7 +9,7 @@ import { ALL_ERASER_SIZES } from 'src/app/types/drawing-tools/eraser-size';
   standalone: false,
 })
 export class EraserSizePickerComponent {
-  availableSizes: number[] = ALL_ERASER_SIZES;
+  readonly sizes: number[] = ALL_ERASER_SIZES;
 
   @Input()
   selectedSize: number;
@@ -18,12 +18,5 @@ export class EraserSizePickerComponent {
 
   selectSize(size: number) {
     this.selectedSizeChange.emit(size);
-  }
-
-  getNgClass(size: number) {
-    const ngClass = {};
-    ngClass['tsp-eraser-size-picker__option--selected'] = this.selectedSize === size;
-
-    return ngClass;
   }
 }

@@ -1,6 +1,11 @@
 @import 'variables';
 
-// Each row is 39x16; the 1px left padding puts the even-sized squares at the same integer offsets as MS Paint
+:host(tsp-eraser-size-picker) {
+  display: block;
+}
+
+// Rows of 39x16 like MS Paint; the 1px left padding puts the 14x14 marker at x=13 instead of a half pixel.
+// --size is the eraser size, set per option.
 .tsp-eraser-size-picker__option {
   box-sizing: border-box;
   width: 39px;
@@ -11,11 +16,22 @@
   justify-content: center;
 }
 
+// The square sizes are even, so they centre on whole pixels inside the 14x14 marker
+.tsp-eraser-size-picker__highlight {
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .tsp-eraser-size-picker__square {
+  width: var(--size);
+  height: var(--size);
   background-color: black;
 }
 
-.tsp-eraser-size-picker__option--selected {
+.tsp-eraser-size-picker__option--selected .tsp-eraser-size-picker__highlight {
   background-color: @color--dark-blue;
 }
 

@@ -1,7 +1,8 @@
-@for (tool of availableTools; track tool) {
-  <div
-    class="tsp-button tsp-toolbox__button"
-    [ngClass]="getNgClass(tool)"
-    (click)="selectTool(tool)"
-  ></div>
+@for (button of buttons; track button.tool) {
+<div
+  class="tsp-button tsp-toolbox__button"
+  [ngClass]="button.iconClass"
+  [class.tsp-toolbox__button--selected]="button.tool === selectedTool"
+  (click)="selectTool(button.tool)"
+></div>
 }

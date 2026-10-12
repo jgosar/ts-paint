@@ -19,12 +19,12 @@ export const ALL_BRUSH_SHAPES: BrushShape[] = [
   { form: BrushForm.SQUARE, size: 8 },
   { form: BrushForm.SQUARE, size: 5 },
   { form: BrushForm.SQUARE, size: 2 },
-  { form: BrushForm.FORWARD_DIAGONAL, size: 9 },
+  { form: BrushForm.FORWARD_DIAGONAL, size: 8 },
   { form: BrushForm.FORWARD_DIAGONAL, size: 5 },
-  { form: BrushForm.FORWARD_DIAGONAL, size: 3 },
-  { form: BrushForm.BACKWARD_DIAGONAL, size: 9 },
+  { form: BrushForm.FORWARD_DIAGONAL, size: 2 },
+  { form: BrushForm.BACKWARD_DIAGONAL, size: 8 },
   { form: BrushForm.BACKWARD_DIAGONAL, size: 5 },
-  { form: BrushForm.BACKWARD_DIAGONAL, size: 3 },
+  { form: BrushForm.BACKWARD_DIAGONAL, size: 2 },
 ];
 
 export function brushShapesEqual(a: BrushShape | undefined, b: BrushShape | undefined): boolean {

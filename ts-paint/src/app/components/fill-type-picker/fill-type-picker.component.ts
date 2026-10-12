@@ -1,15 +1,25 @@
 import { Component, ChangeDetectionStrategy, Input, Output, EventEmitter } from '@angular/core';
 import { ALL_FILL_TYPES, FillType } from 'src/app/types/drawing-tools/fill-type';
 
+export interface FillTypeOption {
+  fillType: FillType;
+  iconClass: string;
+}
+
+const FILL_TYPE_OPTIONS: FillTypeOption[] = ALL_FILL_TYPES.map((fillType) => ({
+  fillType,
+  iconClass: 'tsp-fill-type-picker__option--' + FillType[fillType] + 'Icon',
+}));
+
 @Component({
-    selector: 'tsp-fill-type-picker',
-    templateUrl: './fill-type-picker.component.html',
-    styleUrls: ['./fill-type-picker.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'tsp-fill-type-picker',
+  templateUrl: './fill-type-picker.component.html',
+  styleUrls: ['./fill-type-picker.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class FillTypePickerComponent {
-  availableFillTypes: FillType[] = ALL_FILL_TYPES;
+  readonly options: FillTypeOption[] = FILL_TYPE_OPTIONS;
 
   @Input()
   selectedFillType: FillType;
@@ -18,13 +28,5 @@ export class FillTypePickerComponent {
 
   selectFillType(fillType: FillType) {
     this.selectedFillTypeChange.emit(fillType);
-  }
-
-  getNgClass(fillType: FillType) {
-    const ngClass = {};
-    ngClass['tsp-fill-type-picker__option--selected'] = this.selectedFillType === fillType;
-    ngClass['tsp-fill-type-picker__option--' + FillType[fillType] + 'Icon'] = true;
-
-    return ngClass;
   }
 }

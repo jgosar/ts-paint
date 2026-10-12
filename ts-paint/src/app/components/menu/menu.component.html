@@ -1,23 +1,23 @@
-@for (menu1 of menuStructure; track menu1) {
+@for (menu1 of entries; track menu1.item) {
   <div class="tsp-menu__menu-level-1" (click)="focusMenu()">
-    {{ menu1.name }}
+    {{ menu1.item.name }}
     @if (menu1.menus) {
       <div class="tsp-raised-item-container tsp-menu__menu-level-2-container">
         <div class="tsp-raised-item">
-          @for (menu2 of menu1.menus; track menu2) {
-            @if (menu2.name) {
+          @for (menu2 of menu1.menus; track menu2.item) {
+            @if (menu2.item.name) {
               <div
                 class="tsp-menu__menu-level-2"
-                [ngClass]="{ 'tsp-menu__menu-level-2--disabled': menu2.disabled }"
-                (click)="selectItem(menu2)"
+                [class.tsp-menu__menu-level-2--disabled]="menu2.item.disabled"
+                (click)="selectItem(menu2.item)"
                 >
-                <div>{{ menu2.name }}</div>
-                @if (menu2.hotkeys) {
-                  <div class="tsp-menu__menu-item-hotkeys">{{ menu2.hotkeys.join('+') }}</div>
+                <div>{{ menu2.item.name }}</div>
+                @if (menu2.hotkeyLabel) {
+                  <div class="tsp-menu__menu-item-hotkeys">{{ menu2.hotkeyLabel }}</div>
                 }
               </div>
             }
-            @if (!menu2.name) {
+            @if (!menu2.item.name) {
               <hr />
             }
           }
