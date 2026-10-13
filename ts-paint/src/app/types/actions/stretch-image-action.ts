@@ -31,21 +31,38 @@ export class StretchImageAction extends TsPaintAction {
     }
   }
 
+  /**
+   * Nearest-neighbour resampling in plain loops. Each target pixel copies the source pixel at its floored position,
+   * which is what Paint's StretchBlt does. A canvas drawImage is not used on purpose: at 50% its sample points fall
+   * exactly on source pixel boundaries and the GPU rasterizer rounds them to either side inconsistently, which turns
+   * a 1px checkerboard into stripes.
+   */
   private stretchImage(image: ImageData): ImageData {
-    const canvas: HTMLCanvasElement = document.createElement('canvas');
-    const context: CanvasRenderingContext2D = canvas.getContext('2d');
-    const horizontalScale: number = (this._params.horizontal || 100) / 100;
-    const verticalScale: number = (this._params.vertical || 100) / 100;
+    const width: number = Math.max(1, Math.floor((image.width * (this._params.horizontal || 100)) / 100));
+    const height: number = Math.max(1, Math.floor((image.height * (this._params.vertical || 100)) / 100));
+    const stretched: ImageData = new ImageData(width, height);
+    const source: Uint32Array = new Uint32Array(image.data.buffer, image.data.byteOffset, image.data.length / 4);
+    const target: Uint32Array = new Uint32Array(stretched.data.buffer);
+    const sourceColumns: Int32Array = new Int32Array(width);
+    for (let x: number = 0; x < width; x++) {
+      sourceColumns[x] = Math.floor((x * image.width) / width);
+    }
 
-    canvas.width = image.width * Math.max(1, horizontalScale);
-    canvas.height = image.height * Math.max(1, verticalScale);
+    let previousSourceRow: number = -1;
+    for (let y: number = 0; y < height; y++) {
+      const sourceRow: number = Math.floor((y * image.height) / height);
+      const targetRow: number = y * width;
+      if (sourceRow === previousSourceRow) {
+        target.copyWithin(targetRow, targetRow - width, targetRow);
+      } else {
+        const sourceOffset: number = sourceRow * image.width;
+        for (let x: number = 0; x < width; x++) {
+          target[targetRow + x] = source[sourceOffset + sourceColumns[x]];
+        }
+      }
+      previousSourceRow = sourceRow;
+    }
 
-    context.putImageData(image, 0, 0);
-    context.imageSmoothingEnabled = false;
-
-    context.scale(horizontalScale, verticalScale);
-    context.drawImage(canvas, 0, 0);
-
-    return context.getImageData(0, 0, image.width * horizontalScale, image.height * verticalScale);
+    return stretched;
   }
 }
