@@ -145,7 +145,7 @@ export class PaintPage {
 
   async setIntegerInput(window: Locator, label: string, value: string): Promise<void> {
     const input: Locator = window.locator('tsp-integer-input', { hasText: label }).locator('input');
-    // The integer input validates every keystroke itself, so select the text through the DOM and type over it
+    // The integer input validates the text after every edit, so select the text through the DOM and type over it
     await input.click();
     await input.selectText();
     await input.pressSequentially(value);
