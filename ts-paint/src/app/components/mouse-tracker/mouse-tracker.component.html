@@ -10,4 +10,9 @@
   (selectstart)="onSelectStart()"
   (wheel)="onMouseScroll($event)"
   (contextmenu)="$event.preventDefault()"
+  (touchstart)="onTouchStart($event)"
+  (touchmove)="onTouchMove($event)"
+  (touchend)="onTouchEnd($event)"
+  (touchcancel)="onTouchCancel($event)"
+  (gesturestart)="$event.preventDefault()"
 ></div>
