@@ -49,6 +49,28 @@ describe('StretchImageAction', () => {
     expect(maskOf(patches.image)).toEqual(MASK);
   });
 
+  it('shrinks a one pixel checkerboard to a single flat colour', () => {
+    // Every target pixel must come from the same parity of source pixel, whichever renderer runs this
+    const checkerboard: string[] = ['#.#.#.#.', '.#.#.#.#', '#.#.#.#.', '.#.#.#.#', '#.#.#.#.', '.#.#.#.#'];
+    const state: TsPaintStoreState = createTestState({ image: imageFromMask(checkerboard) });
+
+    const patches: Partial<TsPaintStoreState> = new StretchImageAction({
+      horizontal: 50,
+      vertical: 50,
+    }).getStatePatches(state);
+
+    expect(maskOf(patches.image)).toEqual(['####', '####', '####']);
+  });
+
+  it('maps each target pixel to the source pixel at its floored position', () => {
+    // 2 pixels stretched to 3: positions 0, 2/3 and 4/3 of the source fall into pixels 0, 0 and 1
+    const state: TsPaintStoreState = createTestState({ image: imageFromMask(['#.']) });
+
+    const patches: Partial<TsPaintStoreState> = new StretchImageAction({ horizontal: 150 }).getStatePatches(state);
+
+    expect(maskOf(patches.image)).toEqual(['##.']);
+  });
+
   it('stretches only the selection when there is one', () => {
     const state: TsPaintStoreState = createTestState({ selectionImage: imageFromMask(MASK) });
 
