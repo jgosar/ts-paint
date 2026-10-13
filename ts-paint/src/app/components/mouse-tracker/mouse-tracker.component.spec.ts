@@ -5,6 +5,7 @@ import { createImage } from '../../helpers/image.helpers';
 import { WHITE } from '../../../testing/image-test.helpers';
 import { TspMouseEvent } from '../../types/mouse-tracker/tsp-mouse-event';
 import { MouseButton } from '../../types/mouse-tracker/mouse-button';
+import { TspPinchEvent } from '../../types/mouse-tracker/tsp-pinch-event';
 
 describe('MouseTrackerComponent', () => {
   let fixture: ComponentFixture<MouseTrackerComponent>;
@@ -13,6 +14,7 @@ describe('MouseTrackerComponent', () => {
   let downs: TspMouseEvent[];
   let ups: TspMouseEvent[];
   let scrolls: TspMouseEvent[];
+  let pinches: TspPinchEvent[];
   // 10x10 image at zoom 2 => tracker is 20x20 css px; the browser applies a css zoom of 1.5 so it measures 30x30
   const RECT_LEFT: number = 100;
   const RECT_TOP: number = 50;
@@ -29,10 +31,12 @@ describe('MouseTrackerComponent', () => {
     downs = [];
     ups = [];
     scrolls = [];
+    pinches = [];
     component.mouseMove.subscribe((e) => moves.push(e));
     component.mouseDown.subscribe((e) => downs.push(e));
     component.mouseUp.subscribe((e) => ups.push(e));
     component.mouseScroll.subscribe((e) => scrolls.push(e));
+    component.pinchZoom.subscribe((e) => pinches.push(e));
     stubRect(20 * CSS_ZOOM, 20 * CSS_ZOOM);
   });
 
@@ -65,6 +69,34 @@ describe('MouseTrackerComponent', () => {
     });
     tracker().dispatchEvent(event);
     return event;
+  }
+
+  /** A touch at the given position in zoomed css px relative to the tracker (before the css zoom) */
+  function touchAt(identifier: number, w: number, h: number): Touch {
+    return new Touch({
+      identifier,
+      target: tracker(),
+      clientX: RECT_LEFT + w * CSS_ZOOM,
+      clientY: RECT_TOP + h * CSS_ZOOM,
+    });
+  }
+
+  /** Dispatches a touch event; `touches` are the fingers on the screen afterwards, `changed` the ones of the event */
+  function fireTouch(type: string, touches: Touch[], changed: Touch[]): TouchEvent {
+    const event: TouchEvent = new TouchEvent(type, {
+      touches,
+      changedTouches: changed,
+      targetTouches: touches,
+      bubbles: true,
+      cancelable: true,
+    });
+    tracker().dispatchEvent(event);
+    return event;
+  }
+
+  function tap(w: number, h: number): TouchEvent[] {
+    const finger: Touch = touchAt(1, w, h);
+    return [fireTouch('touchstart', [finger], [finger]), fireTouch('touchend', [], [finger])];
   }
 
   it('sizes the tracker div to the zoomed image', () => {
@@ -192,6 +224,52 @@ describe('MouseTrackerComponent', () => {
       { point: { w: 5, h: 5 }, wheelDelta: 1 },
       { point: { w: 0, h: 0 }, wheelDelta: -2.5 },
     ]);
+  });
+
+  describe('touch', () => {
+    it('reports a tap as a left mouseDown and prevents the browser from synthesising mouse events for it', () => {
+      const [start, end]: TouchEvent[] = tap(10, 5);
+      expect(start.defaultPrevented, 'a touch may still turn into a scroll').toBe(false);
+      expect(end.defaultPrevented).toBe(true);
+      expect(downs).toEqual([{ point: { w: 5, h: 2 }, button: MouseButton.LEFT, outsideCanvas: false, shiftKey: false }]);
+      expect(ups).toEqual([]);
+    });
+
+    it('reports a drag that follows a tap as mouseMoves and a mouseUp, and keeps it from scrolling', () => {
+      tap(2, 2);
+      const finger: Touch = touchAt(2, 2, 2);
+      expect(fireTouch('touchstart', [finger], [finger]).defaultPrevented).toBe(true);
+      expect(fireTouch('touchmove', [touchAt(2, 10, 6)], [touchAt(2, 10, 6)]).defaultPrevented).toBe(true);
+      expect(fireTouch('touchend', [], [touchAt(2, 16, 8)]).defaultPrevented).toBe(true);
+      expect(moves).toEqual([{ point: { w: 5, h: 3 }, outsideCanvas: false, shiftKey: false }]);
+      expect(ups).toEqual([{ point: { w: 8, h: 4 }, outsideCanvas: false, shiftKey: false }]);
+    });
+
+    it('reports nothing for a touch that scrolls', () => {
+      const finger: Touch = touchAt(1, 2, 2);
+      fireTouch('touchstart', [finger], [finger]);
+      fireTouch('touchmove', [touchAt(1, 2, 40)], [touchAt(1, 2, 40)]);
+      expect(fireTouch('touchend', [], [touchAt(1, 2, 40)]).defaultPrevented).toBe(false);
+      expect(downs).toEqual([]);
+      expect(moves).toEqual([]);
+    });
+
+    it('reports a pinch step with the image pixel under the middle of the fingers', () => {
+      const first: Touch = touchAt(1, 0, 0);
+      fireTouch('touchstart', [first], [first]);
+      fireTouch('touchstart', [first, touchAt(2, 10, 0)], [touchAt(2, 10, 0)]);
+      expect(fireTouch('touchmove', [first, touchAt(2, 16, 0)], [touchAt(2, 16, 0)]).defaultPrevented).toBe(false);
+      expect(pinches).toEqual([{ point: { w: 4, h: 0 }, zoomIn: true }]);
+      fireTouch('touchmove', [first, touchAt(2, 8, 0)], [touchAt(2, 8, 0)]);
+      expect(pinches.length).toBe(2);
+      expect(pinches[1]).toEqual({ point: { w: 2, h: 0 }, zoomIn: false });
+    });
+
+    it('does not interfere with the mouse: a mouseup without a mousedown after a tap emits nothing', () => {
+      tap(2, 2);
+      fire('mouseup', 2, 2);
+      expect(ups).toEqual([]);
+    });
   });
 
   it('prevents text selection and the context menu', () => {

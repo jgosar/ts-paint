@@ -138,6 +138,43 @@ describe('ImageScrollerComponent', () => {
   );
 
   it(
+    'drops scroll events still pending when the scrollPosition input is applied, as their positions are stale',
+    fakeAsyncTest(() => {
+      fixture.detectChanges();
+      flush();
+
+      scrollTo(10, 20); // e.g. a two-finger pan, right before the pinch zooms
+      tick(100);
+      fixture.componentRef.setInput('scrollPosition', { w: 25, h: 35 });
+      fixture.detectChanges();
+      tick(0);
+      host.dispatchEvent(new Event('scroll'));
+      tick(400);
+      expect(scrollPositions).toEqual([]);
+
+      scrollTo(50, 60);
+      tick(400);
+      expect(scrollPositions).toEqual([{ w: 50, h: 60 }]);
+    })
+  );
+
+  it(
+    'does not swallow the next user scroll when applying the scrollPosition input moved nothing',
+    fakeAsyncTest(() => {
+      fixture.detectChanges();
+      flush();
+
+      fixture.componentRef.setInput('scrollPosition', { w: 0, h: 0 }); // already there: the browser fires no event
+      fixture.detectChanges();
+      tick(0);
+
+      scrollTo(50, 60);
+      tick(400);
+      expect(scrollPositions).toEqual([{ w: 50, h: 60 }]);
+    })
+  );
+
+  it(
     'emits nothing after it is destroyed',
     fakeAsyncTest(() => {
       fixture.detectChanges();

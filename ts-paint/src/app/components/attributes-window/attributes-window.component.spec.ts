@@ -5,7 +5,7 @@ import { ModalWindowComponent } from '../modal-window/modal-window.component';
 import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
 import { Point } from '../../types/base/point';
 import { createImage } from '../../helpers/image.helpers';
-import { afterTimeout, keydown, keyup } from '../../../testing/events';
+import { afterTimeout, keyup, setInputText } from '../../../testing/events';
 
 // Quirk, left as is: `ngOnChanges` reads `image.width` unguarded, so binding an undefined image throws. The only
 // user (TsPaintComponent) always passes `store.state.image`, which is initialised with an image.
@@ -31,7 +31,6 @@ describe('AttributesWindowComponent', () => {
   async function render(image: ImageData = createImage(300, 200)) {
     fixture.componentRef.setInput('image', image);
     fixture.detectChanges();
-    await fixture.whenStable(); // ngModel writes the dimensions into the inputs asynchronously
   }
 
   function inputs(): HTMLInputElement[] {
@@ -44,12 +43,9 @@ describe('AttributesWindowComponent', () => {
     );
   }
 
-  function pressKeyAtEnd(input: HTMLInputElement, key: string) {
-    input.setSelectionRange(input.value.length, input.value.length);
-    const event: KeyboardEvent = keydown(key);
-    input.dispatchEvent(event);
+  function edit(input: HTMLInputElement, text: string) {
+    setInputText(input, text);
     fixture.detectChanges();
-    return event;
   }
 
   it('shows the image dimensions in the Width and Height fields', async () => {
@@ -84,15 +80,16 @@ describe('AttributesWindowComponent', () => {
 
   it('emits the edited dimensions on OK', async () => {
     await render();
-    pressKeyAtEnd(inputs()[0], '5');
-    pressKeyAtEnd(inputs()[1], 'Backspace');
+    edit(inputs()[0], '3005');
+    edit(inputs()[1], '20');
     buttonLabelled('OK').click();
     expect(saved).toEqual([{ w: 3005, h: 20 }]);
   });
 
   it('rejects dimensions above 99999', async () => {
     await render(createImage(99999, 1));
-    expect(pressKeyAtEnd(inputs()[0], '9').defaultPrevented).toBe(true);
+    edit(inputs()[0], '999999');
+    expect(inputs()[0].value, 'the edit is reverted').toBe('99999');
     buttonLabelled('OK').click();
     expect(saved).toEqual([{ w: 99999, h: 1 }]);
   });

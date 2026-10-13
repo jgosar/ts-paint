@@ -10,6 +10,7 @@ e2e/
   pages/paint.page.ts       PaintPage page object: toolbox, palette, canvas drags, menus, dialogs
   helpers/pixels.ts         read the image canvas back (imagePixel, imageMask, expectPixel)
   helpers/files.ts          fakes for the File System Access API and window.launchQueue, paste/drop helpers
+  helpers/touch.ts          real touch input (taps, drags, pinches) through the DevTools protocol
   fixtures/png.ts           tiny PNG encoder (no dependencies) for generated test images
   fonts.conf                fontconfig for Docker / CI: monochrome text rendering
   *.spec.ts                 functional tests (project "chromium")

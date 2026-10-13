@@ -340,6 +340,20 @@ describe('TsPaintStore', () => {
       expect(store.state.viewportSize).toEqual({ w: 800, h: 600 });
       expect(store.state.actions).toEqual([]);
     });
+
+    it('pinchZoom doubles or halves the zoom and centres the pinched point, without touching the history', () => {
+      const store: TsPaintStore = createStore({ viewportSize: { w: 200, h: 100 } });
+      store.pinchZoom({ point: { w: 60, h: 40 }, zoomIn: true });
+      expect(store.state.zoom).toBe(2);
+      expect(store.state.scrollPosition).toEqual({ w: 20, h: 30 });
+
+      store.pinchZoom({ point: { w: 10, h: 10 }, zoomIn: false });
+      store.pinchZoom({ point: { w: 10, h: 10 }, zoomIn: false });
+      expect(store.state.zoom).toBe(0.5);
+      expect(store.state.scrollPosition).toEqual({ w: 0, h: 0 });
+      expect(store.state.actions).toEqual([]);
+      expect(store.state.unsavedChanges).toBe(false);
+    });
   });
 
   describe('executeMenuAction', () => {

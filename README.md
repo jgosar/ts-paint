@@ -20,6 +20,9 @@ In Chromium-based browsers the installed app also registers as a handler for ima
 
 The UI always renders with a whole number of device pixels per CSS pixel. Fractional OS display scaling (such as 125% or 150% on Windows) is snapped to the nearest integer, so the Windows 95 look stays pixel-perfect on high-DPI screens. Browser zoom (Ctrl +/-) is snapped to integer steps as well.
 
+## Touchscreens
+On a touchscreen, one finger scrolls the image and two fingers pinch to zoom in and out, one 2x step at a time. To draw, tap the canvas and then drag within half a second: the tap is the mouse button going down, the drag that follows it moves the mouse, and lifting the finger releases the button. A tap with no drag after it is a click, so the fill and magnifier tools work with a single tap.
+
 ## Testing
 Everything below runs from the `ts-paint` directory.
 
@@ -56,7 +59,6 @@ To install the extension, follow these steps:
 - Image/Draw Opaque option
 - View/Zoom/Show Grid option
 - Text tool
-- Touchscreen support
 - Modernize Angular code: signals, standalone components
 - Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
 

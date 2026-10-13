@@ -4,7 +4,7 @@ import { StretchSkewWindowComponent } from './stretch-skew-window.component';
 import { ModalWindowComponent } from '../modal-window/modal-window.component';
 import { IntegerInputComponent } from '../inputs/integer-input/integer-input.component';
 import { StretchSkewParams } from '../../types/action-params/stretch-skew-params';
-import { afterTimeout, keydown, keyup, setInputText } from '../../../testing/events';
+import { afterTimeout, keyup, setInputText } from '../../../testing/events';
 
 describe('StretchSkewWindowComponent', () => {
   let fixture: ComponentFixture<StretchSkewWindowComponent>;
@@ -24,7 +24,6 @@ describe('StretchSkewWindowComponent', () => {
     component.saveChanges.subscribe((params) => saved.push(params));
     component.cancel.subscribe(() => cancelled++);
     fixture.detectChanges();
-    await fixture.whenStable(); // ngModel writes the percentages into the inputs asynchronously
   });
 
   function inputs(): HTMLInputElement[] {
@@ -37,12 +36,9 @@ describe('StretchSkewWindowComponent', () => {
     );
   }
 
-  function pressKeyAtEnd(input: HTMLInputElement, key: string) {
-    input.setSelectionRange(input.value.length, input.value.length);
-    const event: KeyboardEvent = keydown(key);
-    input.dispatchEvent(event);
+  function edit(input: HTMLInputElement, text: string) {
+    setInputText(input, text);
     fixture.detectChanges();
-    return event;
   }
 
   it('shows only the Stretch fieldset, with Horizontal and Vertical percentages at 100', () => {
@@ -76,17 +72,17 @@ describe('StretchSkewWindowComponent', () => {
   });
 
   it('emits the edited percentages', () => {
-    pressKeyAtEnd(inputs()[0], '0');
-    pressKeyAtEnd(inputs()[1], 'Backspace');
+    edit(inputs()[0], '1000');
+    edit(inputs()[1], '10');
     buttonLabelled('OK').click();
     expect(saved).toEqual([{ stretch: { horizontal: 1000, vertical: 10 } }]);
   });
 
   it('rejects percentages above 1600', () => {
-    setInputText(inputs()[0], '160');
-    expect(pressKeyAtEnd(inputs()[0], '0').defaultPrevented).toBe(false);
-    setInputText(inputs()[0], '1600');
-    expect(pressKeyAtEnd(inputs()[0], '0').defaultPrevented).toBe(true);
+    edit(inputs()[0], '1600');
+    expect(inputs()[0].value).toBe('1600');
+    edit(inputs()[0], '16000');
+    expect(inputs()[0].value, 'the edit is reverted').toBe('1600');
     buttonLabelled('OK').click();
     expect(saved).toEqual([{ stretch: { horizontal: 1600, vertical: 100 } }]);
   });

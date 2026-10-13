@@ -7,6 +7,7 @@ import { drawRectangle } from 'src/app/helpers/drawing.helpers';
 import { RectangleArea } from '../../base/rectangle-area';
 import { COLOR_WHITE } from 'src/app/services/ts-paint/ts-paint.config';
 import { constrainPointToImage } from 'src/app/helpers/image.helpers';
+import { getScrollPositionCentredOn } from 'src/app/helpers/zoom.helpers';
 
 export class MagnifierAction extends DrawingToolAction {
   protected getAffectedArea(state: TsPaintStoreState): RectangleArea {
@@ -31,7 +32,7 @@ export class MagnifierAction extends DrawingToolAction {
     const zoomMultiplier: number = this.swapColors ? 0.5 : 2; // swapColors = right/left mouse button
     const newZoom: number = state.zoom * zoomMultiplier;
 
-    return { zoom: newZoom, scrollPosition: this.getScrollPosition(state.viewportSize, newZoom, this.points[0]) };
+    return { zoom: newZoom, scrollPosition: getScrollPositionCentredOn(state.viewportSize, newZoom, this.points[0]) };
   }
 
   protected getUndoActions(state: TsPaintStoreState): TsPaintAction[] {
@@ -54,13 +55,5 @@ export class MagnifierAction extends DrawingToolAction {
     end = constrainPointToImage(state.image, end);
 
     return { start, end };
-  }
-
-  private getScrollPosition(viewportSize: Point, zoom: number, centre: Point): Point {
-    const zoomedCentre: Point = { w: centre.w * zoom, h: centre.h * zoom };
-    const w: number = Math.max(0, Math.floor(zoomedCentre.w - viewportSize.w / 2));
-    const h: number = Math.max(0, Math.floor(zoomedCentre.h - viewportSize.h / 2));
-
-    return { w, h };
   }
 }

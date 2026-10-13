@@ -3,11 +3,14 @@
   <input
     #inputElement
     type="text"
+    inputmode="numeric"
     class="tsp-text-input tsp-depressed-item"
-    [(ngModel)]="model"
+    [value]="model"
     [attr.disabled]="disabled ? '' : null"
-    (paste)="onPaste($event)"
-    (keydown)="onKeydown($event)"
+    (beforeinput)="onBeforeInput()"
+    (input)="onInput()"
+    (keydown)="$event.stopPropagation()"
+    (paste)="$event.stopPropagation()"
   />
 </div>
 <label class="tsp-input-label tsp-input-label--after-field">{{ unit }}</label>

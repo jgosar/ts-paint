@@ -29,15 +29,22 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
 
   private _scrollListener: () => void;
   private _isModelLocked: boolean = false;
+  /** Bumped by every programmatic scroll; scroll events from before it report positions that no longer apply */
+  private _scrollEpoch: number = 0;
 
   constructor(private _element: ElementRef, private _renderer: Renderer2) {}
 
   @Input()
   public set scrollPosition(scrollPosition: Point) {
-    this._isModelLocked = true;
     setTimeout(() => {
-      this._element.nativeElement.scrollLeft = scrollPosition.w;
-      this._element.nativeElement.scrollTop = scrollPosition.h;
+      const element: HTMLElement = this._element.nativeElement;
+      const before: Point = { w: element.scrollLeft, h: element.scrollTop };
+      element.scrollLeft = scrollPosition.w;
+      element.scrollTop = scrollPosition.h;
+      this._scrollEpoch++;
+      // The browser reports a programmatic scroll with a scroll event like any other, which must not come back as a
+      // change. There is no event when nothing moved.
+      this._isModelLocked = element.scrollLeft !== before.w || element.scrollTop !== before.h;
     });
   }
   @Output()
@@ -46,12 +53,14 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
   public viewportSizeChange: EventEmitter<Point> = new EventEmitter<Point>();
 
   private _ngUnsubscribe: Subject<void> = new Subject();
-  private _viewportScrolled: Subject<Point> = new Subject<Point>();
+  private _viewportScrolled: Subject<{ position: Point; epoch: number }> = new Subject();
   private _viewportResized: Subject<Point> = new Subject<Point>();
 
   ngOnInit(): void {
-    this._viewportScrolled.pipe(debounceTime(400), takeUntil(this._ngUnsubscribe)).subscribe((scrollPosition) => {
-      this.scrollPositionChange.emit(scrollPosition);
+    this._viewportScrolled.pipe(debounceTime(400), takeUntil(this._ngUnsubscribe)).subscribe((scrolled) => {
+      if (scrolled.epoch === this._scrollEpoch) {
+        this.scrollPositionChange.emit(scrolled.position);
+      }
     });
     this._viewportResized.pipe(debounceTime(400), takeUntil(this._ngUnsubscribe)).subscribe((viewportSize) => {
       this.viewportSizeChange.emit(viewportSize);
@@ -78,8 +87,8 @@ export class ImageScrollerComponent implements OnInit, OnDestroy, AfterViewInit 
     } else {
       if (event.srcElement) {
         // @ts-ignore
-        const scrollPosition: Point = { w: event.srcElement.scrollLeft, h: event.srcElement.scrollTop };
-        this._viewportScrolled.next(scrollPosition);
+        const position: Point = { w: event.srcElement.scrollLeft, h: event.srcElement.scrollTop };
+        this._viewportScrolled.next({ position, epoch: this._scrollEpoch });
       }
     }
   }
