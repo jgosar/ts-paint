@@ -208,12 +208,16 @@ describe('ImageScrollerComponent', () => {
   );
 
   it(
-    'does not report a position that is less than a pixel off when a touch gesture starts',
+    'does not report a position that is less than a pixel off',
     fakeAsyncTest(() => {
       fixture.detectChanges();
       flush();
 
-      host.scrollLeft = 0.5;
+      // Whether the browser keeps the fraction, or rounds it up or down, the viewport is less than a pixel off
+      fixture.componentRef.setInput('scrollPosition', { w: 0.5, h: 0 });
+      fixture.detectChanges();
+      tick(0);
+      expect(scrollPositions).toEqual([]);
       host.dispatchEvent(new Event('touchstart'));
       expect(scrollPositions).toEqual([]);
     })
