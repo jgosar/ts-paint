@@ -5,7 +5,6 @@
   display: block;
   position: relative;
   overflow: auto;
-  // Touch: one finger pans, two fingers are for the canvas's own pinch zoom, not the browser's. No pull-to-refresh.
-  touch-action: pan-x pan-y;
-  overscroll-behavior: contain;
+  // Touch gestures belong to the canvas (one finger draws, two fingers pan and zoom): the browser scrolls nothing
+  touch-action: none;
 }

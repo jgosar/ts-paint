@@ -18,8 +18,8 @@ import { ClientPoint, TouchGesture, TouchGestureRecognizer, TouchPoint } from '.
 
 /**
  * The invisible layer over the image that turns mouse and touch input into events in image pixels. Touch input goes
- * through a TouchGestureRecognizer: one finger scrolls (left to the browser), a tap followed by a drag draws like a
- * left mouse button, two fingers pinch to zoom.
+ * through a TouchGestureRecognizer: one finger draws like the left mouse button, two fingers pan and pinch to zoom.
+ * The browser gets none of the touch events, so it neither scrolls nor synthesises mouse events for them.
  */
 @Component({
   selector: 'tsp-mouse-tracker',
@@ -49,6 +49,8 @@ export class MouseTrackerComponent implements OnChanges, OnDestroy {
   private _mouseIsDown: boolean = false;
   private _lastMouseOut: MouseEvent;
   private _touchGestures: TouchGestureRecognizer = new TouchGestureRecognizer(this.onTouchGesture.bind(this));
+  /** The image point under the middle of the fingers when the current pinch started */
+  private _pinchAnchor: Point;
   @ViewChild('trackerDiv', { static: true })
   private _trackerDiv: ElementRef<HTMLDivElement>;
 
@@ -116,19 +118,23 @@ export class MouseTrackerComponent implements OnChanges, OnDestroy {
   }
 
   onTouchStart(event: TouchEvent) {
-    this.preventIf(event, this._touchGestures.touchStart(touchPoints(event.touches), touchPoints(event.changedTouches)));
+    consume(event);
+    this._touchGestures.touchStart(touchPoints(event.touches), touchPoints(event.changedTouches));
   }
 
   onTouchMove(event: TouchEvent) {
-    this.preventIf(event, this._touchGestures.touchMove(touchPoints(event.touches)));
+    consume(event);
+    this._touchGestures.touchMove(touchPoints(event.touches));
   }
 
   onTouchEnd(event: TouchEvent) {
-    this.preventIf(event, this._touchGestures.touchEnd(touchPoints(event.touches), touchPoints(event.changedTouches)));
+    consume(event);
+    this._touchGestures.touchEnd(touchPoints(event.touches), touchPoints(event.changedTouches));
   }
 
   onTouchCancel(event: TouchEvent) {
-    this.preventIf(event, this._touchGestures.touchCancel(touchPoints(event.touches), touchPoints(event.changedTouches)));
+    consume(event);
+    this._touchGestures.touchCancel(touchPoints(event.touches), touchPoints(event.changedTouches));
   }
 
   private onTouchGesture(gesture: TouchGesture) {
@@ -147,26 +153,45 @@ export class MouseTrackerComponent implements OnChanges, OnDestroy {
       case 'release':
         this.mouseUp.emit({ point: this.getEventPoint(gesture.point), outsideCanvas: false, shiftKey: false });
         break;
+      case 'pinchStart':
+        this._pinchAnchor = this.getImagePoint(gesture.centre);
+        break;
       case 'pinch':
-        this.pinchZoom.emit({ point: this.getEventPoint(gesture.centre), zoomIn: gesture.zoomIn });
+        this.pinchZoom.emit({
+          anchor: this._pinchAnchor,
+          centre: this.getImagePoint(gesture.centre),
+          zoomIn: gesture.zoomIn,
+        });
         break;
     }
   }
 
-  private preventIf(event: TouchEvent, prevent: boolean) {
-    if (prevent && event.cancelable) {
-      event.preventDefault();
-    }
+  /** The image pixel under the event */
+  private getEventPoint(event: ClientPoint): Point {
+    const eventPoint: Point = unzoomPoint(this.getLocalPoint(event), this.zoom);
+    return constrainPointToImage(this.image, eventPoint);
   }
 
-  private getEventPoint(event: ClientPoint): Point {
+  /** The image point under the event, not rounded to a pixel and not kept within the image */
+  private getImagePoint(event: ClientPoint): Point {
+    const localPoint: Point = this.getLocalPoint(event);
+    return { w: localPoint.w / this.zoom, h: localPoint.h / this.zoom };
+  }
+
+  /** The event's position in zoomed css px from the top left of the tracker */
+  private getLocalPoint(event: ClientPoint): Point {
     // The bounding rect is affected by CSS zoom (see PixelScalingService) while zoomedWidth is not, so the ratio
     // between them converts client coordinates into the tracker's own coordinate space.
     const rect: DOMRect = this._trackerDiv.nativeElement.getBoundingClientRect();
     const scale: number = rect.width > 0 ? this.zoomedWidth / rect.width : 1;
-    const localPoint: Point = { w: (event.clientX - rect.left) * scale, h: (event.clientY - rect.top) * scale };
-    const eventPoint: Point = unzoomPoint(localPoint, this.zoom);
-    return constrainPointToImage(this.image, eventPoint);
+    return { w: (event.clientX - rect.left) * scale, h: (event.clientY - rect.top) * scale };
+  }
+}
+
+/** Keeps the browser from scrolling or synthesising mouse events for a touch: every touch belongs to the canvas */
+function consume(event: TouchEvent) {
+  if (event.cancelable) {
+    event.preventDefault();
   }
 }
 

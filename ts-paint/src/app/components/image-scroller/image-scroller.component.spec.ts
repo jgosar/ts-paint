@@ -143,7 +143,7 @@ describe('ImageScrollerComponent', () => {
       fixture.detectChanges();
       flush();
 
-      scrollTo(10, 20); // e.g. a two-finger pan, right before the pinch zooms
+      scrollTo(10, 20); // e.g. a wheel scroll, right before the magnifier zooms
       tick(100);
       fixture.componentRef.setInput('scrollPosition', { w: 25, h: 35 });
       fixture.detectChanges();
@@ -171,6 +171,55 @@ describe('ImageScrollerComponent', () => {
       scrollTo(50, 60);
       tick(400);
       expect(scrollPositions).toEqual([{ w: 50, h: 60 }]);
+    })
+  );
+
+  it(
+    'reports the position the browser clamped a scrollPosition input to',
+    fakeAsyncTest(() => {
+      fixture.detectChanges();
+      flush();
+
+      fixture.componentRef.setInput('scrollPosition', { w: 5000, h: 30 });
+      fixture.detectChanges();
+      tick(0);
+      expect(host.scrollLeft).toBeLessThan(1000);
+      expect(scrollPositions).toEqual([{ w: host.scrollLeft, h: 30 }]);
+
+      host.dispatchEvent(new Event('scroll')); // the browser's reaction to the programmatic scroll
+      tick(400);
+      expect(scrollPositions.length, 'the reaction is not a change').toBe(1);
+    })
+  );
+
+  it(
+    'reports a scroll still waiting in the debounce when a touch gesture starts, and not again afterwards',
+    fakeAsyncTest(() => {
+      fixture.detectChanges();
+      flush();
+
+      scrollTo(10, 20);
+      tick(100);
+      host.dispatchEvent(new Event('touchstart'));
+      expect(scrollPositions).toEqual([{ w: 10, h: 20 }]);
+      tick(400);
+      expect(scrollPositions.length).toBe(1);
+    })
+  );
+
+  it(
+    'does not report a position that is less than a pixel off',
+    fakeAsyncTest(() => {
+      fixture.detectChanges();
+      flush();
+
+      // Whether the browser keeps the fraction, or rounds it up or down, the viewport is less than a pixel off
+      fixture.componentRef.setInput('scrollPosition', { w: 0.5, h: 0 });
+      fixture.detectChanges();
+      tick(0);
+      expect(scrollPositions).toEqual([]);
+      host.dispatchEvent(new Event('touchstart'));
+      expect(scrollPositions).toEqual([]);
     })
   );
 

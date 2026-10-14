@@ -341,14 +341,18 @@ describe('TsPaintStore', () => {
       expect(store.state.actions).toEqual([]);
     });
 
-    it('pinchZoom doubles or halves the zoom and centres the pinched point, without touching the history', () => {
-      const store: TsPaintStore = createStore({ viewportSize: { w: 200, h: 100 } });
-      store.pinchZoom({ point: { w: 60, h: 40 }, zoomIn: true });
+    it('pinchZoom zooms by 2x steps and pans, keeping the anchor under the fingers, without touching the history', () => {
+      const store: TsPaintStore = createStore({ scrollPosition: { w: 10, h: 10 } });
+      store.pinchZoom({ anchor: { w: 60.5, h: 40 }, centre: { w: 60.5, h: 40 }, zoomIn: true });
       expect(store.state.zoom).toBe(2);
-      expect(store.state.scrollPosition).toEqual({ w: 20, h: 30 });
+      expect(store.state.scrollPosition).toEqual({ w: 71, h: 50 });
 
-      store.pinchZoom({ point: { w: 10, h: 10 }, zoomIn: false });
-      store.pinchZoom({ point: { w: 10, h: 10 }, zoomIn: false });
+      store.pinchZoom({ anchor: { w: 60.5, h: 40 }, centre: { w: 65.5, h: 38 } });
+      expect(store.state.zoom, 'a pan leaves the zoom alone').toBe(2);
+      expect(store.state.scrollPosition).toEqual({ w: 61, h: 54 });
+
+      store.pinchZoom({ anchor: { w: 60.5, h: 40 }, centre: { w: 60.5, h: 40 }, zoomIn: false });
+      store.pinchZoom({ anchor: { w: 60.5, h: 40 }, centre: { w: 60.5, h: 40 }, zoomIn: false });
       expect(store.state.zoom).toBe(0.5);
       expect(store.state.scrollPosition).toEqual({ w: 0, h: 0 });
       expect(store.state.actions).toEqual([]);

@@ -21,7 +21,7 @@ In Chromium-based browsers the installed app also registers as a handler for ima
 The UI always renders with a whole number of device pixels per CSS pixel. Fractional OS display scaling (such as 125% or 150% on Windows) is snapped to the nearest integer, so the Windows 95 look stays pixel-perfect on high-DPI screens. Browser zoom (Ctrl +/-) is snapped to integer steps as well.
 
 ## Touchscreens
-On a touchscreen, one finger scrolls the image and two fingers pinch to zoom in and out, one 2x step at a time. To draw, tap the canvas and then drag within half a second: the tap is the mouse button going down, the drag that follows it moves the mouse, and lifting the finger releases the button. A tap with no drag after it is a click, so the fill and magnifier tools work with a single tap.
+On a touchscreen, one finger uses the selected tool like the left mouse button: it draws as it moves, and a tap is a click, so the fill and magnifier tools work with a single tap. Two fingers scroll the image and pinch to zoom in and out, one 2x step at a time; the point between the fingers stays where it is.
 
 ## Testing
 Everything below runs from the `ts-paint` directory.
