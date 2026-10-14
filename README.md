@@ -55,6 +55,10 @@ To install the extension, follow these steps:
 
 ## Future plans
 
+## Bugs/UX improvements
+- Close menu after selecting an option
+- Reduce scrollbar lengths after Reducing size of image
+
 ### Immediate TODO list
 - Image/Draw Opaque option
 - View/Zoom/Show Grid option
