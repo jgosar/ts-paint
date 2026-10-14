@@ -227,48 +227,51 @@ describe('MouseTrackerComponent', () => {
   });
 
   describe('touch', () => {
-    it('reports a tap as a left mouseDown and prevents the browser from synthesising mouse events for it', () => {
+    it('reports a tap as a left mouseDown and a mouseUp, and keeps the browser from synthesising mouse events', () => {
       const [start, end]: TouchEvent[] = tap(10, 5);
-      expect(start.defaultPrevented, 'a touch may still turn into a scroll').toBe(false);
+      expect(start.defaultPrevented).toBe(true);
       expect(end.defaultPrevented).toBe(true);
       expect(downs).toEqual([{ point: { w: 5, h: 2 }, button: MouseButton.LEFT, outsideCanvas: false, shiftKey: false }]);
-      expect(ups).toEqual([]);
+      expect(ups).toEqual([{ point: { w: 5, h: 2 }, outsideCanvas: false, shiftKey: false }]);
     });
 
-    it('reports a drag that follows a tap as mouseMoves and a mouseUp, and keeps it from scrolling', () => {
-      tap(2, 2);
+    it('reports a finger that moves as a mouseDown where it landed, mouseMoves and a mouseUp, and never scrolls', () => {
       const finger: Touch = touchAt(2, 2, 2);
       expect(fireTouch('touchstart', [finger], [finger]).defaultPrevented).toBe(true);
       expect(fireTouch('touchmove', [touchAt(2, 10, 6)], [touchAt(2, 10, 6)]).defaultPrevented).toBe(true);
       expect(fireTouch('touchend', [], [touchAt(2, 16, 8)]).defaultPrevented).toBe(true);
+      expect(downs).toEqual([{ point: { w: 1, h: 1 }, button: MouseButton.LEFT, outsideCanvas: false, shiftKey: false }]);
       expect(moves).toEqual([{ point: { w: 5, h: 3 }, outsideCanvas: false, shiftKey: false }]);
       expect(ups).toEqual([{ point: { w: 8, h: 4 }, outsideCanvas: false, shiftKey: false }]);
     });
 
-    it('reports nothing for a touch that scrolls', () => {
-      const finger: Touch = touchAt(1, 2, 2);
-      fireTouch('touchstart', [finger], [finger]);
-      fireTouch('touchmove', [touchAt(1, 2, 40)], [touchAt(1, 2, 40)]);
-      expect(fireTouch('touchend', [], [touchAt(1, 2, 40)]).defaultPrevented).toBe(false);
-      expect(downs).toEqual([]);
-      expect(moves).toEqual([]);
-    });
-
-    it('reports a pinch step with the image pixel under the middle of the fingers', () => {
+    it('reports a pinch with the image points under the middle of the fingers, not rounded to pixels', () => {
       const first: Touch = touchAt(1, 0, 0);
       fireTouch('touchstart', [first], [first]);
-      fireTouch('touchstart', [first, touchAt(2, 10, 0)], [touchAt(2, 10, 0)]);
-      expect(fireTouch('touchmove', [first, touchAt(2, 16, 0)], [touchAt(2, 16, 0)]).defaultPrevented).toBe(false);
-      expect(pinches).toEqual([{ point: { w: 4, h: 0 }, zoomIn: true }]);
+      expect(fireTouch('touchstart', [first, touchAt(2, 10, 0)], [touchAt(2, 10, 0)]).defaultPrevented).toBe(true);
+      expect(pinches, 'the pinch start only sets the anchor').toEqual([]);
+      expect(fireTouch('touchmove', [first, touchAt(2, 12, 1)], [touchAt(2, 12, 1)]).defaultPrevented).toBe(true);
+      expect(pinches).toEqual([{ anchor: { w: 2.5, h: 0 }, centre: { w: 3, h: 0.25 }, zoomIn: undefined }]);
+      fireTouch('touchmove', [first, touchAt(2, 16, 0)], [touchAt(2, 16, 0)]);
+      expect(pinches[1]).toEqual({ anchor: { w: 2.5, h: 0 }, centre: { w: 4, h: 0 }, zoomIn: true });
       fireTouch('touchmove', [first, touchAt(2, 8, 0)], [touchAt(2, 8, 0)]);
-      expect(pinches.length).toBe(2);
-      expect(pinches[1]).toEqual({ point: { w: 2, h: 0 }, zoomIn: false });
+      expect(pinches[2]).toEqual({ anchor: { w: 2.5, h: 0 }, centre: { w: 2, h: 0 }, zoomIn: false });
+      expect(fireTouch('touchend', [], [first, touchAt(2, 8, 0)]).defaultPrevented).toBe(true);
+      expect(downs).toEqual([]);
+    });
+
+    it('releases a drawing finger on touchcancel', () => {
+      const finger: Touch = touchAt(1, 2, 2);
+      fireTouch('touchstart', [finger], [finger]);
+      fireTouch('touchmove', [touchAt(1, 12, 2)], [touchAt(1, 12, 2)]);
+      expect(fireTouch('touchcancel', [], [touchAt(1, 12, 2)]).defaultPrevented).toBe(true);
+      expect(ups).toEqual([{ point: { w: 6, h: 1 }, outsideCanvas: false, shiftKey: false }]);
     });
 
     it('does not interfere with the mouse: a mouseup without a mousedown after a tap emits nothing', () => {
       tap(2, 2);
       fire('mouseup', 2, 2);
-      expect(ups).toEqual([]);
+      expect(ups.length).toBe(1);
     });
   });
 

@@ -7,8 +7,8 @@ export interface ScreenPoint {
 
 /**
  * Real touch input through the Chrome DevTools Protocol, which Playwright's own touchscreen (taps only) cannot do.
- * The events go through Chromium's gesture detection, so one finger really scrolls and `touch-action` really
- * applies. Needs a context with `hasTouch: true`.
+ * The events go through Chromium's gesture detection, so `touch-action` and `preventDefault` really apply. Needs a
+ * context with `hasTouch: true`.
  */
 export class Touchscreen {
   private constructor(private readonly _cdp: CDPSession) {}
@@ -41,6 +41,19 @@ export class Touchscreen {
     await this.start([from]);
     for (let step = 1; step <= steps; step++) {
       await this.move([interpolate(from, to, step / steps)]);
+    }
+    await this.end();
+  }
+
+  /** Two fingers side by side around `from`, moved together to `to` in a few steps and lifted there */
+  async pan(from: ScreenPoint, to: ScreenPoint, fingerDistance: number = 60, steps: number = 5): Promise<void> {
+    const fingers = (centre: ScreenPoint): ScreenPoint[] => [
+      { x: centre.x - fingerDistance / 2, y: centre.y },
+      { x: centre.x + fingerDistance / 2, y: centre.y },
+    ];
+    await this.start(fingers(from));
+    for (let step = 1; step <= steps; step++) {
+      await this.move(fingers(interpolate(from, to, step / steps)));
     }
     await this.end();
   }

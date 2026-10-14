@@ -9,191 +9,169 @@ export interface TouchPoint extends ClientPoint {
 }
 
 export type TouchGesture =
-  /** A tap: the start of a click or of a tap-and-drag */
+  /** The drawing finger went down; the point is where it landed */
   | { type: 'press'; point: TouchPoint }
-  /** The finger that followed a tap has moved */
+  /** The drawing finger moved */
   | { type: 'drag'; point: TouchPoint }
-  /** The press is over: the drag finger lifted, or no drag followed the tap within the window */
+  /** The drawing finger lifted, or a second finger took over */
   | { type: 'release'; point: TouchPoint }
-  /** Two fingers spread (zoomIn) or pinched by a step; centre is their midpoint */
-  | { type: 'pinch'; zoomIn: boolean; centre: ClientPoint };
+  /** Two fingers landed; centre is their midpoint */
+  | { type: 'pinchStart'; centre: ClientPoint }
+  /** The two fingers moved: their midpoint is at centre, and they zoomed by a step when zoomIn is set */
+  | { type: 'pinch'; centre: ClientPoint; zoomIn?: boolean };
 
 export interface TouchGestureOptions {
-  /** Movement in css px up to which a touch still counts as a tap */
-  tapSlop: number;
-  /** How long after a tap the next touch is taken as the drag that follows it */
-  dragWindowMs: number;
+  /** Movement in css px from which a lone finger is surely drawing and not the first finger of a pair */
+  pressSlop: number;
+  /** How long a lone finger may rest before it is surely drawing and not the first finger of a pair */
+  pressDelayMs: number;
   /** Change of the distance between two fingers that triggers one zoom step */
   pinchStepRatio: number;
 }
 
 export const DEFAULT_TOUCH_GESTURE_OPTIONS: TouchGestureOptions = {
-  tapSlop: 10,
-  dragWindowMs: 500,
+  pressSlop: 10,
+  pressDelayMs: 100,
   pinchStepRatio: Math.SQRT2,
 };
 
 /**
- * Turns raw touches into the gestures the canvas understands. One finger normally scrolls (the browser does that,
- * nothing is reported), but a tap arms the canvas: the tap is reported as a press, the next touch within the drag
- * window is the drag that belongs to it, and lifting that finger (or the window running out without a drag)
- * releases the press. Two fingers pinch, one zoom step per `pinchStepRatio` of distance change.
+ * Turns raw touches into the gestures the canvas understands. One finger is the left mouse button: a press where
+ * it lands, drags as it moves, a release when it lifts. Two fingers pan and zoom: every move reports their midpoint,
+ * and one zoom step per `pinchStepRatio` of distance change.
  *
- * Every event method returns true when the browser's own handling of the event (scrolling, synthesised mouse
- * events) must be prevented.
+ * The press of a lone finger is held back until it moves past `pressSlop`, rests for `pressDelayMs` or lifts, so
+ * that the second finger of a pan, which usually lands a moment after the first, does not leave a dot behind.
+ * Once the press is out, a second finger releases it where the drawing finger is and the pair takes over.
+ * Nothing resumes after a pair until every finger has lifted.
  */
 export class TouchGestureRecognizer {
-  /** A single finger that may still turn out to be a tap */
-  private _tapCandidate?: { identifier: number; start: TouchPoint; moved: boolean };
-  /** The press reported for a tap, until it is released */
-  private _tapPoint?: TouchPoint;
-  private _dragTimer?: ReturnType<typeof setTimeout>;
+  /** A lone finger whose press is still held back */
+  private _pending?: { finger: TouchPoint; timer: ReturnType<typeof setTimeout> };
   /** The finger that is drawing */
-  private _dragFinger?: number;
-  private _dragMoved: boolean = false;
-  /** The distance between two fingers at the last zoom step, while pinching */
+  private _drawFinger?: number;
+  /** The distance between the two fingers at the last zoom step, while pinching */
   private _pinchBaseDistance?: number;
+  /** Set when a pair broke up or a third finger landed: nothing happens until every finger has lifted */
+  private _ignoreUntilLifted: boolean = false;
 
   constructor(
     private _onGesture: (gesture: TouchGesture) => void,
     private _options: TouchGestureOptions = DEFAULT_TOUCH_GESTURE_OPTIONS
   ) {}
 
-  touchStart(touches: TouchPoint[], changed: TouchPoint[]): boolean {
-    if (this._dragFinger !== undefined) {
-      if (this._dragMoved || touches.length !== 2) {
-        return true; // Extra fingers during a drag are ignored, and must not scroll
-      }
-      this._dragFinger = undefined; // Both fingers of a pinch landed after a tap: the tap was a click
+  touchStart(touches: TouchPoint[], changed: TouchPoint[]) {
+    if (this._ignoreUntilLifted) {
+      return;
     }
     if (touches.length === 1) {
       const finger: TouchPoint = changed[0] ?? touches[0];
-      if (this._tapPoint !== undefined) {
-        this.clearDragTimer();
-        this._dragFinger = finger.identifier;
-        this._dragMoved = false;
-        return true;
+      this._pending = { finger, timer: setTimeout(() => this.commitPress(), this._options.pressDelayMs) };
+    } else if (touches.length === 2) {
+      this.dropPending();
+      if (this._drawFinger !== undefined) {
+        this.release(findTouch(touches, this._drawFinger) ?? changed[0]);
       }
-      this._tapCandidate = { identifier: finger.identifier, start: finger, moved: false };
-      return false;
+      this._pinchBaseDistance = distance(touches[0], touches[1]);
+      this._onGesture({ type: 'pinchStart', centre: midpoint(touches[0], touches[1]) });
+    } else {
+      this.dropPending();
+      this._pinchBaseDistance = undefined;
+      this._ignoreUntilLifted = true;
     }
-    this._tapCandidate = undefined;
-    if (this._tapPoint !== undefined) {
-      this.releaseTap(); // A pinch instead of a drag: the tap was a click
-    }
-    this._pinchBaseDistance = touches.length === 2 ? distance(touches[0], touches[1]) : undefined;
-    return false;
   }
 
-  touchMove(touches: TouchPoint[]): boolean {
-    if (this._dragFinger !== undefined) {
-      const finger: TouchPoint | undefined = findTouch(touches, this._dragFinger);
+  touchMove(touches: TouchPoint[]) {
+    if (this._ignoreUntilLifted) {
+      return;
+    }
+    if (this._drawFinger !== undefined) {
+      const finger: TouchPoint | undefined = findTouch(touches, this._drawFinger);
       if (finger !== undefined) {
-        this._dragMoved = true;
         this._onGesture({ type: 'drag', point: finger });
       }
-      return true;
-    }
-    if (this._pinchBaseDistance !== undefined && touches.length >= 2) {
+    } else if (this._pending !== undefined) {
+      const finger: TouchPoint | undefined = findTouch(touches, this._pending.finger.identifier);
+      if (finger !== undefined && distance(finger, this._pending.finger) >= this._options.pressSlop) {
+        this.commitPress();
+        this._onGesture({ type: 'drag', point: finger });
+      }
+    } else if (this._pinchBaseDistance !== undefined && touches.length >= 2) {
       this.trackPinch(touches[0], touches[1]);
-      return false;
     }
-    if (this._tapCandidate !== undefined && !this._tapCandidate.moved) {
-      const finger: TouchPoint | undefined = findTouch(touches, this._tapCandidate.identifier);
-      if (finger !== undefined && distance(finger, this._tapCandidate.start) >= this._options.tapSlop) {
-        this._tapCandidate.moved = true;
-      }
-    }
-    return false;
   }
 
-  touchEnd(touches: TouchPoint[], changed: TouchPoint[]): boolean {
-    if (this._dragFinger !== undefined) {
-      const finger: TouchPoint | undefined = findTouch(changed, this._dragFinger);
+  touchEnd(touches: TouchPoint[], changed: TouchPoint[]) {
+    if (touches.length === 0) {
+      this._ignoreUntilLifted = false;
+    }
+    if (this._drawFinger !== undefined) {
+      const finger: TouchPoint | undefined = findTouch(changed, this._drawFinger);
       if (finger !== undefined) {
-        this.releaseDrag(finger);
+        this.release(finger);
       }
-      return true;
-    }
-    if (this._pinchBaseDistance !== undefined) {
-      if (touches.length < 2) {
-        this._pinchBaseDistance = undefined;
-      }
-      return false;
-    }
-    if (this._tapCandidate !== undefined) {
-      const finger: TouchPoint | undefined = findTouch(changed, this._tapCandidate.identifier);
+    } else if (this._pending !== undefined) {
+      const finger: TouchPoint | undefined = findTouch(changed, this._pending.finger.identifier);
       if (finger !== undefined) {
-        const isTap: boolean = !this._tapCandidate.moved;
-        this._tapCandidate = undefined;
-        if (isTap) {
-          this._tapPoint = finger;
-          this._onGesture({ type: 'press', point: finger });
-          this._dragTimer = setTimeout(() => this.releaseTap(), this._options.dragWindowMs);
-          return true; // Keeps the browser from synthesising mouse events for the tap
-        }
+        this.commitPress(); // A tap is a click
+        this.release(finger);
       }
-    }
-    return false;
-  }
-
-  touchCancel(touches: TouchPoint[], changed: TouchPoint[]): boolean {
-    this._tapCandidate = undefined;
-    if (touches.length < 2) {
+    } else if (this._pinchBaseDistance !== undefined && touches.length < 2) {
       this._pinchBaseDistance = undefined;
+      this._ignoreUntilLifted = touches.length > 0; // The finger left behind must not start drawing
     }
-    if (this._dragFinger !== undefined) {
-      const finger: TouchPoint | undefined = findTouch(changed, this._dragFinger);
-      if (finger !== undefined) {
-        this.releaseDrag(finger);
-      }
-    }
-    return false;
   }
 
-  /** Forgets a pending tap without releasing it; for when the element goes away */
+  touchCancel(touches: TouchPoint[], changed: TouchPoint[]) {
+    this.dropPending();
+    this._pinchBaseDistance = undefined;
+    if (this._drawFinger !== undefined) {
+      const finger: TouchPoint | undefined = findTouch(changed, this._drawFinger);
+      if (finger !== undefined) {
+        this.release(finger);
+      }
+    }
+    this._ignoreUntilLifted = touches.length > 0;
+  }
+
+  /** Forgets a held back press without reporting it; for when the element goes away */
   destroy() {
-    this.clearDragTimer();
-    this._tapPoint = undefined;
+    this.dropPending();
+  }
+
+  /** The held back press is surely a press: reports it where the finger landed */
+  private commitPress() {
+    const finger: TouchPoint = this._pending.finger;
+    this.dropPending();
+    this._drawFinger = finger.identifier;
+    this._onGesture({ type: 'press', point: finger });
+  }
+
+  private dropPending() {
+    if (this._pending !== undefined) {
+      clearTimeout(this._pending.timer);
+      this._pending = undefined;
+    }
+  }
+
+  private release(point: TouchPoint) {
+    this._drawFinger = undefined;
+    this._onGesture({ type: 'release', point });
   }
 
   private trackPinch(first: TouchPoint, second: TouchPoint) {
     const currentDistance: number = distance(first, second);
     const ratio: number = currentDistance / this._pinchBaseDistance;
-    const zoomIn: boolean = ratio >= this._options.pinchStepRatio;
-    const zoomOut: boolean = ratio <= 1 / this._options.pinchStepRatio;
-    if (zoomIn || zoomOut) {
+    let zoomIn: boolean | undefined;
+    if (ratio >= this._options.pinchStepRatio) {
+      zoomIn = true;
+    } else if (ratio <= 1 / this._options.pinchStepRatio) {
+      zoomIn = false;
+    }
+    if (zoomIn !== undefined) {
       this._pinchBaseDistance = currentDistance;
-      const centre: ClientPoint = {
-        clientX: (first.clientX + second.clientX) / 2,
-        clientY: (first.clientY + second.clientY) / 2,
-      };
-      this._onGesture({ type: 'pinch', zoomIn, centre });
     }
-  }
-
-  /** The press ends where the tap was: no drag followed it */
-  private releaseTap() {
-    this.releaseAt(this._tapPoint);
-  }
-
-  /** The press ends where the drag finger lifted */
-  private releaseDrag(finger: TouchPoint) {
-    this._dragFinger = undefined;
-    this.releaseAt(finger);
-  }
-
-  private releaseAt(point: TouchPoint) {
-    this.clearDragTimer();
-    this._tapPoint = undefined;
-    this._onGesture({ type: 'release', point });
-  }
-
-  private clearDragTimer() {
-    if (this._dragTimer !== undefined) {
-      clearTimeout(this._dragTimer);
-      this._dragTimer = undefined;
-    }
+    this._onGesture({ type: 'pinch', centre: midpoint(first, second), zoomIn });
   }
 }
 
@@ -203,4 +181,8 @@ function findTouch(touches: TouchPoint[], identifier: number): TouchPoint | unde
 
 function distance(a: ClientPoint, b: ClientPoint): number {
   return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+}
+
+function midpoint(a: ClientPoint, b: ClientPoint): ClientPoint {
+  return { clientX: (a.clientX + b.clientX) / 2, clientY: (a.clientY + b.clientY) / 2 };
 }

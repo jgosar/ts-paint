@@ -41,7 +41,7 @@ import { FlipRotateParams } from 'src/app/types/action-params/flip-rotate-params
 import { RotateImageAction } from 'src/app/types/actions/rotate-image-action';
 import { TspMouseEvent } from 'src/app/types/mouse-tracker/tsp-mouse-event';
 import { TspPinchEvent } from 'src/app/types/mouse-tracker/tsp-pinch-event';
-import { getScrollPositionCentredOn } from 'src/app/helpers/zoom.helpers';
+import { getScrollPositionAnchoredOn } from 'src/app/helpers/zoom.helpers';
 import { CropAction } from 'src/app/types/actions/crop-action';
 import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-params';
 import { StretchImageAction } from 'src/app/types/actions/stretch-image-action';
@@ -185,10 +185,19 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.patchState(viewportSize, 'viewportSize');
   }
 
-  /** A pinch zooms by 2x steps around the pinched point. Unlike the magnifier it is not a part of the history. */
+  /**
+   * Two fingers keep the image point they landed on under their midpoint while they pan and zoom by 2x steps.
+   * Unlike the magnifier it is not a part of the history.
+   */
   pinchZoom(event: TspPinchEvent) {
-    const zoom: number = this.state.zoom * (event.zoomIn ? 2 : 0.5);
-    const scrollPosition: Point = getScrollPositionCentredOn(this.state.viewportSize, zoom, event.point);
+    const zoom: number = event.zoomIn === undefined ? this.state.zoom : this.state.zoom * (event.zoomIn ? 2 : 0.5);
+    const scrollPosition: Point = getScrollPositionAnchoredOn(
+      this.state.scrollPosition,
+      this.state.zoom,
+      zoom,
+      event.anchor,
+      event.centre
+    );
     this.setState({ ...this.state, zoom, scrollPosition });
   }
 

@@ -1,15 +1,15 @@
 import { TouchGesture, TouchGestureRecognizer, TouchPoint } from './touch-gesture-recognizer';
 
 describe('TouchGestureRecognizer', () => {
-  const DRAG_WINDOW_MS: number = 30;
+  const PRESS_DELAY_MS: number = 30;
   let recognizer: TouchGestureRecognizer;
   let gestures: TouchGesture[];
 
   beforeEach(() => {
     gestures = [];
     recognizer = new TouchGestureRecognizer((gesture) => gestures.push(gesture), {
-      tapSlop: 10,
-      dragWindowMs: DRAG_WINDOW_MS,
+      pressSlop: 10,
+      pressDelayMs: PRESS_DELAY_MS,
       pinchStepRatio: Math.SQRT2,
     });
   });
@@ -24,171 +24,172 @@ describe('TouchGestureRecognizer', () => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
-  /** A single finger that goes down and up without moving */
-  function tap(w: number, h: number, identifier: number = 1): boolean[] {
-    const finger: TouchPoint = touch(identifier, w, h);
-    return [recognizer.touchStart([finger], [finger]), recognizer.touchEnd([], [finger])];
+  /** Both fingers of a pair land in one event */
+  function pinchStart(first: TouchPoint, second: TouchPoint) {
+    recognizer.touchStart([first, second], [first, second]);
   }
 
   describe('one finger', () => {
-    it('reports a tap as a press and prevents only the touchend, so that no mouse events are synthesised', () => {
-      expect(tap(10, 20)).toEqual([false, true]);
-      expect(gestures).toEqual([{ type: 'press', point: touch(1, 10, 20) }]);
-    });
-
-    it('tolerates a little movement in a tap', () => {
+    it('reports a tap as a press where it landed and a release where it lifted', () => {
       const finger: TouchPoint = touch(1, 10, 20);
       recognizer.touchStart([finger], [finger]);
-      recognizer.touchMove([touch(1, 15, 24)]);
-      expect(recognizer.touchEnd([], [touch(1, 12, 22)])).toBe(true);
-      expect(gestures).toEqual([{ type: 'press', point: touch(1, 12, 22) }]);
+      expect(gestures, 'the press is held back').toEqual([]);
+      recognizer.touchEnd([], [touch(1, 12, 21)]);
+      expect(gestures).toEqual([
+        { type: 'press', point: finger },
+        { type: 'release', point: touch(1, 12, 21) },
+      ]);
     });
 
-    it('reports nothing and prevents nothing for a touch that moves, which is a scroll', () => {
+    it('presses where the finger landed once it moves past the slop, then drags and releases', () => {
       const finger: TouchPoint = touch(1, 10, 20);
-      expect(recognizer.touchStart([finger], [finger])).toBe(false);
-      expect(recognizer.touchMove([touch(1, 10, 30)])).toBe(false);
-      expect(recognizer.touchMove([touch(1, 10, 21)])).toBe(false);
-      expect(recognizer.touchEnd([], [touch(1, 10, 21)])).toBe(false);
-      expect(gestures).toEqual([]);
-    });
-
-    it('releases the press at the tap point when no drag follows within the window', async () => {
-      tap(10, 20);
-      await wait(DRAG_WINDOW_MS / 2);
-      expect(gestures.length, 'still waiting for a drag').toBe(1);
-      await wait(DRAG_WINDOW_MS);
+      recognizer.touchStart([finger], [finger]);
+      recognizer.touchMove([touch(1, 15, 20)]);
+      expect(gestures, 'a little movement does not tell a press from the first finger of a pair').toEqual([]);
+      recognizer.touchMove([touch(1, 30, 20)]);
+      recognizer.touchMove([touch(1, 40, 25)]);
+      recognizer.touchEnd([], [touch(1, 50, 25)]);
       expect(gestures).toEqual([
-        { type: 'press', point: touch(1, 10, 20) },
-        { type: 'release', point: touch(1, 10, 20) },
+        { type: 'press', point: finger },
+        { type: 'drag', point: touch(1, 30, 20) },
+        { type: 'drag', point: touch(1, 40, 25) },
+        { type: 'release', point: touch(1, 50, 25) },
       ]);
     });
-  });
 
-  describe('tap and drag', () => {
-    it('takes the next touch within the window as the drag, prevents its scrolling and releases when it lifts', async () => {
-      tap(10, 20);
-      const finger: TouchPoint = touch(2, 11, 21);
-      expect(recognizer.touchStart([finger], [finger])).toBe(true);
-      expect(recognizer.touchMove([touch(2, 30, 40)])).toBe(true);
-      expect(recognizer.touchMove([touch(2, 50, 60)])).toBe(true);
-      expect(recognizer.touchEnd([], [touch(2, 50, 60)])).toBe(true);
-      expect(gestures).toEqual([
-        { type: 'press', point: touch(1, 10, 20) },
-        { type: 'drag', point: touch(2, 30, 40) },
-        { type: 'drag', point: touch(2, 50, 60) },
-        { type: 'release', point: touch(2, 50, 60) },
-      ]);
-      await wait(DRAG_WINDOW_MS * 2);
-      expect(gestures.length, 'no second release from the timer').toBe(4);
-    });
-
-    it('is back in scrolling mode after the drag', () => {
-      tap(10, 20);
-      const finger: TouchPoint = touch(2, 11, 21);
+    it('presses once the finger has rested for the press delay', async () => {
+      const finger: TouchPoint = touch(1, 10, 20);
       recognizer.touchStart([finger], [finger]);
-      recognizer.touchEnd([], [finger]);
-      const scroller: TouchPoint = touch(3, 11, 21);
-      expect(recognizer.touchStart([scroller], [scroller])).toBe(false);
-      recognizer.touchMove([touch(3, 11, 80)]);
-      expect(recognizer.touchEnd([], [touch(3, 11, 80)])).toBe(false);
-      expect(gestures.length).toBe(2);
-    });
-
-    it('ignores extra fingers once the drag has moved, but keeps them from scrolling', () => {
-      tap(10, 20);
-      const finger: TouchPoint = touch(2, 11, 21);
-      recognizer.touchStart([finger], [finger]);
-      recognizer.touchMove([touch(2, 20, 30)]);
-      const extra: TouchPoint = touch(3, 100, 100);
-      expect(recognizer.touchStart([finger, extra], [extra])).toBe(true);
-      expect(recognizer.touchMove([touch(2, 30, 40), touch(3, 120, 120)])).toBe(true);
-      expect(recognizer.touchEnd([finger], [touch(3, 120, 120)])).toBe(true);
-      expect(recognizer.touchMove([touch(2, 35, 45)])).toBe(true);
+      await wait(PRESS_DELAY_MS + 10);
+      expect(gestures).toEqual([{ type: 'press', point: finger }]);
+      recognizer.touchMove([touch(1, 12, 20)]);
+      recognizer.touchEnd([], [touch(1, 12, 20)]);
       expect(gestures.slice(1)).toEqual([
-        { type: 'drag', point: touch(2, 20, 30) },
-        { type: 'drag', point: touch(2, 30, 40) },
-        { type: 'drag', point: touch(2, 35, 45) },
+        { type: 'drag', point: touch(1, 12, 20) },
+        { type: 'release', point: touch(1, 12, 20) },
       ]);
     });
 
-    it('releases the press when the drag is cancelled by the system', () => {
-      tap(10, 20);
-      const finger: TouchPoint = touch(2, 11, 21);
+    it('ignores other fingers that move while the drawing finger stays', () => {
+      const finger: TouchPoint = touch(1, 10, 20);
       recognizer.touchStart([finger], [finger]);
-      recognizer.touchCancel([], [touch(2, 11, 21)]);
-      expect(gestures[1]).toEqual({ type: 'release', point: touch(2, 11, 21) });
-      const scroller: TouchPoint = touch(3, 11, 21);
-      expect(recognizer.touchStart([scroller], [scroller]), 'back in scrolling mode').toBe(false);
-    });
-
-    it('turns the tap into a click when a second finger lands before the drag has moved: a pinch, not a drag', () => {
-      tap(10, 20);
-      const first: TouchPoint = touch(2, 100, 100);
-      const second: TouchPoint = touch(3, 200, 100);
-      recognizer.touchStart([first], [first]);
-      expect(recognizer.touchStart([first, second], [second])).toBe(false);
-      expect(recognizer.touchMove([first, touch(3, 250, 100)])).toBe(false);
+      recognizer.touchMove([touch(1, 30, 20)]);
+      recognizer.touchMove([touch(7, 30, 20)]);
+      recognizer.touchEnd([finger], [touch(7, 30, 20)]);
       expect(gestures).toEqual([
-        { type: 'press', point: touch(1, 10, 20) },
-        { type: 'release', point: touch(1, 10, 20) },
-        { type: 'pinch', zoomIn: true, centre: { clientX: 175, clientY: 100 } },
+        { type: 'press', point: finger },
+        { type: 'drag', point: touch(1, 30, 20) },
       ]);
     });
 
-    it('forgets a pending tap on destroy without releasing it', async () => {
-      tap(10, 20);
+    it('releases a press on touchcancel and drops a held back one silently', () => {
+      const finger: TouchPoint = touch(1, 10, 20);
+      recognizer.touchStart([finger], [finger]);
+      recognizer.touchCancel([], [finger]);
+      expect(gestures).toEqual([]);
+
+      recognizer.touchStart([finger], [finger]);
+      recognizer.touchMove([touch(1, 30, 20)]);
+      recognizer.touchCancel([], [touch(1, 30, 20)]);
+      expect(gestures).toEqual([
+        { type: 'press', point: finger },
+        { type: 'drag', point: touch(1, 30, 20) },
+        { type: 'release', point: touch(1, 30, 20) },
+      ]);
+    });
+
+    it('forgets a held back press on destroy without reporting it', async () => {
+      const finger: TouchPoint = touch(1, 10, 20);
+      recognizer.touchStart([finger], [finger]);
       recognizer.destroy();
-      await wait(DRAG_WINDOW_MS * 2);
-      expect(gestures.length).toBe(1);
+      await wait(PRESS_DELAY_MS + 10);
+      expect(gestures).toEqual([]);
     });
   });
 
-  describe('pinch', () => {
-    const first: TouchPoint = touch(1, 100, 100);
-    const second: TouchPoint = touch(2, 200, 100);
+  describe('two fingers', () => {
+    it('starts a pinch at the midpoint when the second finger lands before the press is out, and presses nothing', async () => {
+      recognizer.touchStart([touch(1, 100, 100)], [touch(1, 100, 100)]);
+      recognizer.touchStart([touch(1, 100, 100), touch(2, 200, 150)], [touch(2, 200, 150)]);
+      await wait(PRESS_DELAY_MS + 10);
+      expect(gestures).toEqual([{ type: 'pinchStart', centre: { clientX: 150, clientY: 125 } }]);
+    });
 
-    function startPinch() {
-      recognizer.touchStart([first], [first]);
-      recognizer.touchStart([first, second], [second]);
-    }
+    it('releases a press where the drawing finger is when the second finger lands, then starts a pinch', () => {
+      recognizer.touchStart([touch(1, 100, 100)], [touch(1, 100, 100)]);
+      recognizer.touchMove([touch(1, 120, 100)]);
+      recognizer.touchStart([touch(1, 120, 100), touch(2, 200, 100)], [touch(2, 200, 100)]);
+      expect(gestures).toEqual([
+        { type: 'press', point: touch(1, 100, 100) },
+        { type: 'drag', point: touch(1, 120, 100) },
+        { type: 'release', point: touch(1, 120, 100) },
+        { type: 'pinchStart', centre: { clientX: 160, clientY: 100 } },
+      ]);
+    });
 
-    it('zooms in one step each time the distance grows by the step ratio, measured from the last step', () => {
-      startPinch();
-      expect(recognizer.touchMove([first, touch(2, 230, 100)]), 'not prevented, two fingers may pan').toBe(false);
-      expect(gestures).toEqual([]);
-      recognizer.touchMove([first, touch(2, 242, 100)]); // 142 / 100 >= sqrt(2)
-      expect(gestures).toEqual([{ type: 'pinch', zoomIn: true, centre: { clientX: 171, clientY: 100 } }]);
-      recognizer.touchMove([first, touch(2, 280, 100)]); // 180 / 142 < sqrt(2)
-      expect(gestures.length).toBe(1);
-      recognizer.touchMove([first, touch(2, 301, 100)]); // 201 / 142 >= sqrt(2)
+    it('reports every move with the midpoint, and a zoom step per sqrt(2) of distance change measured from the last step', () => {
+      pinchStart(touch(1, 0, 0), touch(2, 100, 0));
+      recognizer.touchMove([touch(1, 10, 0), touch(2, 130, 0)]);
+      expect(gestures[1], 'a pan: 120 / 100 is no step').toEqual({
+        type: 'pinch',
+        centre: { clientX: 70, clientY: 0 },
+        zoomIn: undefined,
+      });
+      recognizer.touchMove([touch(1, 10, 0), touch(2, 152, 0)]);
+      expect(gestures[2]).toEqual({ type: 'pinch', centre: { clientX: 81, clientY: 0 }, zoomIn: true });
+      recognizer.touchMove([touch(1, 10, 0), touch(2, 190, 0)]);
+      expect(gestures[3], '180 / 142 is no step').toMatchObject({ zoomIn: undefined });
+      recognizer.touchMove([touch(1, 10, 0), touch(2, 211, 0)]);
+      expect(gestures[4], '201 / 142 is a step').toMatchObject({ zoomIn: true });
+      expect(gestures.length).toBe(5);
+    });
+
+    it('zooms out when the fingers come together by a step', () => {
+      pinchStart(touch(1, 0, 0), touch(2, 200, 0));
+      recognizer.touchMove([touch(1, 0, 0), touch(2, 150, 0)]);
+      recognizer.touchMove([touch(1, 0, 0), touch(2, 141, 0)]);
+      expect(gestures.slice(1)).toEqual([
+        { type: 'pinch', centre: { clientX: 75, clientY: 0 }, zoomIn: undefined },
+        { type: 'pinch', centre: { clientX: 70.5, clientY: 0 }, zoomIn: false },
+      ]);
+    });
+
+    it('does nothing with the finger left behind after a pinch until it lifts too', async () => {
+      pinchStart(touch(1, 0, 0), touch(2, 100, 0));
+      recognizer.touchEnd([touch(1, 0, 0)], [touch(2, 100, 0)]);
+      recognizer.touchMove([touch(1, 50, 0)]);
+      await wait(PRESS_DELAY_MS + 10);
+      recognizer.touchEnd([], [touch(1, 50, 0)]);
+      expect(gestures).toEqual([{ type: 'pinchStart', centre: { clientX: 50, clientY: 0 } }]);
+
+      recognizer.touchStart([touch(3, 10, 10)], [touch(3, 10, 10)]);
+      recognizer.touchEnd([], [touch(3, 10, 10)]);
+      expect(gestures.slice(1), 'the next finger draws again').toEqual([
+        { type: 'press', point: touch(3, 10, 10) },
+        { type: 'release', point: touch(3, 10, 10) },
+      ]);
+    });
+
+    it('stops at a third finger, and does not resume until every finger has lifted', () => {
+      pinchStart(touch(1, 0, 0), touch(2, 100, 0));
+      recognizer.touchStart([touch(1, 0, 0), touch(2, 100, 0), touch(3, 50, 50)], [touch(3, 50, 50)]);
+      recognizer.touchMove([touch(1, 0, 0), touch(2, 200, 0), touch(3, 50, 50)]);
+      recognizer.touchEnd([touch(1, 0, 0), touch(2, 200, 0)], [touch(3, 50, 50)]);
+      recognizer.touchMove([touch(1, 0, 0), touch(2, 300, 0)]);
+      recognizer.touchEnd([touch(1, 0, 0)], [touch(2, 300, 0)]);
+      recognizer.touchStart([touch(1, 0, 0), touch(4, 100, 0)], [touch(4, 100, 0)]);
+      recognizer.touchEnd([], [touch(1, 0, 0), touch(4, 100, 0)]);
+      expect(gestures).toEqual([{ type: 'pinchStart', centre: { clientX: 50, clientY: 0 } }]);
+
+      pinchStart(touch(1, 0, 0), touch(2, 100, 0));
       expect(gestures.length).toBe(2);
     });
 
-    it('zooms out when the distance shrinks by the step ratio', () => {
-      startPinch();
-      recognizer.touchMove([first, touch(2, 171, 100)]); // 71 / 100 > 1 / sqrt(2)
-      expect(gestures).toEqual([]);
-      recognizer.touchMove([touch(1, 110, 100), touch(2, 180, 100)]); // 70 / 100 <= 1 / sqrt(2)
-      expect(gestures).toEqual([{ type: 'pinch', zoomIn: false, centre: { clientX: 145, clientY: 100 } }]);
-    });
-
-    it('does not take the finger that stays after a pinch for a tap', () => {
-      startPinch();
-      expect(recognizer.touchEnd([second], [first])).toBe(false);
-      expect(recognizer.touchEnd([], [second])).toBe(false);
-      expect(gestures).toEqual([]);
-    });
-
-    it('stops with a third finger and resumes with two', () => {
-      startPinch();
-      const third: TouchPoint = touch(3, 150, 200);
-      recognizer.touchStart([first, second, third], [third]);
-      recognizer.touchMove([first, touch(2, 300, 100), third]);
-      expect(gestures).toEqual([]);
-      recognizer.touchEnd([first, second], [third]);
-      recognizer.touchMove([first, touch(2, 300, 100)]);
-      expect(gestures, 'the pinch base is gone until two fingers start again').toEqual([]);
+    it('drops a pinch on touchcancel', () => {
+      pinchStart(touch(1, 0, 0), touch(2, 100, 0));
+      recognizer.touchCancel([], [touch(1, 0, 0), touch(2, 100, 0)]);
+      recognizer.touchMove([touch(1, 0, 0), touch(2, 200, 0)]);
+      expect(gestures.length).toBe(1);
     });
   });
 });

@@ -8,3 +8,20 @@ export function getScrollPositionCentredOn(viewportSize: Point, zoom: number, ce
 
   return { w, h };
 }
+
+/**
+ * The scroll position that, at `newZoom`, puts the image point `anchor` where the image point `centre` is now, at
+ * `zoom` and `scrollPosition`. With the same zoom it is a pan from `centre` to `anchor`.
+ */
+export function getScrollPositionAnchoredOn(
+  scrollPosition: Point,
+  zoom: number,
+  newZoom: number,
+  anchor: Point,
+  centre: Point
+): Point {
+  const w: number = Math.max(0, Math.round(scrollPosition.w + anchor.w * newZoom - centre.w * zoom));
+  const h: number = Math.max(0, Math.round(scrollPosition.h + anchor.h * newZoom - centre.h * zoom));
+
+  return { w, h };
+}
