@@ -60,7 +60,6 @@ To install the extension, follow these steps:
 - Reduce scrollbar lengths after Reducing size of image
 
 ### Immediate TODO list
-- Image/Draw Opaque option
 - View/Zoom/Show Grid option
 - Text tool
 - Modernize Angular code: signals, standalone components

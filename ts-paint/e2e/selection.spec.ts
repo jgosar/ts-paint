@@ -71,6 +71,59 @@ test.describe('selection', () => {
     await expectPixel(page, 60, 60, WHITE);
   });
 
+  test.describe('Draw Opaque', () => {
+    /** Puts a black pixel at (45,20), selects the black square with its white border and drops the selection 12px to
+     * the right, so that its white border covers the black pixel */
+    async function dropSelectionOverPixel(): Promise<void> {
+      await paint.selectTool(DrawingToolType.pencil);
+      await paint.clickCanvas(45, 20);
+      await paint.selectTool(DrawingToolType.rectangleSelect);
+      await paint.drag([
+        [5, 5],
+        [35, 35],
+      ]);
+      await paint.drag([
+        [20, 20],
+        [32, 20],
+      ]);
+    }
+
+    async function deselect(): Promise<void> {
+      await paint.clickCanvas(250, 150);
+      await paint.hotkey('Escape');
+      await expect(paint.selectionFrame).toBeHidden();
+    }
+
+    test('is on by default: the whole selection covers the image', async ({ page }) => {
+      await expect(paint.pickerOption(0)).toHaveClass(/--selected/);
+      await dropSelectionOverPixel();
+      await deselect();
+      await expectPixel(page, 45, 20, WHITE);
+      await expectPixel(page, 30, 20, BLACK);
+    });
+
+    test('the transparent option lets the image show through the secondary color of the selection', async ({
+      page,
+    }) => {
+      await paint.selectPickerOption(1);
+      await dropSelectionOverPixel();
+      await deselect();
+      await expectPixel(page, 45, 20, BLACK);
+      await expectPixel(page, 30, 20, BLACK);
+      await expectPixel(page, 15, 20, WHITE);
+    });
+
+    test('Options > Draw Opaque toggles the option and shows a check mark while it is on', async () => {
+      const options = await paint.openMenu('Options');
+      await expect(paint.menuItem(options, 'Draw Opaque')).toHaveAttribute('aria-checked', 'true');
+      await paint.menuItem(options, 'Draw Opaque').click();
+      await expect(paint.pickerOption(1)).toHaveClass(/--selected/);
+      await paint.openMenu('Options');
+      await expect(paint.menuItem(options, 'Draw Opaque')).toHaveAttribute('aria-checked', 'false');
+      await expect(paint.menuItem(options, 'Draw Opaque').locator('.tsp-menu__check')).toHaveCount(0);
+    });
+  });
+
   test('Delete clears the selected pixels with the secondary color', async ({ page }) => {
     await paint.drag([
       [5, 5],

@@ -1,5 +1,6 @@
 import { vi } from 'vitest';
 import {
+  blendImagePart,
   calculateLocation,
   cloneImage,
   constrainPointToImage,
@@ -16,6 +17,7 @@ import {
   getPixelOffset,
   isPointInRectangle,
   isSubpixelInRectangle,
+  makeColorTransparent,
   pasteImagePart,
   resizeImage,
   setPixelInOriginalImage,
@@ -373,6 +375,59 @@ describe('pasteImagePart', () => {
 
     expect(alphaAt({ w: 1, h: 0 }, result)).toBe(0);
     expect(isColor({ w: 0, h: 0 }, result, BLACK)).toBe(true);
+  });
+});
+
+describe('blendImagePart', () => {
+  it('draws the opaque pixels of the part and keeps the image under its transparent ones', () => {
+    const image: ImageData = createImage(4, 2, WHITE);
+    const part: ImageData = createImage(2, 2, RED);
+    setPixel(part, { w: 1, h: 0 }, RED, 0);
+
+    const result: ImageData = blendImagePart({ w: 1, h: 0 }, part, image);
+
+    expect(result).not.toBe(image);
+    expect(maskOf(result, RED)).toEqual(['.#..', '.##.']);
+    expect(alphaAt({ w: 2, h: 0 }, result)).toBe(255);
+    expect(pointsOfColor(image, RED), 'the original is untouched').toEqual([]);
+  });
+
+  it('mixes partially transparent pixels with the pixels underneath', () => {
+    const image: ImageData = createImage(1, 1, WHITE);
+    const part: ImageData = createImage(1, 1, BLACK);
+    setPixel(part, { w: 0, h: 0 }, BLACK, 128);
+
+    const result: ImageData = blendImagePart({ w: 0, h: 0 }, part, image);
+
+    const channel: number = result.data[0];
+    expect(channel).toBeGreaterThan(120);
+    expect(channel).toBeLessThan(135);
+    expect(alphaAt({ w: 0, h: 0 }, result)).toBe(255);
+  });
+
+  it('clips parts that hang over the edge', () => {
+    const result: ImageData = blendImagePart({ w: -1, h: 1 }, createImage(2, 2, BLACK), createImage(3, 3, WHITE));
+
+    expect(maskOf(result)).toEqual(['...', '#..', '#..']);
+  });
+});
+
+describe('makeColorTransparent', () => {
+  it('returns a copy in which only the pixels of the color are fully transparent', () => {
+    const image: ImageData = createImage(3, 1, WHITE);
+    setPixel(image, { w: 1, h: 0 }, RED);
+
+    const result: ImageData = makeColorTransparent(image, WHITE);
+
+    expect([0, 1, 2].map((w) => alphaAt({ w, h: 0 }, result))).toEqual([0, 255, 0]);
+    expect(isColor({ w: 1, h: 0 }, result, RED)).toBe(true);
+    expect(alphaAt({ w: 0, h: 0 }, image), 'the original is untouched').toBe(255);
+  });
+
+  it('ignores the alpha of the color', () => {
+    const result: ImageData = makeColorTransparent(createImage(1, 1, BLUE), { ...BLUE, a: 10 });
+
+    expect(alphaAt({ w: 0, h: 0 }, result)).toBe(0);
   });
 });
 

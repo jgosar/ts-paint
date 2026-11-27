@@ -301,6 +301,60 @@ describe('TsPaintStore', () => {
       expect(pixel(store, 12, 12)).toEqual(WHITE);
     });
 
+    describe('with Draw Opaque off', () => {
+      /** A white image with a red pixel at (23, 23), and a selection of the area around the black pixel at (12, 12)
+       * that is then moved by 10px so that one of its white pixels covers the red pixel */
+      function storeWithMovedSelection(): TsPaintStore {
+        const image: ImageData = imageWithBlackPixel();
+        setPixel(image, { w: 23, h: 23 }, RED);
+        const store: TsPaintStore = createStore({ image });
+        store.setDrawingToolOptions({ [DrawingToolType.rectangleSelect]: { drawOpaque: false } });
+        selectArea(store, { w: 10, h: 10 }, { w: 14, h: 14 });
+        store.processMouseDown(at(12, 12));
+        store.processMouseMove(at(22, 22));
+        store.processMouseUp(at(22, 22));
+        return store;
+      }
+
+      it('shows the secondary color of the selection as see-through', () => {
+        const store: TsPaintStore = storeWithMovedSelection();
+        expect(store.selectionTransparentColor).toEqual(WHITE);
+
+        store.setColor({ color: BLUE, primary: false });
+        expect(store.selectionTransparentColor).toEqual(BLUE);
+
+        store.setDrawingToolOptions({ [DrawingToolType.rectangleSelect]: { drawOpaque: true } });
+        expect(store.selectionTransparentColor).toBeUndefined();
+      });
+
+      it('clicking outside the selection pastes only the pixels that are not the secondary color', () => {
+        const store: TsPaintStore = storeWithMovedSelection();
+        store.processMouseDown(at(60, 60));
+
+        expect(store.state.selectionImage).toBeUndefined();
+        expect(pixel(store, 22, 22), 'the black pixel was pasted').toEqual(BLACK);
+        expect(pixel(store, 23, 23), 'white is see-through, the red pixel stays').toEqual(RED);
+      });
+
+      it('DESELECT pastes transparently too, and undo brings the covered pixels back', () => {
+        const image: ImageData = createImage(100, 100, WHITE);
+        setPixel(image, { w: 22, h: 21 }, RED);
+        const store: TsPaintStore = createStore({ image });
+        store.setDrawingToolOptions({ [DrawingToolType.rectangleSelect]: { drawOpaque: false } });
+        store.setColor({ color: BLUE, primary: false });
+        selectArea(store, { w: 10, h: 10 }, { w: 14, h: 14 }); // all white, so nothing is see-through
+        store.processMouseDown(at(12, 12));
+        store.processMouseUp(at(22, 22));
+
+        store.executeMenuAction(MenuActionType.DESELECT);
+        expect(pixel(store, 22, 21), 'white is not the secondary color, so it covers the red pixel').toEqual(WHITE);
+
+        store.executeMenuAction(MenuActionType.UNDO);
+        expect(store.state.selectionImage).toBeDefined();
+        expect(pixel(store, 22, 21)).toEqual(RED);
+      });
+    });
+
     it('routes mouse up and move to the selection tool only while a selection exists', () => {
       const store: TsPaintStore = storeWithSelection();
       store.processMouseDown(at(60, 60)); // deselects
@@ -502,6 +556,30 @@ describe('TsPaintStore', () => {
 
       store.executeMenuAction(MenuActionType.DESELECT);
       expect(store.state.actions.length).toBe(actionCount + 1);
+    });
+
+    it('TOGGLE_DRAW_OPAQUE flips the option, keeps the menu check mark in line, and is undoable', () => {
+      const store: TsPaintStore = createStore();
+      const drawOpaque = (): boolean => store.state.drawingToolOptions[DrawingToolType.rectangleSelect].drawOpaque;
+      const checked = (): boolean =>
+        store.state.menuStructure
+          .find((menu) => menu.name === 'Options')
+          .menus.find((item) => item.name === 'Draw Opaque').checked;
+      expect(drawOpaque()).toBe(true);
+      expect(checked()).toBe(true);
+
+      store.executeMenuAction(MenuActionType.TOGGLE_DRAW_OPAQUE);
+      expect(drawOpaque()).toBe(false);
+      expect(checked()).toBe(false);
+
+      const menu = store.state.menuStructure;
+      store.setColor({ color: RED, primary: true });
+      expect(store.state.menuStructure, 'the menu is only rebuilt when a flag changes').toBe(menu);
+
+      store.executeMenuAction(MenuActionType.UNDO);
+      store.executeMenuAction(MenuActionType.UNDO);
+      expect(drawOpaque()).toBe(true);
+      expect(checked()).toBe(true);
     });
 
     it('opens the Flip/Rotate, Stretch/Skew, Attributes and About windows', () => {

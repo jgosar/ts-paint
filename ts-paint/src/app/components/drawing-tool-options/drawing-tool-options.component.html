@@ -19,5 +19,10 @@
     [selectedShape]="selectedBrushShape"
     (selectedShapeChange)="changeSelectedBrushShape($event)"
   ></tsp-brush-shape-picker>
+  } @else if (displayedPicker === 'drawOpaquePicker') {
+  <tsp-draw-opaque-picker
+    [drawOpaque]="selectedDrawOpaque"
+    (drawOpaqueChange)="changeDrawOpaque($event)"
+  ></tsp-draw-opaque-picker>
   }
 </div>

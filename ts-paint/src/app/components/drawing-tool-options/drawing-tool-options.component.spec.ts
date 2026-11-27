@@ -10,11 +10,13 @@ import { ALL_FILL_TYPES, FillType } from '../../types/drawing-tools/fill-type';
 import { SimpleChange } from '@angular/core';
 import { ALL_BRUSH_SHAPES, BrushForm } from '../../types/drawing-tools/brush-shape';
 import { ALL_ERASER_SIZES } from '../../types/drawing-tools/eraser-size';
+import { DrawOpaquePickerComponent } from '../draw-opaque-picker/draw-opaque-picker.component';
 
 describe('DrawingToolOptionsComponent', () => {
   let fixture: ComponentFixture<DrawingToolOptionsComponent>;
   let component: DrawingToolOptionsComponent;
   const options: DrawingToolOptions = {
+    [DrawingToolType.rectangleSelect]: { drawOpaque: true },
     [DrawingToolType.rectangle]: { fillType: FillType.EMPTY },
     [DrawingToolType.line]: { thickness: 4 },
     [DrawingToolType.eraser]: { size: 8 },
@@ -29,6 +31,7 @@ describe('DrawingToolOptionsComponent', () => {
         LineThicknessPickerComponent,
         EraserSizePickerComponent,
         BrushShapePickerComponent,
+        DrawOpaquePickerComponent,
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(DrawingToolOptionsComponent);
@@ -104,6 +107,20 @@ describe('DrawingToolOptionsComponent', () => {
     expect(emitted).toEqual({ [DrawingToolType.brush]: { shape: { form: BrushForm.SQUARE, size: 8 } } });
   });
 
+  it('shows the opaque/transparent picker for the selection tool and emits the clicked choice', () => {
+    selectTool(DrawingToolType.rectangleSelect);
+    const picker: HTMLElement = fixture.nativeElement.querySelector('tsp-draw-opaque-picker');
+    expect(picker).not.toBeNull();
+    const choices: HTMLElement[] = Array.from(picker.querySelectorAll('.tsp-draw-opaque-picker__option'));
+    expect(choices[0].classList).toContain('tsp-draw-opaque-picker__option--selected');
+    let emitted: Partial<DrawingToolOptions>;
+    component.optionsChange.subscribe((changes) => (emitted = changes));
+
+    choices[1].click();
+
+    expect(emitted).toEqual({ [DrawingToolType.rectangleSelect]: { drawOpaque: false } });
+  });
+
   describe('every picker state fits inside the sunken frame', () => {
     function showOption(tool: DrawingToolType, toolOptions: DrawingToolOptions[keyof DrawingToolOptions]) {
       component.selectedTool = tool;
@@ -135,6 +152,7 @@ describe('DrawingToolOptionsComponent', () => {
       ['line thicknesses', DrawingToolType.line, [1, 2, 3, 4, 5].map((thickness) => ({ thickness }))],
       ['eraser sizes', DrawingToolType.eraser, ALL_ERASER_SIZES.map((size) => ({ size }))],
       ['brush shapes', DrawingToolType.brush, ALL_BRUSH_SHAPES.map((shape) => ({ shape }))],
+      ['opaque and transparent', DrawingToolType.rectangleSelect, [true, false].map((drawOpaque) => ({ drawOpaque }))],
     ];
     for (const [name, tool, values] of cases) {
       it(name, () => {

@@ -3,10 +3,16 @@ import { FillType } from './fill-type';
 import { BrushShape } from './brush-shape';
 
 export interface DrawingToolOptions {
+  [DrawingToolType.rectangleSelect]: SelectionOptions;
   [DrawingToolType.rectangle]: RectangleOptions;
   [DrawingToolType.line]: LineOptions;
   [DrawingToolType.eraser]: EraserOptions;
   [DrawingToolType.brush]: BrushOptions;
+}
+
+/** Options > Draw Opaque: when it is off, the secondary color of a selection is see-through */
+export interface SelectionOptions {
+  drawOpaque: boolean;
 }
 
 export interface RectangleOptions {

@@ -7,11 +7,12 @@ import { Point } from '../../types/base/point';
 import { MoveSelectionTool } from '../../types/drawing-tools/move-selection-tool';
 import {
   DEFAULT_AVAILABLE_COLORS,
-  MENU_STRUCTURE,
   NON_MENU_SHORTCUTS,
   COLOR_WHITE,
   DEFAULT_DRAWING_TOOL_OPTIONS,
+  getMenuStructure,
 } from './ts-paint.config';
+import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
 import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
 import { DEFAULT_IMAGE_FILE_FORMAT, ImageFileFormat } from 'src/app/types/base/image-file-format';
 
@@ -43,6 +44,8 @@ export class TsPaintStoreState {
   saveAsWindowOpen: boolean = false;
   mousePosition: Point;
   unsavedChanges: boolean = false;
-  menuStructure: MenuItem[] = MENU_STRUCTURE;
+  menuStructure: MenuItem[] = getMenuStructure({
+    drawOpaque: DEFAULT_DRAWING_TOOL_OPTIONS[DrawingToolType.rectangleSelect].drawOpaque,
+  });
   hiddenHotkeyShortcuts: MenuItem[] = NON_MENU_SHORTCUTS;
 }

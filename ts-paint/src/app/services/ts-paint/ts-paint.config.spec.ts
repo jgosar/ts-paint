@@ -4,7 +4,9 @@ import {
   DEFAULT_DRAWING_TOOL_OPTIONS,
   MENU_STRUCTURE,
   NON_MENU_SHORTCUTS,
+  getMenuStructure,
 } from './ts-paint.config';
+import { MenuActionType } from '../../types/menu/menu-action-type';
 import { MenuItem } from '../../types/menu/menu-item';
 import { DrawingToolType } from '../../types/drawing-tools/drawing-tool-type';
 import { FillType } from '../../types/drawing-tools/fill-type';
@@ -95,6 +97,26 @@ describe('MENU_STRUCTURE', () => {
   });
 });
 
+describe('getMenuStructure', () => {
+  function drawOpaqueItem(menu: MenuItem[]): MenuItem {
+    return flattenMenu(menu).find((item) => item.name === 'Draw Opaque');
+  }
+
+  it('checks Options > Draw Opaque to match the flag', () => {
+    expect(drawOpaqueItem(getMenuStructure({ drawOpaque: true })).checked).toBe(true);
+    expect(drawOpaqueItem(getMenuStructure({ drawOpaque: false })).checked).toBe(false);
+    expect(drawOpaqueItem(getMenuStructure({ drawOpaque: true })).action).toBe(MenuActionType.TOGGLE_DRAW_OPAQUE);
+  });
+
+  it('keeps the items that do not depend on a flag', () => {
+    const menu: MenuItem[] = getMenuStructure({ drawOpaque: false });
+    expect(menu.map((item) => item.name)).toEqual(MENU_STRUCTURE.map((item) => item.name));
+    expect(menu[0]).toBe(MENU_STRUCTURE[0]);
+    expect(flattenMenu(menu).length).toBe(flattenMenu(MENU_STRUCTURE).length);
+    expect(drawOpaqueItem(MENU_STRUCTURE).checked, 'the base structure is not changed').toBeUndefined();
+  });
+});
+
 describe('NON_MENU_SHORTCUTS', () => {
   it('maps Escape to deselect', () => {
     expect(NON_MENU_SHORTCUTS.length).toBe(1);
@@ -110,10 +132,18 @@ describe('DEFAULT_DRAWING_TOOL_OPTIONS', () => {
         .map(Number)
         .sort((a, b) => a - b)
     ).toEqual(
-      [DrawingToolType.rectangle, DrawingToolType.line, DrawingToolType.eraser, DrawingToolType.brush].sort(
-        (a, b) => a - b
-      )
+      [
+        DrawingToolType.rectangleSelect,
+        DrawingToolType.rectangle,
+        DrawingToolType.line,
+        DrawingToolType.eraser,
+        DrawingToolType.brush,
+      ].sort((a, b) => a - b)
     );
+  });
+
+  it('starts with Draw Opaque on like MS Paint', () => {
+    expect(DEFAULT_DRAWING_TOOL_OPTIONS[DrawingToolType.rectangleSelect]).toEqual({ drawOpaque: true });
   });
 
   it('starts with an empty rectangle, a 1px line and the 8px eraser like MS Paint', () => {

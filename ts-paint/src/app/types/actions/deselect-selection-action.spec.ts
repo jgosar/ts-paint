@@ -33,6 +33,34 @@ describe('DeselectSelectionAction', () => {
     expect(patches.moveSelectionTool).toBeUndefined();
   });
 
+  it('leaves the image visible under the pixels of the transparent color', () => {
+    const state: TsPaintStoreState = stateWithSelection();
+
+    const patches: Partial<TsPaintStoreState> = new DeselectSelectionAction(WHITE).getStatePatches(state);
+
+    expect(isColor({ w: 10, h: 20 }, patches.image, BLACK)).toBe(true);
+    expect(isColor({ w: 11, h: 20 }, patches.image, RED), 'the white selection pixel is see-through').toBe(true);
+    expect(isColor({ w: 11, h: 21 }, patches.image, BLACK)).toBe(true);
+    expect(patches.selectionImage).toBeUndefined();
+  });
+
+  it('undoes a transparent paste by restoring exactly the covered pixels, white ones included', () => {
+    // The black selection pixels cover white image pixels, which the undo has to paste back although white is the
+    // transparent color
+    const state: TsPaintStoreState = stateWithSelection();
+    const action: DeselectSelectionAction = new DeselectSelectionAction(WHITE);
+
+    const restored: TsPaintStoreState = executeAndUndo(action, state);
+
+    expect(imagesEqual(restored.image, state.image)).toBe(true);
+    expect(isColor({ w: 10, h: 20 }, restored.image, WHITE)).toBe(true);
+    expect(maskOf(restored.selectionImage)).toEqual(SELECTION_MASK);
+    expect(
+      (action.undoActions[2] as DeselectSelectionAction).transparentColor,
+      'the undo chain pastes opaquely'
+    ).toBeUndefined();
+  });
+
   it('does nothing without a selection', () => {
     const state: TsPaintStoreState = createTestState();
 

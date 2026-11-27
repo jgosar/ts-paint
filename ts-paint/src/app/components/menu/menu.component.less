@@ -38,6 +38,7 @@
 }
 
 .tsp-menu__menu-level-2 {
+  position: relative;
   display: flex;
   justify-content: space-between;
   padding-left: 23px;
@@ -58,6 +59,26 @@
 
 .tsp-menu__menu-level-2--disabled:hover {
   color: @color--grey;
+}
+
+// The check mark sits in the left gutter, vertically centred
+.tsp-menu__check {
+  position: absolute;
+  left: 7px;
+  top: 0;
+  bottom: 0;
+  margin: auto 0;
+  width: 7px;
+  height: 7px;
+  background-image: url('../../../assets/icons/check.png');
+}
+
+.tsp-menu__menu-level-2:hover .tsp-menu__check {
+  background-image: url('../../../assets/icons/check_selected.png');
+}
+
+.tsp-menu__menu-level-2--disabled:hover .tsp-menu__check {
+  background-image: url('../../../assets/icons/check.png');
 }
 
 .tsp-menu__menu-item-hotkeys {

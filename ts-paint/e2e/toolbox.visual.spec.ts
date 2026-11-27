@@ -20,6 +20,14 @@ test.describe('toolbox and tool options', () => {
     });
   }
 
+  for (const [index, background] of ['opaque', 'transparent'].entries()) {
+    test(`selection ${background}`, async () => {
+      await paint.selectTool(DrawingToolType.rectangleSelect);
+      await paint.selectPickerOption(index);
+      await expect(paint.toolOptions).toHaveScreenshot(`options-rectangleSelect-${background}.png`);
+    });
+  }
+
   for (const [index, thickness] of ALL_LINE_THICKNESSES.entries()) {
     test(`line thickness ${thickness}`, async () => {
       await paint.selectTool(DrawingToolType.line);
