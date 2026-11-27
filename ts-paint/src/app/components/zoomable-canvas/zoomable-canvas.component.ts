@@ -57,8 +57,7 @@ export class ZoomableCanvasComponent implements OnChanges {
 
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
-        const shownImage: ImageData =
-          this.transparentColor === undefined ? this.image : makeColorTransparent(this.image, this.transparentColor);
+        const shownImage: ImageData = makeColorTransparent(this.image, this.transparentColor);
         context.putImageData(shownImage, Math.min(this.offset.w, 0), Math.min(this.offset.h, 0));
       } else {
         canvas.width = 0;

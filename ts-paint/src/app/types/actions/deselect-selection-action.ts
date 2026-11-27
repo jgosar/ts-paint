@@ -2,7 +2,7 @@ import { TsPaintAction } from './ts-paint-action';
 import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
 import { PartialActionResult } from './partial-action-result';
 import { Point } from '../base/point';
-import { pasteImagePart, getImagePart, blendImagePart, makeColorTransparent } from '../../helpers/image.helpers';
+import { pasteImagePart, getImagePart, makeColorTransparent } from '../../helpers/image.helpers';
 import { Color } from '../base/color';
 import { RectangleArea } from '../base/rectangle-area';
 import { PasteImageAction } from './paste-image-action';
@@ -28,14 +28,11 @@ export class DeselectSelectionAction extends TsPaintAction {
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
     if (state.selectionImage !== undefined) {
       const selectionOffset: Point = state.selectionOffset;
-      const image: ImageData =
-        this.transparentColor === undefined
-          ? pasteImagePart(selectionOffset, state.selectionImage, state.image)
-          : blendImagePart(
-              selectionOffset,
-              makeColorTransparent(state.selectionImage, this.transparentColor),
-              state.image
-            );
+      const image: ImageData = pasteImagePart(
+        selectionOffset,
+        makeColorTransparent(state.selectionImage, this.transparentColor),
+        state.image
+      );
 
       const patches: Partial<TsPaintStoreState> = DeselectSelectionAction.getDeselectPatches();
 

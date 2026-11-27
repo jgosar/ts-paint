@@ -402,6 +402,16 @@ describe('readImageDataFromFile', () => {
     expect(read.data).toEqual(original.data);
   });
 
+  it('loads transparent pixels as opaque white', async () => {
+    const original: ImageData = createImage(2, 1, RED);
+    setPixel(original, { w: 1, h: 0 }, RED, 0);
+    const file: File = new File([await renderImageToBlob(original, 'png')], 'holey.png', { type: 'image/png' });
+
+    const read: ImageData = await readImageDataFromFile(file);
+
+    expect(Array.from(read.data)).toEqual([255, 0, 0, 255, 255, 255, 255, 255]);
+  });
+
   it('rejects for a file that is not an image', async () => {
     const file: File = new File(['nope'], 'nope.png', { type: 'image/png' });
 

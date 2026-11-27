@@ -1,6 +1,5 @@
 import { vi } from 'vitest';
 import {
-  blendImagePart,
   calculateLocation,
   cloneImage,
   constrainPointToImage,
@@ -367,29 +366,22 @@ describe('pasteImagePart', () => {
     expect(maskOf(result)).toEqual(['....', '....', '....', '..##']);
   });
 
-  it('overwrites pixels instead of blending, including transparent ones', () => {
-    const image: ImageData = createImage(2, 1, BLACK);
-    const part: ImageData = new ImageData(1, 1);
+  it('clips parts that hang over the top left edge', () => {
+    const result: ImageData = pasteImagePart({ w: -1, h: 1 }, createImage(2, 2, BLACK), createImage(3, 3, WHITE));
 
-    const result: ImageData = pasteImagePart({ w: 1, h: 0 }, part, image);
-
-    expect(alphaAt({ w: 1, h: 0 }, result)).toBe(0);
-    expect(isColor({ w: 0, h: 0 }, result, BLACK)).toBe(true);
+    expect(maskOf(result)).toEqual(['...', '#..', '#..']);
   });
-});
 
-describe('blendImagePart', () => {
-  it('draws the opaque pixels of the part and keeps the image under its transparent ones', () => {
+  it('keeps the image under the transparent pixels of the part', () => {
     const image: ImageData = createImage(4, 2, WHITE);
     const part: ImageData = createImage(2, 2, RED);
     setPixel(part, { w: 1, h: 0 }, RED, 0);
 
-    const result: ImageData = blendImagePart({ w: 1, h: 0 }, part, image);
+    const result: ImageData = pasteImagePart({ w: 1, h: 0 }, part, image);
 
-    expect(result).not.toBe(image);
     expect(maskOf(result, RED)).toEqual(['.#..', '.##.']);
+    expect(isColor({ w: 2, h: 0 }, result, WHITE)).toBe(true);
     expect(alphaAt({ w: 2, h: 0 }, result)).toBe(255);
-    expect(pointsOfColor(image, RED), 'the original is untouched').toEqual([]);
   });
 
   it('mixes partially transparent pixels with the pixels underneath', () => {
@@ -397,18 +389,12 @@ describe('blendImagePart', () => {
     const part: ImageData = createImage(1, 1, BLACK);
     setPixel(part, { w: 0, h: 0 }, BLACK, 128);
 
-    const result: ImageData = blendImagePart({ w: 0, h: 0 }, part, image);
+    const result: ImageData = pasteImagePart({ w: 0, h: 0 }, part, image);
 
     const channel: number = result.data[0];
     expect(channel).toBeGreaterThan(120);
     expect(channel).toBeLessThan(135);
     expect(alphaAt({ w: 0, h: 0 }, result)).toBe(255);
-  });
-
-  it('clips parts that hang over the edge', () => {
-    const result: ImageData = blendImagePart({ w: -1, h: 1 }, createImage(2, 2, BLACK), createImage(3, 3, WHITE));
-
-    expect(maskOf(result)).toEqual(['...', '#..', '#..']);
   });
 });
 
@@ -428,6 +414,12 @@ describe('makeColorTransparent', () => {
     const result: ImageData = makeColorTransparent(createImage(1, 1, BLUE), { ...BLUE, a: 10 });
 
     expect(alphaAt({ w: 0, h: 0 }, result)).toBe(0);
+  });
+
+  it('returns the image itself when there is no color', () => {
+    const image: ImageData = createImage(2, 1, WHITE);
+
+    expect(makeColorTransparent(image, undefined)).toBe(image);
   });
 });
 
