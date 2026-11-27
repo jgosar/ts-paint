@@ -36,7 +36,27 @@
   right: 0;
 }
 
+.tsp-dropdown__label {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.tsp-dropdown__text {
+  flex-grow: 1;
+  width: 0;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+
+// Long lists (fonts) scroll; offsetTop of the options is relative to the list
 .tsp-dropdown__list {
+  position: relative;
+  max-height: 120px;
+  overflow-y: auto;
   background-color: white;
 }
 
@@ -46,6 +66,7 @@
   white-space: nowrap;
 }
 
+.tsp-dropdown__option--selected,
 .tsp-dropdown__option:hover {
   background-color: @color--dark-blue;
   color: white;

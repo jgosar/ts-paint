@@ -9,6 +9,7 @@ import { MagnifierAction } from '../actions/drawing-tool-actions/magnifier-actio
 import { PencilAction } from '../actions/drawing-tool-actions/pencil-action';
 import { RectangleAction } from '../actions/drawing-tool-actions/rectangle-action';
 import { RectangleSelectAction } from '../actions/drawing-tool-actions/rectangle-select-action';
+import { TextBoxAction } from '../actions/drawing-tool-actions/text-box-action';
 import { Point } from '../base/point';
 import { DrawingToolAngleSnap } from './drawing-tool-angle-snap';
 import { DrawingToolBehaviour } from './drawing-tool-behaviour';
@@ -71,6 +72,14 @@ export const DRAWING_TOOL_CONFIG: { [key in DrawingToolType]: DrawingToolConfig 
     ...DRAWING_TOOL_CONFIG_DEFAULTS,
     behaviour: DrawingToolBehaviour.FREE_DRAW,
     actionClass: BrushAction,
+  },
+  [DrawingToolType.text]: {
+    ...DRAWING_TOOL_CONFIG_DEFAULTS,
+    behaviour: DrawingToolBehaviour.CLICK_AND_DRAG,
+    maxPoints: 2,
+    helpText: 'Inserts text into the picture.',
+    invertedPreview: true,
+    actionClass: TextBoxAction,
   },
   [DrawingToolType.line]: {
     ...DRAWING_TOOL_CONFIG_DEFAULTS,

@@ -1,0 +1,44 @@
+<tsp-modal-window
+  [title]="'Fonts'"
+  [closable]="true"
+  [floating]="true"
+  [position]="position()"
+  (positionChange)="positionChange.emit($event)"
+  (closeClicked)="closeClicked.emit()"
+>
+  <!-- Keys typed here choose fonts; they must not reach the app's shortcuts -->
+  <div class="tsp-horizontal-bar tsp-fonts-window__content" (keydown)="$event.stopPropagation()">
+    <tsp-dropdown
+      class="tsp-fonts-window__family"
+      aria-label="Font"
+      [options]="familyOptions()"
+      [value]="options().fontFamily"
+      (valueChange)="changeFamily($event)"
+    ></tsp-dropdown>
+    <tsp-dropdown
+      class="tsp-fonts-window__size"
+      aria-label="Font size"
+      [editable]="true"
+      [parseValue]="parseSize"
+      [options]="sizeOptions"
+      [value]="options().fontSize"
+      (valueChange)="changeSize($event)"
+    ></tsp-dropdown>
+    <div class="tsp-fonts-window__styles">
+      @for (style of styles; track style.key) {
+      <!-- mousedown is cancelled so that the text box keeps the focus and its caret -->
+      <button
+        type="button"
+        class="tsp-button tsp-fonts-window__style"
+        [class.tsp-button--pressed]="options()[style.key]"
+        [attr.aria-label]="style.label"
+        [attr.aria-pressed]="options()[style.key]"
+        (mousedown)="$event.preventDefault()"
+        (click)="toggle(style.key)"
+      >
+        <span class="tsp-fonts-window__glyph" [ngClass]="'tsp-fonts-window__glyph--' + style.key"></span>
+      </button>
+      }
+    </div>
+  </div>
+</tsp-modal-window>

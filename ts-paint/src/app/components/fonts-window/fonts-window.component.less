@@ -1,0 +1,57 @@
+@import 'variables';
+
+// Laid out like the Fonts toolbar of MS Paint
+.tsp-fonts-window__content {
+  align-items: center;
+  padding: 4px 6px 5px 6px;
+  box-sizing: border-box;
+}
+
+.tsp-fonts-window__family {
+  width: 160px;
+}
+
+.tsp-fonts-window__size {
+  width: 68px;
+  margin-left: 10px;
+}
+
+.tsp-fonts-window__styles {
+  display: flex;
+  margin-left: 12px;
+}
+
+.tsp-fonts-window__style {
+  position: relative;
+  width: 23px;
+  height: 22px;
+  padding: 0;
+  margin: 0 1px 1px 0;
+}
+
+.tsp-fonts-window__glyph {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  background-repeat: no-repeat;
+}
+
+.tsp-button--pressed .tsp-fonts-window__glyph,
+.tsp-fonts-window__style:active .tsp-fonts-window__glyph {
+  left: 7px;
+  top: 7px;
+}
+
+.tsp-fonts-window__glyph--bold {
+  background-image: url('../../../assets/icons/bold.png');
+}
+
+.tsp-fonts-window__glyph--italic {
+  background-image: url('../../../assets/icons/italic.png');
+}
+
+.tsp-fonts-window__glyph--underline {
+  background-image: url('../../../assets/icons/underline.png');
+}

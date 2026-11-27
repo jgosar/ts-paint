@@ -1,7 +1,7 @@
 <div
   #wrapper
   class="tsp-horizontal-bar tsp-dropdown"
-  tabindex="0"
+  [attr.tabindex]="editable() ? -1 : 0"
   role="combobox"
   aria-haspopup="listbox"
   [attr.aria-expanded]="isOpen()"
@@ -10,16 +10,26 @@
   (keyup.enter)="$event.stopPropagation()"
   (keyup.escape)="closeOnEscape($any($event))"
 >
-  <div class="tsp-depressed-item-container tsp-can-grow" (click)="toggleOpen()">
+  <div class="tsp-depressed-item-container tsp-can-grow" (click)="onFieldClick($event)">
     <div class="tsp-text-input tsp-depressed-item tsp-dropdown__input">
-      {{ selectedLabel() }}
+      @if (editable()) {
+      <input
+        #textInput
+        class="tsp-dropdown__text"
+        type="text"
+        [value]="selectedLabel()"
+        (paste)="$event.stopPropagation()"
+      />
+      } @else {
+      <span class="tsp-dropdown__label">{{ selectedLabel() }}</span>
+      }
       <button type="button" tabindex="-1" class="tsp-button tsp-dropdown__arrow" aria-label="Open list"></button>
     </div>
   </div>
 
   @if (isOpen()) {
   <div class="tsp-raised-item-container tsp-dropdown__list-container">
-    <div class="tsp-raised-item tsp-dropdown__list" role="listbox">
+    <div #list class="tsp-raised-item tsp-dropdown__list" role="listbox">
       @for (option of options(); track option.value) {
       <div
         class="tsp-dropdown__option"

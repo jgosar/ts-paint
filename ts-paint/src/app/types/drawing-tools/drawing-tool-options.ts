@@ -3,7 +3,9 @@ import { FillType } from './fill-type';
 import { BrushShape } from './brush-shape';
 
 export interface DrawingToolOptions {
+  /** Also decides whether the text tool fills its background, like in MS Paint */
   [DrawingToolType.rectangleSelect]: SelectionOptions;
+  [DrawingToolType.text]: TextOptions;
   [DrawingToolType.rectangle]: RectangleOptions;
   [DrawingToolType.line]: LineOptions;
   [DrawingToolType.eraser]: EraserOptions;
@@ -13,6 +15,16 @@ export interface DrawingToolOptions {
 /** Options > Draw Opaque: when it is off, the secondary color of a selection is see-through */
 export interface SelectionOptions {
   drawOpaque: boolean;
+}
+
+/** The settings of the Fonts toolbar; they apply to the whole text box */
+export interface TextOptions {
+  fontFamily: string;
+  /** In points, like MS Paint: a point is 4/3 px */
+  fontSize: number;
+  bold: boolean;
+  italic: boolean;
+  underline: boolean;
 }
 
 export interface RectangleOptions {

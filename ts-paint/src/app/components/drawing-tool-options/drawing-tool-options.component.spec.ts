@@ -11,12 +11,15 @@ import { SimpleChange } from '@angular/core';
 import { ALL_BRUSH_SHAPES, BrushForm } from '../../types/drawing-tools/brush-shape';
 import { ALL_ERASER_SIZES } from '../../types/drawing-tools/eraser-size';
 import { DrawOpaquePickerComponent } from '../draw-opaque-picker/draw-opaque-picker.component';
+import { usePageZoom } from '../../../testing/page-zoom.helpers';
 
 describe('DrawingToolOptionsComponent', () => {
+  usePageZoom();
   let fixture: ComponentFixture<DrawingToolOptionsComponent>;
   let component: DrawingToolOptionsComponent;
   const options: DrawingToolOptions = {
     [DrawingToolType.rectangleSelect]: { drawOpaque: true },
+    [DrawingToolType.text]: { fontFamily: 'Arial', fontSize: 10, bold: false, italic: false, underline: false },
     [DrawingToolType.rectangle]: { fillType: FillType.EMPTY },
     [DrawingToolType.line]: { thickness: 4 },
     [DrawingToolType.eraser]: { size: 8 },
@@ -117,6 +120,18 @@ describe('DrawingToolOptionsComponent', () => {
     component.optionsChange.subscribe((changes) => (emitted = changes));
 
     choices[1].click();
+
+    expect(emitted).toEqual({ [DrawingToolType.rectangleSelect]: { drawOpaque: false } });
+  });
+
+  it('shows the same opaque/transparent picker for the text tool, which shares the selection option', () => {
+    selectTool(DrawingToolType.text);
+    const picker: HTMLElement = fixture.nativeElement.querySelector('tsp-draw-opaque-picker');
+    expect(picker).not.toBeNull();
+    let emitted: Partial<DrawingToolOptions>;
+    component.optionsChange.subscribe((changes) => (emitted = changes));
+
+    picker.querySelectorAll<HTMLElement>('.tsp-draw-opaque-picker__option')[1].click();
 
     expect(emitted).toEqual({ [DrawingToolType.rectangleSelect]: { drawOpaque: false } });
   });

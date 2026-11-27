@@ -1,3 +1,4 @@
+import { DragDirective } from '../../directives/drag.directive';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { StretchSkewWindowComponent } from './stretch-skew-window.component';
@@ -15,7 +16,7 @@ describe('StretchSkewWindowComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [StretchSkewWindowComponent, ModalWindowComponent, IntegerInputComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, DragDirective],
     }).compileComponents();
     fixture = TestBed.createComponent(StretchSkewWindowComponent);
     component = fixture.componentInstance;

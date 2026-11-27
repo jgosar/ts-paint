@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DrawOpaquePickerComponent } from './draw-opaque-picker.component';
+import { usePageZoom } from '../../../testing/page-zoom.helpers';
 
 describe('DrawOpaquePickerComponent', () => {
+  usePageZoom();
   let fixture: ComponentFixture<DrawOpaquePickerComponent>;
   let component: DrawOpaquePickerComponent;
 

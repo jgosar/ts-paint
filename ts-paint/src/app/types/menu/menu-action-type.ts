@@ -18,4 +18,5 @@ export enum MenuActionType {
   DESELECT,
   ABOUT_PAINT,
   TOGGLE_DRAW_OPAQUE,
+  TOGGLE_TEXT_TOOLBAR,
 }

@@ -1,0 +1,52 @@
+<div
+  class="tsp-text-box"
+  [style.left.px]="textBox.area.start.w * zoom"
+  [style.top.px]="textBox.area.start.h * zoom"
+  [style.width.px]="size.w * zoom"
+  [style.height.px]="size.h * zoom"
+>
+  <canvas
+    #canvas
+    class="tsp-text-box__canvas"
+    [style.width.px]="size.w * zoom"
+    [style.height.px]="size.h * zoom"
+  ></canvas>
+  <textarea
+    #textarea
+    class="tsp-text-box__textarea"
+    aria-label="Text"
+    spellcheck="false"
+    autocomplete="off"
+    autocapitalize="off"
+    [ngStyle]="textareaStyles"
+    (input)="onInput()"
+    (keydown)="onKeyDown($event)"
+    (paste)="$event.stopPropagation()"
+    (scroll)="resetScroll()"
+  ></textarea>
+  <tsp-selection-frame
+    class="tsp-text-box__frame"
+    [zoom]="zoom"
+    [image]="frameImage"
+    [parentImage]="frameImage"
+    [offset]="{ w: 0, h: 0 }"
+  ></tsp-selection-frame>
+  @for (edge of edges; track edge) {
+  <div
+    class="tsp-text-box__edge"
+    [ngClass]="'tsp-text-box__edge--' + edge"
+    tspDrag
+    (dragStart)="startDrag()"
+    (dragMove)="move($event)"
+  ></div>
+  } @for (handle of handles; track handle) {
+  <div
+    class="tsp-text-box__handle"
+    [ngClass]="'tsp-text-box__handle--' + handle"
+    [attr.data-handle]="handle"
+    tspDrag
+    (dragStart)="startDrag()"
+    (dragMove)="resize(handle, $event)"
+  ></div>
+  }
+</div>

@@ -114,6 +114,23 @@ div.tsp-button {
   border-color: black white white black;
 }
 
+// A toggle button that is switched on (like Bold in the Fonts toolbar): sunken, with the dithered face of Windows 95
+.tsp-button--pressed {
+  border-color: @color--grey @color--lighter-grey @color--lighter-grey @color--grey;
+  background-color: @color--lighter-grey;
+  background-image: repeating-conic-gradient(white 0% 25%, @color--lighter-grey 0% 50%);
+  background-size: 2px 2px;
+}
+
+.tsp-button--pressed::before {
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-width: 1px;
+  border-color: black white white black;
+}
+
 .tsp-text-button {
   padding: 2px 0px 3px 0px;
   margin-left: 12px;

@@ -13,6 +13,11 @@ export class PaintPage {
   readonly canvasTracker: Locator;
   readonly selectionFrame: Locator;
   readonly windowTitle: Locator;
+  /** The text tool's box (its size is the box size times the zoom) and the textarea typed into */
+  readonly textBox: Locator;
+  readonly textArea: Locator;
+  /** The Fonts toolbar of the text tool */
+  readonly fontsWindow: Locator;
 
   constructor(readonly page: Page) {
     this.toolbox = page.locator('tsp-toolbox');
@@ -24,6 +29,9 @@ export class PaintPage {
     // The host elements of the frame and the dialogs have no box of their own, so target their sized children
     this.selectionFrame = page.locator('tsp-selection-frame .tsp-selection-frame__frame');
     this.windowTitle = page.locator('tsp-ts-paint > tsp-modal-window .tsp-modal-window__title-bar').first();
+    this.textBox = page.locator('tsp-text-box .tsp-text-box');
+    this.textArea = page.locator('tsp-text-box textarea');
+    this.fontsWindow = this.window('tsp-fonts-window');
   }
 
   async goto(query: string = ''): Promise<void> {
@@ -134,6 +142,7 @@ export class PaintPage {
       | 'tsp-flip-rotate-window'
       | 'tsp-stretch-skew-window'
       | 'tsp-about-paint-window'
+      | 'tsp-fonts-window'
   ): Locator {
     return this.page.locator(selector).locator('.tsp-modal-window__container');
   }

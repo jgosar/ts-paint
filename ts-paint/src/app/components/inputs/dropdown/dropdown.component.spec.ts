@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { DropdownComponent } from './dropdown.component';
 import { DropdownOption } from '../../../types/base/dropdown-option';
-import { keydown, keyup, recordEvents, EventRecorder } from '../../../../testing/events';
+import { keydown, keyup, recordEvents, EventRecorder, KeyEventOptions } from '../../../../testing/events';
 
 type Format = 'png' | 'jpeg' | 'gif';
 
@@ -54,8 +54,8 @@ describe('DropdownComponent', () => {
     return Array.from(fixture.nativeElement.querySelectorAll('[role="option"]'));
   }
 
-  function pressKey(key: string): KeyboardEvent {
-    const event: KeyboardEvent = keydown(key);
+  function pressKey(key: string, options: KeyEventOptions = {}): KeyboardEvent {
+    const event: KeyboardEvent = keydown(key, options);
     wrapper().dispatchEvent(event);
     fixture.detectChanges();
     return event;
@@ -174,6 +174,134 @@ describe('DropdownComponent', () => {
       recorder = recordEvents(document, 'keyup');
       wrapper().dispatchEvent(keyup('Enter'));
       expect(recorder.events.length).toBe(0);
+    });
+  });
+
+  describe('long lists', () => {
+    const LETTERS: DropdownOption<Format>[] = ['Alpha', 'Bravo', 'Beta', 'Charlie', 'Delta', 'Echo'].map((label) => ({
+      value: label.toLowerCase() as Format,
+      label,
+    }));
+
+    it('jumps to the first and last option with Home and End', () => {
+      render('bravo' as Format, LETTERS);
+      expect(pressKey('End').defaultPrevented).toBe(true);
+      pressKey('Home');
+      expect(emitted).toEqual(['echo', 'alpha']);
+    });
+
+    it('selects the next option starting with a typed letter, cycling through them', () => {
+      render('alpha' as Format, LETTERS);
+      recorder = recordEvents(document, 'keydown');
+      pressKey('b');
+      render('bravo' as Format, LETTERS);
+      pressKey('B');
+      render('beta' as Format, LETTERS);
+      pressKey('b');
+      expect(emitted).toEqual(['bravo', 'beta', 'bravo']);
+      expect(recorder.events.length, 'the letters are consumed').toBe(0);
+      expect(pressKey('b', { ctrl: true }).defaultPrevented, 'not with Ctrl').toBe(false);
+    });
+
+    it('scrolls the open list to the selected option', () => {
+      const many: DropdownOption<Format>[] = Array.from({ length: 40 }, (_, index) => ({
+        value: ('font' + index) as Format,
+        label: 'Font ' + index,
+      }));
+      render('font35' as Format, many);
+      clickField();
+      fixture.detectChanges();
+      const list: HTMLElement = listbox();
+      const selected: HTMLElement = optionElements()[35];
+      expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
+      expect(selected.offsetTop).toBeGreaterThanOrEqual(list.scrollTop);
+      expect(selected.offsetTop + selected.offsetHeight).toBeLessThanOrEqual(list.scrollTop + list.clientHeight);
+      expect(selected.classList).toContain('tsp-dropdown__option--selected');
+    });
+  });
+
+  describe('editable', () => {
+    let numberFixture: ComponentFixture<DropdownComponent<number>>;
+    let numbers: number[];
+    const SIZES: DropdownOption<number>[] = [8, 10, 12].map((size) => ({ value: size, label: String(size) }));
+    const parse = (text: string): number | undefined => (/^\d+$/.test(text) ? Number(text) : undefined);
+
+    beforeEach(() => {
+      numberFixture = TestBed.createComponent<DropdownComponent<number>>(DropdownComponent);
+      numbers = [];
+      numberFixture.componentInstance.valueChange.subscribe((value) => numbers.push(value));
+      numberFixture.componentRef.setInput('options', SIZES);
+      numberFixture.componentRef.setInput('editable', true);
+      numberFixture.componentRef.setInput('parseValue', parse);
+      setValue(10);
+    });
+
+    function setValue(value: number) {
+      numberFixture.componentRef.setInput('value', value);
+      numberFixture.detectChanges();
+    }
+
+    function textField(): HTMLInputElement {
+      return numberFixture.nativeElement.querySelector('input.tsp-dropdown__text');
+    }
+
+    function type(text: string, key: string = 'Enter'): KeyboardEvent {
+      textField().value = text;
+      const event: KeyboardEvent = keydown(key);
+      textField().dispatchEvent(event);
+      numberFixture.detectChanges();
+      return event;
+    }
+
+    it('shows the value in a text field, even one that is not an option', () => {
+      expect(textField().value).toBe('10');
+      setValue(13);
+      expect(textField().value).toBe('13');
+      const wrapper: HTMLElement = numberFixture.nativeElement.querySelector('.tsp-dropdown');
+      expect(wrapper.getAttribute('tabindex')).toBe('-1');
+    });
+
+    it('emits typed values on Enter and puts invalid text back', () => {
+      type('13');
+      expect(numbers).toEqual([13]);
+      type('abc');
+      expect(numbers).toEqual([13]);
+      expect(textField().value).toBe('10');
+      type('10');
+      expect(numbers, 'nothing changed').toEqual([13]);
+    });
+
+    it('emits the typed value when the focus leaves it', () => {
+      textField().value = '24';
+      numberFixture.nativeElement
+        .querySelector('.tsp-dropdown')
+        .dispatchEvent(new FocusEvent('focusout', { relatedTarget: null, bubbles: true }));
+      expect(numbers).toEqual([24]);
+    });
+
+    it('types spaces and letters instead of opening the list, and keeps every key from the app', () => {
+      recorder = recordEvents(document, 'keydown');
+      expect(type('1', ' ').defaultPrevented).toBe(false);
+      expect(type('1', 'Home').defaultPrevented).toBe(false);
+      expect(type('1', 'b').defaultPrevented).toBe(false);
+      expect(numberFixture.nativeElement.querySelector('[role="listbox"]')).toBeNull();
+      expect(recorder.events.length).toBe(0);
+      expect(numbers).toEqual([]);
+    });
+
+    it('still steps through the options with the arrows', () => {
+      textField().dispatchEvent(keydown('ArrowDown'));
+      expect(numbers).toEqual([12]);
+    });
+
+    it('opens the list from the arrow button but not from a click on the text', () => {
+      textField().click();
+      numberFixture.detectChanges();
+      expect(numberFixture.nativeElement.querySelector('[role="listbox"]')).toBeNull();
+      (numberFixture.nativeElement.querySelector('.tsp-dropdown__arrow') as HTMLElement).click();
+      numberFixture.detectChanges();
+      expect(numberFixture.nativeElement.querySelector('[role="listbox"]')).not.toBeNull();
+      expect(document.activeElement).toBe(textField());
     });
   });
 

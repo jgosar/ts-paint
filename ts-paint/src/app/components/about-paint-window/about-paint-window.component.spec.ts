@@ -1,3 +1,4 @@
+import { DragDirective } from '../../directives/drag.directive';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { vi } from 'vitest';
 import { AboutPaintWindowComponent } from './about-paint-window.component';
@@ -16,6 +17,7 @@ describe('AboutPaintWindowComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [AboutPaintWindowComponent, ModalWindowComponent],
+      imports: [DragDirective],
     }).compileComponents();
   });
 

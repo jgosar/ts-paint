@@ -24,6 +24,20 @@
   transform: none;
 }
 
+// A tool window lets clicks through everywhere but on itself
+:host(.tsp-modal-window--floating) {
+  pointer-events: none;
+}
+
+.tsp-modal-window__container--floating {
+  pointer-events: auto;
+  transform: none;
+
+  .tsp-modal-window__title-bar {
+    touch-action: none;
+  }
+}
+
 .tsp-modal-window__inner-container {
   padding: 1px;
   display: flex;

@@ -51,6 +51,19 @@ export function drawRectangle(
   drawLineFunction(corner4, corner1, color, image);
 }
 
+/** The dashed outline the select and text tools show while dragging. The dashes are 4 screen pixels long at any
+ * zoom; drawn in white on a preview with an inverted background, they show up on any color. */
+export function drawDashedRectangle(area: RectangleArea, color: Color, image: ImageData, zoom: number) {
+  const dashLength: number = Math.ceil(4 / zoom);
+  drawRectangle(area, color, image, (start: Point, end: Point, lineColor: Color, lineImage: ImageData) => {
+    getLinePoints(start, end).forEach((point, index) => {
+      if (Math.floor(index / dashLength) % 2 === 0) {
+        setPixelInOriginalImage(point, lineColor, lineImage);
+      }
+    });
+  });
+}
+
 /** Draws a rectangle whose border is `thickness` pixels wide and lies entirely inside the given area. */
 export function drawThickRectangle(area: RectangleArea, color: Color, image: ImageData, thickness: number) {
   const minW: number = Math.min(area.start.w, area.end.w);

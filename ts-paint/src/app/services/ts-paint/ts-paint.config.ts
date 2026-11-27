@@ -29,6 +29,7 @@ export const DEFAULT_AVAILABLE_COLORS: Color[] = [
 
 export const DEFAULT_DRAWING_TOOL_OPTIONS: DrawingToolOptions = {
   [DrawingToolType.rectangleSelect]: { drawOpaque: true },
+  [DrawingToolType.text]: { fontFamily: 'Arial', fontSize: 10, bold: false, italic: false, underline: false },
   [DrawingToolType.rectangle]: { fillType: FillType.EMPTY },
   [DrawingToolType.line]: { thickness: 1 },
   [DrawingToolType.eraser]: { size: 8 },
@@ -190,8 +191,9 @@ export const MENU_STRUCTURE: MenuItem[] = [
         disabled: true,
       },
       {
+        // Enabled and checked by getMenuStructure while a text box is open
         name: 'Text Toolbar',
-        disabled: true,
+        action: MenuActionType.TOGGLE_TEXT_TOOLBAR,
       },
     ],
   },
@@ -266,6 +268,8 @@ export const MENU_STRUCTURE: MenuItem[] = [
 /** The parts of the state that change how the menu looks */
 export interface MenuFlags {
   drawOpaque: boolean;
+  textBoxOpen: boolean;
+  textToolbarVisible: boolean;
 }
 
 /** The menu with the check marks and enabled states of the given flags applied. Items whose state does not depend on
@@ -278,6 +282,9 @@ function applyMenuFlags(menu: MenuItem[], flags: MenuFlags): MenuItem[] {
   return menu.map((item) => {
     if (item.action === MenuActionType.TOGGLE_DRAW_OPAQUE) {
       return { ...item, checked: flags.drawOpaque };
+    }
+    if (item.action === MenuActionType.TOGGLE_TEXT_TOOLBAR) {
+      return { ...item, disabled: !flags.textBoxOpen, checked: flags.textToolbarVisible };
     }
     if (item.menus) {
       const menus: MenuItem[] = applyMenuFlags(item.menus, flags);

@@ -25,6 +25,14 @@ import { MenuActionType } from 'src/app/types/menu/menu-action-type';
 import { PencilAction } from 'src/app/types/actions/drawing-tool-actions/pencil-action';
 import { OpenFileAction } from 'src/app/types/actions/open-file-action';
 import { Color } from 'src/app/types/base/color';
+import { TextOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
+import { DEFAULT_DRAWING_TOOL_OPTIONS } from './ts-paint.config';
+import { RectangleArea } from 'src/app/types/base/rectangle-area';
+import { MenuItem } from 'src/app/types/menu/menu-item';
+import { isPointInRectangle } from 'src/app/helpers/image.helpers';
+import { BUNDLED_FONT } from 'src/app/helpers/font.helpers';
+import { classesOf } from 'src/testing/action-test.helpers';
+import { SetDrawingToolAction } from 'src/app/types/actions/set-drawing-tool-action';
 
 function createStore(overrides: Partial<TsPaintStoreState> = {}): TsPaintStore {
   const store: TsPaintStore = new TsPaintStore();
@@ -1121,6 +1129,246 @@ describe('TsPaintStore', () => {
       expect(store.executeHotkeyAction(keyEvent({ key: 'Escape' }))).toBe(true);
       expect(store.state.selectionImage).toBeUndefined();
       expect(pixel(store, 12, 12)).toEqual(BLACK);
+    });
+  });
+
+  describe('text tool', () => {
+    const MONOSPACE: TextOptions = {
+      fontFamily: 'monospace',
+      fontSize: 12,
+      bold: false,
+      italic: false,
+      underline: false,
+    };
+    const originalQueryLocalFonts: Window['queryLocalFonts'] = window.queryLocalFonts;
+
+    function setQueryLocalFonts(query: Window['queryLocalFonts']) {
+      Object.defineProperty(window, 'queryLocalFonts', { value: query, configurable: true, writable: true });
+    }
+
+    beforeEach(() => setQueryLocalFonts(undefined));
+
+    afterEach(() => {
+      setQueryLocalFonts(originalQueryLocalFonts);
+      vi.restoreAllMocks();
+    });
+
+    /** A store with the text tool selected and a box dragged open over (10,10)-(89,49), with `text` typed in */
+    function storeWithTextBox(text: string = 'Hello', options: TextOptions = MONOSPACE): TsPaintStore {
+      const store: TsPaintStore = createStore({
+        image: createImage(100, 100, WHITE),
+        drawingToolOptions: { ...DEFAULT_DRAWING_TOOL_OPTIONS, [DrawingToolType.text]: options },
+      });
+      store.setDrawingTool(DrawingToolType.text);
+      store.processMouseDown(at(10, 10));
+      store.processMouseMove(at(89, 49));
+      store.processMouseUp(at(89, 49));
+      store.setTextBoxText(text);
+      return store;
+    }
+
+    function textBoxPixels(store: TsPaintStore, color: Color): number {
+      const area: RectangleArea = { start: { w: 10, h: 10 }, end: { w: 89, h: 49 } };
+      return pointsOfColor(store.state.image, color).filter((point) => isPointInRectangle(point, area)).length;
+    }
+
+    function textToolbarItem(store: TsPaintStore): MenuItem {
+      return store.state.menuStructure
+        .find((menu) => menu.name === 'View')
+        .menus.find((item) => item.name === 'Text Toolbar');
+    }
+
+    it('dragging opens an empty text box over the dragged area, which is not an undo step', () => {
+      const store: TsPaintStore = storeWithTextBox('');
+      expect(store.state.textBox).toEqual({ area: { start: { w: 10, h: 10 }, end: { w: 89, h: 49 } }, text: '' });
+      expect(classesOf(store.state.actions)).toEqual([SetDrawingToolAction]);
+      expect(store.state.previewImage.width, 'the dashed outline is gone').toBe(1);
+    });
+
+    it('finds the installed fonts when the first box opens', () => {
+      const store: TsPaintStore = storeWithTextBox('');
+      expect(store.state.availableFonts).toContain(BUNDLED_FONT);
+      expect(store.textOptions).toBe(store.state.drawingToolOptions[DrawingToolType.text]);
+    });
+
+    it('switches to an installed font when the chosen one is missing', () => {
+      const store: TsPaintStore = storeWithTextBox('', { ...MONOSPACE, fontFamily: 'No Such Font 4a7c' });
+      expect(store.state.availableFonts).toContain(store.textOptions.fontFamily);
+    });
+
+    it('typing changes the text and grows the box to show every line', () => {
+      const store: TsPaintStore = storeWithTextBox();
+      expect(store.state.textBox.text).toBe('Hello');
+      store.setTextBoxText('a\n'.repeat(10));
+      expect(store.state.textBox.area.end.h).toBeGreaterThan(49);
+      expect(store.state.textBox.area.start).toEqual({ w: 10, h: 10 });
+    });
+
+    it('a click outside the box pastes the text as one undo step and does nothing else', () => {
+      const store: TsPaintStore = storeWithTextBox();
+      const actionCount: number = store.state.actions.length;
+
+      store.processMouseDown(at(95, 95));
+      store.processMouseMove(at(98, 98));
+      store.processMouseUp(at(98, 98));
+
+      expect(store.state.textBox).toBeUndefined();
+      expect(textBoxPixels(store, BLACK)).toBeGreaterThan(5);
+      expect(store.state.actions.length).toBe(actionCount + 1);
+      expect(store.state.previewImage.width, 'no new box was dragged').toBe(1);
+
+      store.executeMenuAction(MenuActionType.UNDO);
+      expect(textBoxPixels(store, BLACK)).toBe(0);
+      store.executeMenuAction(MenuActionType.REPEAT);
+      expect(textBoxPixels(store, BLACK)).toBeGreaterThan(5);
+    });
+
+    it('draws the text in the primary color, on the secondary color only while Draw Opaque is on', () => {
+      const store: TsPaintStore = storeWithTextBox();
+      store.setColor({ color: RED, primary: true });
+      store.setColor({ color: BLUE, primary: false });
+      expect(store.textBackgroundColor).toEqual(BLUE);
+      store.processMouseDown(at(95, 95));
+      expect(textBoxPixels(store, RED)).toBeGreaterThan(5);
+      expect(pixel(store, 89, 49), 'the box is filled').toEqual(BLUE);
+
+      const transparent: TsPaintStore = storeWithTextBox();
+      transparent.setDrawingToolOptions({ [DrawingToolType.rectangleSelect]: { drawOpaque: false } });
+      expect(transparent.textBackgroundColor).toBeUndefined();
+      transparent.processMouseDown(at(95, 95));
+      expect(pixel(transparent, 89, 49)).toEqual(WHITE);
+      expect(textBoxPixels(transparent, BLACK)).toBeGreaterThan(5);
+    });
+
+    it('closes an empty box without changing the picture or the history', () => {
+      const store: TsPaintStore = storeWithTextBox('');
+      const actions = store.state.actions;
+      store.processMouseDown(at(95, 95));
+      store.processMouseUp(at(95, 95));
+      expect(store.state.textBox).toBeUndefined();
+      expect(store.state.actions).toBe(actions);
+      expect(store.state.unsavedChanges).toBe(false);
+    });
+
+    it('Escape throws the text away', () => {
+      const store: TsPaintStore = storeWithTextBox();
+      expect(store.executeHotkeyAction(keyEvent({ key: 'Escape' }))).toBe(true);
+      expect(store.state.textBox).toBeUndefined();
+      expect(textBoxPixels(store, BLACK)).toBe(0);
+    });
+
+    it('cancelTextBox throws the text away too', () => {
+      const store: TsPaintStore = storeWithTextBox();
+      store.cancelTextBox();
+      expect(store.state.textBox).toBeUndefined();
+      expect(textBoxPixels(store, BLACK)).toBe(0);
+    });
+
+    it('switching tools pastes the text first', () => {
+      const store: TsPaintStore = storeWithTextBox();
+      store.setDrawingTool(DrawingToolType.pencil);
+      expect(store.state.textBox).toBeUndefined();
+      expect(textBoxPixels(store, BLACK)).toBeGreaterThan(5);
+      expect(store.state.selectedDrawingTool.type).toBe(DrawingToolType.pencil);
+    });
+
+    it('menu commands and shortcuts paste the text first', () => {
+      const store: TsPaintStore = storeWithTextBox();
+      store.executeMenuAction(MenuActionType.INVERT_COLORS);
+      expect(store.state.textBox).toBeUndefined();
+      expect(textBoxPixels(store, WHITE), 'the pasted black text was inverted').toBeGreaterThan(5);
+
+      const viaHotkey: TsPaintStore = storeWithTextBox();
+      expect(viaHotkey.executeHotkeyAction(keyEvent({ key: 'i', ctrlKey: true }))).toBe(true);
+      expect(viaHotkey.state.textBox).toBeUndefined();
+      expect(textBoxPixels(viaHotkey, WHITE)).toBeGreaterThan(5);
+    });
+
+    it('View > Text Toolbar is enabled while a box is open and shows or hides the Fonts window', () => {
+      const store: TsPaintStore = createStore();
+      expect(textToolbarItem(store).disabled).toBe(true);
+
+      const withBox: TsPaintStore = storeWithTextBox();
+      expect(textToolbarItem(withBox)).toEqual(expect.objectContaining({ disabled: false, checked: true }));
+
+      withBox.executeMenuAction(MenuActionType.TOGGLE_TEXT_TOOLBAR);
+      expect(withBox.state.textToolbarVisible).toBe(false);
+      expect(textToolbarItem(withBox).checked).toBe(false);
+      expect(withBox.state.textBox, 'the box stays open').toBeDefined();
+
+      withBox.executeMenuAction(MenuActionType.TOGGLE_TEXT_TOOLBAR);
+      withBox.hideTextToolbar();
+      expect(withBox.state.textToolbarVisible).toBe(false);
+
+      withBox.executeMenuAction(MenuActionType.TOGGLE_DRAW_OPAQUE);
+      expect(withBox.state.textBox, 'Draw Opaque keeps the box open too').toBeDefined();
+    });
+
+    it('remembers where the Fonts window was moved to', () => {
+      const store: TsPaintStore = createStore();
+      store.setTextToolbarPosition({ w: 300, h: 120 });
+      expect(store.state.textToolbarPosition).toEqual({ w: 300, h: 120 });
+    });
+
+    it('changing the font keeps the box open and refits it', () => {
+      const store: TsPaintStore = storeWithTextBox('a\nb\nc');
+      store.setTextOptions({ fontSize: 48 });
+      expect(store.textOptions).toEqual({ ...MONOSPACE, fontSize: 48 });
+      expect(store.state.textBox.area.end.h).toBe(99);
+      store.setTextOptions({ bold: true });
+      expect(store.textOptions.bold).toBe(true);
+      expect(store.textOptions.fontSize).toBe(48);
+    });
+
+    it('moves and resizes the box within the image', () => {
+      const store: TsPaintStore = storeWithTextBox('');
+      store.setTextBoxArea({ start: { w: 50, h: 70 }, end: { w: 129, h: 109 } });
+      expect(store.state.textBox.area).toEqual({ start: { w: 20, h: 60 }, end: { w: 99, h: 99 } });
+    });
+
+    it('ignores text box changes when no box is open', () => {
+      const store: TsPaintStore = createStore();
+      store.setTextBoxText('x');
+      store.setTextBoxArea({ start: { w: 0, h: 0 }, end: { w: 9, h: 9 } });
+      expect(store.state.textBox).toBeUndefined();
+    });
+
+    describe('all installed fonts', () => {
+      const LOCAL_FONTS: LocalFontData[] = [
+        { family: 'Zapfino', fullName: 'Zapfino', postscriptName: 'Zapfino', style: 'Regular' },
+        { family: 'Arial', fullName: 'Arial', postscriptName: 'Arial', style: 'Regular' },
+      ];
+
+      it('can be listed only where the browser supports it, until they are', async () => {
+        const store: TsPaintStore = createStore();
+        expect(store.canLoadMoreFonts).toBe(false);
+        setQueryLocalFonts(() => Promise.resolve(LOCAL_FONTS));
+        expect(store.canLoadMoreFonts).toBe(true);
+
+        await store.loadAllFonts();
+
+        expect(store.state.availableFonts).toEqual(['Arial', BUNDLED_FONT, 'Zapfino']);
+        expect(store.state.allFontsLoaded).toBe(true);
+        expect(store.canLoadMoreFonts).toBe(false);
+      });
+
+      it('stay unlisted when the user refuses', async () => {
+        const store: TsPaintStore = storeWithTextBox('');
+        const fonts: string[] = store.state.availableFonts;
+        setQueryLocalFonts(() => Promise.reject(new DOMException('denied', 'NotAllowedError')));
+        await store.loadAllFonts();
+        expect(store.state.availableFonts).toBe(fonts);
+        expect(store.state.allFontsLoaded).toBe(false);
+      });
+
+      it('are listed by themselves when the user has allowed it before', async () => {
+        setQueryLocalFonts(() => Promise.resolve(LOCAL_FONTS));
+        vi.spyOn(navigator.permissions, 'query').mockResolvedValue({ state: 'granted' } as PermissionStatus);
+        const store: TsPaintStore = storeWithTextBox('');
+        await settle();
+        expect(store.state.allFontsLoaded).toBe(true);
+        expect(store.state.availableFonts).toContain('Zapfino');
+      });
     });
   });
 });

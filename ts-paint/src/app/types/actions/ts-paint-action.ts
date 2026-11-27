@@ -12,6 +12,8 @@ export abstract class TsPaintAction {
   protected _needsPreviewPixels: boolean = false;
   protected _replacesImage: boolean = false;
   protected _overridesPreviousActionOfSameType: boolean = false;
+  /** Only changes the UI (like opening a text box), so it never becomes an undo step */
+  protected _transient: boolean = false;
 
   constructor(public renderIn: 'image' | 'preview' | 'nowhere') {}
 
@@ -25,6 +27,7 @@ export abstract class TsPaintAction {
 
   public getStatePatches(state: TsPaintStoreState, logToHistory: boolean = true): Partial<TsPaintStoreState> {
     let patches: Partial<TsPaintStoreState> = {};
+    logToHistory = logToHistory && !this._transient;
 
     if (logToHistory && this.renderIn !== 'preview') {
       this.undoActions = this.getUndoActions(state);

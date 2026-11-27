@@ -7,8 +7,8 @@ export enum DrawingToolType {
   magnifier,
   pencil,
   brush,
-  /*airbrush,
-  text,*/
+  /*airbrush,*/
+  text,
   line,
   /*curve,*/
   rectangle,

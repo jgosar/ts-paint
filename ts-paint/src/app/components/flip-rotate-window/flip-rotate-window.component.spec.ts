@@ -1,3 +1,4 @@
+import { DragDirective } from '../../directives/drag.directive';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { FlipRotateWindowComponent } from './flip-rotate-window.component';
@@ -16,7 +17,7 @@ describe('FlipRotateWindowComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [FlipRotateWindowComponent, ModalWindowComponent, RadioButtonGroupComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, DragDirective],
     }).compileComponents();
     fixture = TestBed.createComponent(FlipRotateWindowComponent);
     component = fixture.componentInstance;

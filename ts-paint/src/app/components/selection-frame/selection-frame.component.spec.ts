@@ -102,9 +102,10 @@ describe('SelectionFrameComponent', () => {
   // Quirk: the view child is not static, so it is only resolved by the first change detection. In the app this
   // never matters because the frame is always rendered first without a selection image (see the ngStyle display
   // toggle in ts-paint.component.html), but ngOnChanges with an image before the first detectChanges throws.
-  it('quirk: throws when an image is set before the view has been created', () => {
+  it('can frame an image it gets before its first change detection (the text box frame does)', () => {
     const fresh: ComponentFixture<SelectionFrameComponent> = TestBed.createComponent(SelectionFrameComponent);
     fresh.componentInstance.image = createImage(4, 4, RED);
-    expect(() => fresh.componentInstance.ngOnChanges()).toThrow();
+    expect(() => fresh.componentInstance.ngOnChanges()).not.toThrow();
+    expect(fresh.componentInstance.imageCanvas.nativeElement.width).toBe(8);
   });
 });

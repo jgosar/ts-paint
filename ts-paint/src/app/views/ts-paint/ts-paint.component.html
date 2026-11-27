@@ -59,6 +59,19 @@
               (pinchZoom)="store.pinchZoom($event)"
               >
             </tsp-mouse-tracker>
+            @if (store.state.textBox) {
+              <tsp-text-box
+                [textBox]="store.state.textBox"
+                [zoom]="store.state.zoom"
+                [image]="store.state.image"
+                [options]="store.textOptions"
+                [textColor]="store.state.primaryColor"
+                [backgroundColor]="store.textBackgroundColor"
+                (textChange)="store.setTextBoxText($event)"
+                (areaChange)="store.setTextBoxArea($event)"
+                (cancel)="store.cancelTextBox()"
+              ></tsp-text-box>
+            }
           </div>
         </tsp-image-scroller>
       </div>
@@ -83,6 +96,19 @@
     </div>
   </div>
 </tsp-modal-window>
+
+@if (store.state.textBox && store.state.textToolbarVisible) {
+  <tsp-fonts-window
+    [options]="store.textOptions"
+    [fonts]="store.state.availableFonts"
+    [canLoadMoreFonts]="store.canLoadMoreFonts"
+    [position]="store.state.textToolbarPosition"
+    (optionsChange)="store.setTextOptions($event)"
+    (loadMoreFonts)="store.loadAllFonts()"
+    (positionChange)="store.setTextToolbarPosition($event)"
+    (closeClicked)="store.hideTextToolbar()"
+  ></tsp-fonts-window>
+}
 
 @if (store.state.attributesWindowOpen) {
   <tsp-attributes-window

@@ -51,10 +51,32 @@ import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-opt
 import { SetDrawingToolOptionsAction } from 'src/app/types/actions/set-drawing-tool-options-action';
 import { Color } from 'src/app/types/base/color';
 import { getMenuStructure, MenuFlags } from './ts-paint.config';
+import { TextOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
+import { TextBox } from 'src/app/types/base/text-box';
+import { areaSize } from 'src/app/helpers/area.helpers';
+import { fitTextBox, GENERIC_FONT_FAMILIES, renderTextBox } from 'src/app/helpers/text.helpers';
+import {
+  detectAvailableFonts,
+  getPreferredFont,
+  isLocalFontAccessGranted,
+  isLocalFontAccessSupported,
+  queryLocalFontFamilies,
+} from 'src/app/helpers/font.helpers';
+import { DrawTextAction } from 'src/app/types/actions/draw-text-action';
 
 function getMenuFlags(state: TsPaintStoreState): MenuFlags {
-  return { drawOpaque: state.drawingToolOptions[DrawingToolType.rectangleSelect].drawOpaque };
+  return {
+    drawOpaque: state.drawingToolOptions[DrawingToolType.rectangleSelect].drawOpaque,
+    textBoxOpen: state.textBox !== undefined,
+    textToolbarVisible: state.textToolbarVisible,
+  };
 }
+
+/** Menu actions that leave an open text box open; every other one first pastes its text into the image */
+const MENU_ACTIONS_KEEPING_THE_TEXT_BOX: MenuActionType[] = [
+  MenuActionType.TOGGLE_DRAW_OPAQUE,
+  MenuActionType.TOGGLE_TEXT_TOOLBAR,
+];
 
 function menuFlagsEqual(a: MenuFlags, b: MenuFlags): boolean {
   return (Object.keys(a) as (keyof MenuFlags)[]).every((key) => a[key] === b[key]);
@@ -84,8 +106,16 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   ////////////////////////////// Mouse actions //////////////////////////////
+
+  /** Set by a mouse down that only closed the text box: the rest of that click or drag does nothing */
+  private _ignoreMouseUntilUp: boolean = false;
+
   processMouseDown(event: TspMouseEvent) {
-    if (this.state.selectionImage !== undefined) {
+    if (this.state.textBox !== undefined) {
+      // Like MS Paint, a click outside the text box pastes the text and does nothing else
+      this.commitTextBox();
+      this._ignoreMouseUntilUp = true;
+    } else if (this.state.selectionImage !== undefined) {
       if (this.isPointInSelection(event.point)) {
         if (!this.state.moveSelectionTool) {
           this.patchState(new MoveSelectionTool(this.executeAction.bind(this)), 'moveSelectionTool');
@@ -102,15 +132,23 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   }
 
   processMouseUp(event: TspMouseEvent) {
-    if (this.state.moveSelectionTool !== undefined) {
+    if (this._ignoreMouseUntilUp) {
+      this._ignoreMouseUntilUp = false;
+    } else if (this.state.moveSelectionTool !== undefined) {
       this.state.moveSelectionTool.mouseUp(event);
     } else {
       this.state.selectedDrawingTool?.mouseUp(event);
+      if (this.state.textBox !== undefined) {
+        this.detectFontsOnce();
+      }
     }
   }
 
   processMouseMove(event: TspMouseEvent) {
     this.patchState(event.point, 'mousePosition');
+    if (this._ignoreMouseUntilUp) {
+      return;
+    }
     if (this.state.moveSelectionTool !== undefined) {
       this.state.moveSelectionTool.mouseMove(event);
     } else {
@@ -197,6 +235,136 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   setDrawingToolOptions(changedOptions: Partial<DrawingToolOptions>) {
     const action: SetDrawingToolOptionsAction = new SetDrawingToolOptionsAction(changedOptions);
     this.executeAction(action);
+    this.refitTextBox(this.state.textBox);
+  }
+
+  ////////////////////////////// Text tool //////////////////////////////
+
+  setTextOptions(changes: Partial<TextOptions>) {
+    const options: TextOptions = this.state.drawingToolOptions[DrawingToolType.text];
+    this.setDrawingToolOptions({ [DrawingToolType.text]: { ...options, ...changes } });
+  }
+
+  setTextBoxText(text: string) {
+    if (this.state.textBox !== undefined) {
+      this.refitTextBox({ ...this.state.textBox, text });
+    }
+  }
+
+  /** Moves or resizes the text box */
+  setTextBoxArea(area: RectangleArea) {
+    if (this.state.textBox !== undefined) {
+      this.refitTextBox({ ...this.state.textBox, area });
+    }
+  }
+
+  /** Closes the text box without pasting its text */
+  cancelTextBox() {
+    this.patchState(undefined, 'textBox');
+  }
+
+  setTextToolbarPosition(position: Point) {
+    this.patchState(position, 'textToolbarPosition');
+  }
+
+  /** The close button of the Fonts window, which unchecks View > Text Toolbar */
+  hideTextToolbar() {
+    this.patchState(false, 'textToolbarVisible');
+  }
+
+  get textOptions(): TextOptions {
+    return this.state.drawingToolOptions[DrawingToolType.text];
+  }
+
+  /** True while the browser can list every installed font and has not done so yet */
+  get canLoadMoreFonts(): boolean {
+    return isLocalFontAccessSupported() && !this.state.allFontsLoaded;
+  }
+
+  /** Lists every installed font. The browser asks the user for permission the first time; if it is refused, the
+   * list stays as it was. */
+  async loadAllFonts(): Promise<void> {
+    try {
+      const fonts: string[] = await queryLocalFontFamilies();
+      this.setState({ ...this.state, availableFonts: fonts, allFontsLoaded: true });
+    } catch {
+      // Refused or not supported: keep the fonts found so far
+    }
+  }
+
+  /** Pastes the text of the open text box into the image (one undo step) and closes the box */
+  private commitTextBox() {
+    const textBox: TextBox = this.state.textBox;
+    if (textBox === undefined) {
+      return;
+    }
+    if (textBox.text === '') {
+      this.cancelTextBox();
+      return;
+    }
+    const size: Point = areaSize(textBox.area);
+    const textImage: ImageData = renderTextBox({
+      text: textBox.text,
+      width: size.w,
+      height: size.h,
+      options: this.state.drawingToolOptions[DrawingToolType.text],
+      textColor: this.state.primaryColor,
+      backgroundColor: this.textBackgroundColor,
+    });
+    this.executeAction(new DrawTextAction(textImage, textBox.area.start));
+  }
+
+  /** The color behind the text, or undefined while Draw Opaque is off */
+  get textBackgroundColor(): Color | undefined {
+    return this.state.drawingToolOptions[DrawingToolType.rectangleSelect].drawOpaque
+      ? this.state.secondaryColor
+      : undefined;
+  }
+
+  private refitTextBox(textBox: TextBox | undefined) {
+    if (textBox !== undefined) {
+      const imageSize: Point = { w: this.state.image.width, h: this.state.image.height };
+      this.patchState(fitTextBox(textBox, this.state.drawingToolOptions[DrawingToolType.text], imageSize), 'textBox');
+    }
+  }
+
+  /** Finds the installed fonts when the first text box opens, and lists all of them if the user has allowed that */
+  private detectFontsOnce() {
+    if (this.state.availableFonts.length > 0) {
+      return;
+    }
+    const fonts: string[] = detectAvailableFonts();
+    const options: TextOptions = this.state.drawingToolOptions[DrawingToolType.text];
+    const isAvailable: boolean =
+      fonts.includes(options.fontFamily) || GENERIC_FONT_FAMILIES.includes(options.fontFamily);
+    const fontFamily: string = isAvailable ? options.fontFamily : getPreferredFont(fonts);
+    this.setState({
+      ...this.state,
+      availableFonts: fonts,
+      drawingToolOptions: { ...this.state.drawingToolOptions, [DrawingToolType.text]: { ...options, fontFamily } },
+    });
+    this.refitTextBox(this.state.textBox);
+    isLocalFontAccessGranted().then((granted) => {
+      if (granted) {
+        this.loadAllFonts();
+      }
+    });
+  }
+
+  private toggleTextToolbar() {
+    this.patchState(!this.state.textToolbarVisible, 'textToolbarVisible');
+  }
+
+  /** Before a menu action or shortcut: Escape throws the text away, most other actions paste it first */
+  private prepareTextBoxForMenuAction(menuAction: MenuActionType) {
+    if (this.state.textBox === undefined || MENU_ACTIONS_KEEPING_THE_TEXT_BOX.includes(menuAction)) {
+      return;
+    }
+    if (menuAction === MenuActionType.DESELECT) {
+      this.cancelTextBox();
+    } else {
+      this.commitTextBox();
+    }
   }
 
   setColor(selection: ColorSelection) {
@@ -234,6 +402,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     if (!isDefined(menuAction)) {
       return;
     }
+    this.prepareTextBoxForMenuAction(menuAction);
     const menuActionFunction: () => void = this.getMenuActionFunction(menuAction);
     menuActionFunction();
   }
@@ -278,6 +447,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         return this.aboutPaint.bind(this);
       case MenuActionType.TOGGLE_DRAW_OPAQUE:
         return this.toggleDrawOpaque.bind(this);
+      case MenuActionType.TOGGLE_TEXT_TOOLBAR:
+        return this.toggleTextToolbar.bind(this);
     }
 
     assertUnreachable(menuAction);
@@ -527,30 +698,23 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
   ////////////////////////////// Hotkey actions //////////////////////////////
 
   executeHotkeyAction(event: KeyboardEvent): boolean {
-    const hotkeyActionFunction: () => void = this.getHotkeyActionFunction(event);
-
-    if (hotkeyActionFunction) {
-      hotkeyActionFunction();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  private getHotkeyActionFunction(event: KeyboardEvent): () => void | undefined {
     const menuAction: MenuActionType = findMenuActionTypeByHotkeyEvent(
       [...this.state.menuStructure, ...this.state.hiddenHotkeyShortcuts],
       event
     );
-    if (menuAction) {
-      return this.getMenuActionFunction(menuAction);
+    if (!menuAction) {
+      return false;
     }
+    this.prepareTextBoxForMenuAction(menuAction);
+    this.getMenuActionFunction(menuAction)();
+    return true;
   }
 
   ////////////////////////////// Action processing //////////////////////////////
 
   private executeAction(action: TsPaintAction, logToHistory: boolean = true) {
     if (logToHistory && action.deselectsSelection) {
+      this.commitTextBox();
       this.deselectIfSelected();
     }
     const patches: Partial<TsPaintStoreState> = action.getStatePatches(this.state, logToHistory);

@@ -1,9 +1,20 @@
 <div
+  #container
   class="tsp-modal-window__container tsp-raised-item-container"
-  [ngClass]="{ 'tsp-modal-window__container--fullscreen': fullscreen }"
-  >
+  [ngClass]="{
+    'tsp-modal-window__container--fullscreen': fullscreen,
+    'tsp-modal-window__container--floating': floating
+  }"
+  [style.left.px]="floating ? position.w : null"
+  [style.top.px]="floating ? position.h : null"
+>
   <div class="tsp-modal-window__inner-container tsp-raised-item">
-    <div class="tsp-modal-window__title-bar tsp-horizontal-bar">
+    <div
+      class="tsp-modal-window__title-bar tsp-horizontal-bar"
+      [tspDrag]="floating"
+      (dragStart)="startDrag()"
+      (dragMove)="drag($event)"
+    >
       @if (this.icon) {
         <div class="tsp-modal-window__title-bar-icon" [ngClass]="iconClass"></div>
       }
@@ -11,7 +22,11 @@
         {{ title }}
       </div>
       @if (closable) {
-        <button class="tsp-button tsp-modal-window__close-button" (click)="closeClicked.emit()"></button>
+        <button
+          class="tsp-button tsp-modal-window__close-button"
+          aria-label="Close"
+          (click)="closeClicked.emit()"
+        ></button>
       }
     </div>
     <ng-content></ng-content>
