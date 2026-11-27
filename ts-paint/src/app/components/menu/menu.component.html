@@ -9,8 +9,13 @@
               <div
                 class="tsp-menu__menu-level-2"
                 [class.tsp-menu__menu-level-2--disabled]="menu2.item.disabled"
+                [attr.role]="menu2.item.checked === undefined ? 'menuitem' : 'menuitemcheckbox'"
+                [attr.aria-checked]="menu2.item.checked"
                 (click)="selectItem(menu2.item)"
                 >
+                @if (menu2.item.checked) {
+                  <div class="tsp-menu__check"></div>
+                }
                 <div>{{ menu2.item.name }}</div>
                 @if (menu2.hotkeyLabel) {
                   <div class="tsp-menu__menu-item-hotkeys">{{ menu2.hotkeyLabel }}</div>

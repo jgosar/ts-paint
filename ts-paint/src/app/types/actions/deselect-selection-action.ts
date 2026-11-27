@@ -2,13 +2,18 @@ import { TsPaintAction } from './ts-paint-action';
 import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state';
 import { PartialActionResult } from './partial-action-result';
 import { Point } from '../base/point';
-import { pasteImagePart, getImagePart } from '../../helpers/image.helpers';
+import { pasteImagePart, getImagePart, makeColorTransparent } from '../../helpers/image.helpers';
+import { Color } from '../base/color';
 import { RectangleArea } from '../base/rectangle-area';
 import { PasteImageAction } from './paste-image-action';
 import { MoveSelectionAction } from './move-selection-action';
 
 export class DeselectSelectionAction extends TsPaintAction {
-  constructor() {
+  /**
+   * @param transparentColor When set (Draw Opaque is off), the selection's pixels of this color are not pasted, so the
+   * image shows through them. Undo chains use this action without it, to put back exactly the pixels they saved.
+   */
+  constructor(public transparentColor?: Color) {
     super('image');
   }
 
@@ -23,7 +28,11 @@ export class DeselectSelectionAction extends TsPaintAction {
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
     if (state.selectionImage !== undefined) {
       const selectionOffset: Point = state.selectionOffset;
-      const image: ImageData = pasteImagePart(selectionOffset, state.selectionImage, state.image);
+      const image: ImageData = pasteImagePart(
+        selectionOffset,
+        makeColorTransparent(state.selectionImage, this.transparentColor),
+        state.image
+      );
 
       const patches: Partial<TsPaintStoreState> = DeselectSelectionAction.getDeselectPatches();
 

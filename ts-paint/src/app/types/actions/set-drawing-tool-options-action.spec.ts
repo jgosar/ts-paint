@@ -8,6 +8,7 @@ import { createTestState } from '../../../testing/state.factory';
 import { classesOf, executeAndUndo } from '../../../testing/action-test.helpers';
 
 const OPTIONS: DrawingToolOptions = {
+  [DrawingToolType.rectangleSelect]: { drawOpaque: false },
   [DrawingToolType.rectangle]: { fillType: FillType.FILL_PRIMARY },
   [DrawingToolType.line]: { thickness: 3 },
   [DrawingToolType.eraser]: { size: 6 },

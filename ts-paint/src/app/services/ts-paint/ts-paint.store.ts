@@ -49,11 +49,38 @@ import { ImageFileData } from 'src/app/types/base/image-file-data';
 import { ImageFileFormat } from 'src/app/types/base/image-file-format';
 import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
 import { SetDrawingToolOptionsAction } from 'src/app/types/actions/set-drawing-tool-options-action';
+import { Color } from 'src/app/types/base/color';
+import { getMenuStructure, MenuFlags } from './ts-paint.config';
+
+function getMenuFlags(state: TsPaintStoreState): MenuFlags {
+  return { drawOpaque: state.drawingToolOptions[DrawingToolType.rectangleSelect].drawOpaque };
+}
+
+function menuFlagsEqual(a: MenuFlags, b: MenuFlags): boolean {
+  return (Object.keys(a) as (keyof MenuFlags)[]).every((key) => a[key] === b[key]);
+}
 
 @Injectable()
 export class TsPaintStore extends Store<TsPaintStoreState> {
   constructor() {
     super(new TsPaintStoreState());
+  }
+
+  /** Keeps the menu's check marks and enabled states in line with the state, whichever way the state changed
+   * (including undo and repeat). The menu is only rebuilt when one of its flags changes. */
+  setState(nextState: TsPaintStoreState): void {
+    const flags: MenuFlags = getMenuFlags(nextState);
+    if (!menuFlagsEqual(flags, getMenuFlags(this.state))) {
+      nextState = { ...nextState, menuStructure: getMenuStructure(flags) };
+    }
+    super.setState(nextState);
+  }
+
+  /** The color that is see-through in a selection, or undefined while Draw Opaque is on */
+  get selectionTransparentColor(): Color | undefined {
+    return this.state.drawingToolOptions[DrawingToolType.rectangleSelect].drawOpaque
+      ? undefined
+      : this.state.secondaryColor;
   }
 
   ////////////////////////////// Mouse actions //////////////////////////////
@@ -65,7 +92,7 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         }
         this.state.moveSelectionTool.mouseDown(this.state.selectionOffset, event);
       } else {
-        const action: DeselectSelectionAction = new DeselectSelectionAction();
+        const action: DeselectSelectionAction = new DeselectSelectionAction(this.selectionTransparentColor);
         this.executeAction(action);
         this.state.selectedDrawingTool?.mouseDown(event);
       }
@@ -249,6 +276,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         return this.deselectIfSelected.bind(this);
       case MenuActionType.ABOUT_PAINT:
         return this.aboutPaint.bind(this);
+      case MenuActionType.TOGGLE_DRAW_OPAQUE:
+        return this.toggleDrawOpaque.bind(this);
     }
 
     assertUnreachable(menuAction);
@@ -393,8 +422,13 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
 
   private deselectIfSelected() {
     if (this.state.selectionImage !== undefined) {
-      this.executeAction(new DeselectSelectionAction(), true);
+      this.executeAction(new DeselectSelectionAction(this.selectionTransparentColor), true);
     }
+  }
+
+  private toggleDrawOpaque() {
+    const drawOpaque: boolean = this.state.drawingToolOptions[DrawingToolType.rectangleSelect].drawOpaque;
+    this.setDrawingToolOptions({ [DrawingToolType.rectangleSelect]: { drawOpaque: !drawOpaque } });
   }
 
   ////////////////////////////// Stretch/skew window //////////////////////////////

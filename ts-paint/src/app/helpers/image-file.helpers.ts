@@ -217,6 +217,9 @@ function getImageDataFromImage(image: HTMLImageElement): ImageData {
   canvas.width = image.width;
   canvas.height = image.height;
   const context: CanvasRenderingContext2D = canvas.getContext('2d');
+  // The app has no notion of transparency, so transparent pixels are loaded as white
+  context.fillStyle = 'white';
+  context.fillRect(0, 0, image.width, image.height);
   context.drawImage(image, 0, 0);
 
   return context.getImageData(0, 0, image.width, image.height);

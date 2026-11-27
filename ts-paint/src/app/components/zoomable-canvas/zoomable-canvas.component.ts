@@ -1,12 +1,14 @@
 import { Component, ChangeDetectionStrategy, Input, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { Point } from '../../types/base/point';
+import { Color } from '../../types/base/color';
+import { makeColorTransparent } from '../../helpers/image.helpers';
 
 @Component({
-    selector: 'tsp-zoomable-canvas',
-    templateUrl: './zoomable-canvas.component.html',
-    styleUrls: ['./zoomable-canvas.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'tsp-zoomable-canvas',
+  templateUrl: './zoomable-canvas.component.html',
+  styleUrls: ['./zoomable-canvas.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class ZoomableCanvasComponent implements OnChanges {
   @Input()
@@ -19,6 +21,9 @@ export class ZoomableCanvasComponent implements OnChanges {
   offset: Point = { w: 0, h: 0 };
   @Input()
   invertBackground: boolean = false;
+  /** Pixels of this color are not drawn (a selection while Draw Opaque is off) */
+  @Input()
+  transparentColor: Color | undefined = undefined;
   @ViewChild('imageCanvas', { static: true })
   imageCanvas: ElementRef;
 
@@ -52,14 +57,12 @@ export class ZoomableCanvasComponent implements OnChanges {
 
         canvas.width = canvasWidth;
         canvas.height = canvasHeight;
-        context.putImageData(this.image, Math.min(this.offset.w, 0), Math.min(this.offset.h, 0));
+        const shownImage: ImageData = makeColorTransparent(this.image, this.transparentColor);
+        context.putImageData(shownImage, Math.min(this.offset.w, 0), Math.min(this.offset.h, 0));
       } else {
         canvas.width = 0;
         canvas.height = 0;
       }
-    }
-
-    if (this.invertBackground) {
     }
   }
 }

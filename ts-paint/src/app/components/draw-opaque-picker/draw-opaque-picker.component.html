@@ -1,0 +1,11 @@
+@for (option of options; track option.drawOpaque) {
+<div
+  class="tsp-draw-opaque-picker__option"
+  role="button"
+  [attr.aria-label]="option.label"
+  [attr.aria-pressed]="option.drawOpaque === drawOpaque"
+  [ngClass]="option.iconClass"
+  [class.tsp-draw-opaque-picker__option--selected]="option.drawOpaque === drawOpaque"
+  (click)="select(option.drawOpaque)"
+></div>
+}

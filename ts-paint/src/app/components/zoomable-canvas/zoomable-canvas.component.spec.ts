@@ -109,6 +109,20 @@ describe('ZoomableCanvasComponent', () => {
     expect(canvas().style.height).toBe('20px');
   });
 
+  it('leaves out the pixels of the transparent color, and draws them again when it is cleared', () => {
+    setInputs({ image: imageFromMask(['#.']) });
+    fixture.componentRef.setInput('transparentColor', WHITE);
+    fixture.detectChanges();
+
+    expect(canvasPixels().data[3]).toBe(255);
+    expect(canvasPixels().data[7]).toBe(0);
+
+    fixture.componentRef.setInput('transparentColor', undefined);
+    fixture.detectChanges();
+    expect(isColor({ w: 1, h: 0 }, canvasPixels(), WHITE)).toBe(true);
+    expect(canvasPixels().data[7]).toBe(255);
+  });
+
   it('toggles the invert background class', () => {
     setInputs({ image: createImage(2, 2, RED) });
     expect(canvas().classList.contains('tsp-zoomable-canvas__canvas--invert_background')).toBe(false);

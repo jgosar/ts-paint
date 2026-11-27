@@ -28,6 +28,7 @@ export const DEFAULT_AVAILABLE_COLORS: Color[] = [
 ];
 
 export const DEFAULT_DRAWING_TOOL_OPTIONS: DrawingToolOptions = {
+  [DrawingToolType.rectangleSelect]: { drawOpaque: true },
   [DrawingToolType.rectangle]: { fillType: FillType.EMPTY },
   [DrawingToolType.line]: { thickness: 1 },
   [DrawingToolType.eraser]: { size: 8 },
@@ -242,7 +243,7 @@ export const MENU_STRUCTURE: MenuItem[] = [
       },
       {
         name: 'Draw Opaque',
-        disabled: true,
+        action: MenuActionType.TOGGLE_DRAW_OPAQUE,
       },
     ],
   },
@@ -261,6 +262,30 @@ export const MENU_STRUCTURE: MenuItem[] = [
     ],
   },
 ];
+
+/** The parts of the state that change how the menu looks */
+export interface MenuFlags {
+  drawOpaque: boolean;
+}
+
+/** The menu with the check marks and enabled states of the given flags applied. Items whose state does not depend on
+ * a flag keep their identity, so equal flags give equal-looking menus. */
+export function getMenuStructure(flags: MenuFlags): MenuItem[] {
+  return applyMenuFlags(MENU_STRUCTURE, flags);
+}
+
+function applyMenuFlags(menu: MenuItem[], flags: MenuFlags): MenuItem[] {
+  return menu.map((item) => {
+    if (item.action === MenuActionType.TOGGLE_DRAW_OPAQUE) {
+      return { ...item, checked: flags.drawOpaque };
+    }
+    if (item.menus) {
+      const menus: MenuItem[] = applyMenuFlags(item.menus, flags);
+      return menus.every((subItem, index) => subItem === item.menus[index]) ? item : { ...item, menus };
+    }
+    return item;
+  });
+}
 
 export const NON_MENU_SHORTCUTS: MenuItem[] = [
   {

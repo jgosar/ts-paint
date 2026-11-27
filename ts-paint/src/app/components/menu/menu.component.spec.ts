@@ -87,6 +87,24 @@ describe('MenuComponent', () => {
     expect(emitted).toEqual([]);
   });
 
+  it('shows a check mark only in front of checked items, and marks checkable items for assistive technology', () => {
+    fixture.componentRef.setInput('menuStructure', [
+      { name: 'Options', menus: [{ name: 'On', checked: true }, { name: 'Off', checked: false }, { name: 'Plain' }] },
+    ]);
+    fixture.detectChanges();
+
+    const items: HTMLElement[] = level2(level1()[0]);
+    expect(items.map((item) => item.querySelector('.tsp-menu__check') !== null)).toEqual([true, false, false]);
+    expect(items.map((item) => item.getAttribute('role'))).toEqual([
+      'menuitemcheckbox',
+      'menuitemcheckbox',
+      'menuitem',
+    ]);
+    expect(items.map((item) => item.getAttribute('aria-checked'))).toEqual(['true', 'false', null]);
+    expect(textOf(items[0]), 'the name follows the check mark').toBe('');
+    expect(items[0].children[1].textContent.trim()).toBe('On');
+  });
+
   it('makes the host focusable with tabindex -1', () => {
     expect(fixture.nativeElement.getAttribute('tabindex')).toBe('-1');
   });

@@ -1,0 +1,28 @@
+@import 'variables';
+
+// Two 39x29 options in the 39x64 box, like MS Paint: 1px above, 3px between and 2px below them
+:host(tsp-draw-opaque-picker) {
+  display: block;
+  padding-top: 1px;
+}
+
+.tsp-draw-opaque-picker__option {
+  width: 39px;
+  height: 29px;
+  margin-bottom: 3px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+// The icons are see-through where the background shows, so the same picture works on both backgrounds
+.tsp-draw-opaque-picker__option--selected {
+  background-color: @color--dark-blue;
+}
+
+.tsp-draw-opaque-picker__option--opaqueIcon {
+  background-image: url('../../../assets/icons/opaque.png');
+}
+
+.tsp-draw-opaque-picker__option--transparentIcon {
+  background-image: url('../../../assets/icons/transparent.png');
+}

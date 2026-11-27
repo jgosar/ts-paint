@@ -32,11 +32,13 @@ export class DrawingToolOptionsComponent implements OnChanges {
     | 'lineThicknessPicker'
     | 'eraserSizePicker'
     | 'brushShapePicker'
+    | 'drawOpaquePicker'
     | undefined = undefined;
   selectedFillType: FillType = undefined;
   selectedLineThickness: number = undefined;
   selectedEraserSize: number = undefined;
   selectedBrushShape: BrushShape = undefined;
+  selectedDrawOpaque: boolean = undefined;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.displayedPicker = undefined;
@@ -44,8 +46,12 @@ export class DrawingToolOptionsComponent implements OnChanges {
     this.selectedLineThickness = undefined;
     this.selectedEraserSize = undefined;
     this.selectedBrushShape = undefined;
+    this.selectedDrawOpaque = undefined;
 
-    if ([DrawingToolType.rectangle].includes(this.selectedTool)) {
+    if (this.selectedTool === DrawingToolType.rectangleSelect) {
+      this.displayedPicker = 'drawOpaquePicker';
+      this.selectedDrawOpaque = this.options[DrawingToolType.rectangleSelect].drawOpaque;
+    } else if ([DrawingToolType.rectangle].includes(this.selectedTool)) {
       this.displayedPicker = 'fillTypePicker';
       this.selectedFillType = this.options[DrawingToolType.rectangle].fillType;
     } else if ([DrawingToolType.line].includes(this.selectedTool)) {
@@ -73,6 +79,11 @@ export class DrawingToolOptionsComponent implements OnChanges {
 
   changeSelectedBrushShape(shape: BrushShape) {
     const changes: Partial<DrawingToolOptions> = { [DrawingToolType.brush]: { shape } };
+    this.optionsChange.emit(changes);
+  }
+
+  changeDrawOpaque(drawOpaque: boolean) {
+    const changes: Partial<DrawingToolOptions> = { [DrawingToolType.rectangleSelect]: { drawOpaque } };
     this.optionsChange.emit(changes);
   }
 

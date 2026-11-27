@@ -41,6 +41,7 @@
               [image]="store.state.selectionImage"
               [parentImage]="store.state.image"
               [offset]="store.state.selectionOffset"
+              [transparentColor]="store.selectionTransparentColor"
             ></tsp-zoomable-canvas>
             <tsp-selection-frame
               [ngStyle]="{ display: store.state.selectionImage ? 'block' : 'none' }"

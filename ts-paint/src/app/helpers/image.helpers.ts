@@ -155,13 +155,32 @@ export function getAreaHeight(area: RectangleArea): number {
   return 1 + Math.abs(area.end.h - area.start.h);
 }
 
+/** Draws the part over the image: its transparent pixels leave the image untouched and partially transparent ones
+ * are mixed with the pixels underneath */
 export function pasteImagePart(location: Point, imagePart: ImageData, image: ImageData): ImageData {
   const canvas: HTMLCanvasElement = document.createElement('canvas');
   const context: CanvasRenderingContext2D = canvas.getContext('2d');
   loadImageToCanvas(image, canvas);
-  context.putImageData(imagePart, location.w, location.h);
-  const result: ImageData = context.getImageData(0, 0, image.width, image.height);
+  const partCanvas: HTMLCanvasElement = document.createElement('canvas');
+  loadImageToCanvas(imagePart, partCanvas);
+  context.drawImage(partCanvas, location.w, location.h);
+  return context.getImageData(0, 0, image.width, image.height);
+}
 
+/** A copy of the image in which the pixels of the given color are fully transparent. Without a color, the image
+ * itself is returned unchanged */
+export function makeColorTransparent(image: ImageData, color: Color | undefined): ImageData {
+  if (color === undefined) {
+    return image;
+  }
+
+  const result: ImageData = cloneImage(image);
+  const data: Uint8ClampedArray = result.data;
+  for (let i = 0; i < data.length; i += 4) {
+    if (data[i] === color.r && data[i + 1] === color.g && data[i + 2] === color.b) {
+      data[i + 3] = 0;
+    }
+  }
   return result;
 }
 
