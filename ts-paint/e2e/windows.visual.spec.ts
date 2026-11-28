@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { PaintPage } from './pages/paint.page';
+import { DrawingToolType } from '../src/app/types/drawing-tools/drawing-tool-type';
 
 test.describe('dialog windows', () => {
   let paint: PaintPage;
@@ -33,6 +34,13 @@ test.describe('dialog windows', () => {
   test('About Paint', async () => {
     await paint.menu('Help', 'About Paint');
     await expect(paint.window('tsp-about-paint-window')).toHaveScreenshot('window-about.png');
+  });
+
+  test('the Fonts toolbar of the text tool, with Bold pressed', async () => {
+    await paint.selectTool(DrawingToolType.text);
+    await paint.clickCanvas(150, 150);
+    await paint.fontsWindow.getByRole('button', { name: 'Bold', exact: true }).click();
+    await expect(paint.fontsWindow).toHaveScreenshot('window-fonts.png');
   });
 
   test('Save As, with the format list open', async ({ page }) => {

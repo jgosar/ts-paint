@@ -61,7 +61,6 @@ To install the extension, follow these steps:
 
 ### Immediate TODO list
 - View/Zoom/Show Grid option
-- Text tool
 - Modernize Angular code: signals, standalone components
 - Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
 

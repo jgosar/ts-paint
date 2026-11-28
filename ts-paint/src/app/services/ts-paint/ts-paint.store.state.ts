@@ -13,6 +13,7 @@ import {
   getMenuStructure,
 } from './ts-paint.config';
 import { DrawingToolType } from 'src/app/types/drawing-tools/drawing-tool-type';
+import { TextBox } from 'src/app/types/base/text-box';
 import { DrawingToolOptions } from 'src/app/types/drawing-tools/drawing-tool-options';
 import { DEFAULT_IMAGE_FILE_FORMAT, ImageFileFormat } from 'src/app/types/base/image-file-format';
 
@@ -44,8 +45,20 @@ export class TsPaintStoreState {
   saveAsWindowOpen: boolean = false;
   mousePosition: Point;
   unsavedChanges: boolean = false;
+  /** The open text box of the text tool */
+  textBox: TextBox | undefined = undefined;
+  /** View > Text Toolbar: whether the Fonts window shows while a text box is open */
+  textToolbarVisible: boolean = true;
+  /** Where the Fonts window is, in css px from the top left of the page */
+  textToolbarPosition: Point = { w: 88, h: 36 };
+  /** The fonts the Fonts window offers; found when the first text box opens */
+  availableFonts: string[] = [];
+  /** True once every installed font is listed (Local Font Access) */
+  allFontsLoaded: boolean = false;
   menuStructure: MenuItem[] = getMenuStructure({
     drawOpaque: DEFAULT_DRAWING_TOOL_OPTIONS[DrawingToolType.rectangleSelect].drawOpaque,
+    textBoxOpen: false,
+    textToolbarVisible: true,
   });
   hiddenHotkeyShortcuts: MenuItem[] = NON_MENU_SHORTCUTS;
 }

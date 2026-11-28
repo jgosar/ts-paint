@@ -13,12 +13,13 @@ import { BrushAction } from '../actions/drawing-tool-actions/brush-action';
 import { LineAction } from '../actions/drawing-tool-actions/line-action';
 import { RectangleAction } from '../actions/drawing-tool-actions/rectangle-action';
 import { EllipseAction } from '../actions/drawing-tool-actions/ellipse-action';
+import { TextBoxAction } from '../actions/drawing-tool-actions/text-box-action';
 
 const { FREE_DRAW, SINGLE_POINT, SINGLE_POINT_WITH_PREVIEW, CLICK_AND_DRAG } = DrawingToolBehaviour;
 const { NONE, DIAGONAL, EVERY_45_DEGREES } = DrawingToolAngleSnap;
 
 describe('ALL_DRAWING_TOOL_TYPES', () => {
-  it('lists the 10 implemented tools in toolbox order', () => {
+  it('lists the 11 implemented tools in toolbox order', () => {
     expect(ALL_DRAWING_TOOL_TYPES).toEqual([
       DrawingToolType.rectangleSelect,
       DrawingToolType.eraser,
@@ -27,6 +28,7 @@ describe('ALL_DRAWING_TOOL_TYPES', () => {
       DrawingToolType.magnifier,
       DrawingToolType.pencil,
       DrawingToolType.brush,
+      DrawingToolType.text,
       DrawingToolType.line,
       DrawingToolType.rectangle,
       DrawingToolType.ellipse,
@@ -106,6 +108,14 @@ describe('DRAWING_TOOL_CONFIG', () => {
       actionClass: BrushAction,
     },
     {
+      tool: DrawingToolType.text,
+      behaviour: CLICK_AND_DRAG,
+      maxPoints: 2,
+      angleSnap: NONE,
+      invertedPreview: true,
+      actionClass: TextBoxAction,
+    },
+    {
       tool: DrawingToolType.line,
       behaviour: CLICK_AND_DRAG,
       maxPoints: 2,
@@ -147,11 +157,12 @@ describe('DRAWING_TOOL_CONFIG', () => {
     expect(configuredTools.sort((a, b) => a - b)).toEqual([...ALL_DRAWING_TOOL_TYPES].sort((a, b) => a - b));
   });
 
-  it('only gives the magnifier a help text', () => {
+  it('only gives the magnifier and the text tool a help text', () => {
+    const toolsWithHelp: DrawingToolType[] = [DrawingToolType.magnifier, DrawingToolType.text];
     ALL_DRAWING_TOOL_TYPES.forEach((tool) => {
       const helpText: string = DRAWING_TOOL_CONFIG[tool].helpText;
-      if (tool === DrawingToolType.magnifier) {
-        expect(helpText.length).toBeGreaterThan(0);
+      if (toolsWithHelp.includes(tool)) {
+        expect(helpText.length, DrawingToolType[tool]).toBeGreaterThan(0);
       } else {
         expect(helpText, DrawingToolType[tool]).toBe(DRAWING_TOOL_CONFIG_DEFAULTS.helpText);
       }

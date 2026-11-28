@@ -1,0 +1,160 @@
+@import 'variables';
+
+// The text box is laid over the image and must not create a stacking context, so that the textarea's caret and
+// selection can be inverted against the picture underneath (mix-blend-mode)
+:host(tsp-text-box) {
+  position: absolute;
+  // The padding around the image (.tsp-ts-paint__image-padding)
+  left: 3px;
+  top: 3px;
+}
+
+.tsp-text-box {
+  position: absolute;
+}
+
+.tsp-text-box__canvas {
+  position: absolute;
+  left: 0;
+  top: 0;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+// Sized and laid out in image pixels (see getTextLayoutStyles), then scaled up by the zoom
+.tsp-text-box__textarea {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  background: transparent;
+  color: transparent;
+  caret-color: white;
+  mix-blend-mode: difference;
+  resize: none;
+  outline: none;
+  overflow: hidden;
+  cursor: text;
+}
+
+.tsp-text-box__textarea::selection {
+  color: transparent;
+  background-color: white;
+}
+
+.tsp-text-box__frame {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+}
+
+// The dashed frame lies 2px outside the box; the strips along it move the box
+@grab: 6px;
+
+.tsp-text-box__edge {
+  position: absolute;
+  cursor: move;
+  touch-action: none;
+}
+
+.tsp-text-box__edge--top {
+  left: -@grab;
+  right: -@grab;
+  top: -@grab;
+  height: @grab;
+}
+
+.tsp-text-box__edge--bottom {
+  left: -@grab;
+  right: -@grab;
+  bottom: -@grab;
+  height: @grab;
+}
+
+.tsp-text-box__edge--left {
+  top: 0;
+  bottom: 0;
+  left: -@grab;
+  width: @grab;
+}
+
+.tsp-text-box__edge--right {
+  top: 0;
+  bottom: 0;
+  right: -@grab;
+  width: @grab;
+}
+
+// 3x3 dark blue squares centred on the frame, with a 9x9 area to grab them
+.tsp-text-box__handle {
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  margin: -6px 0 0 -6px;
+  touch-action: none;
+}
+
+.tsp-text-box__handle::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 3px;
+  height: 3px;
+  background-color: @color--dark-blue;
+}
+
+.tsp-text-box__handle--nw,
+.tsp-text-box__handle--n,
+.tsp-text-box__handle--ne {
+  top: 0;
+}
+
+.tsp-text-box__handle--w,
+.tsp-text-box__handle--e {
+  top: calc(50% + 2px);
+}
+
+.tsp-text-box__handle--sw,
+.tsp-text-box__handle--s,
+.tsp-text-box__handle--se {
+  top: calc(100% + 3px);
+}
+
+.tsp-text-box__handle--nw,
+.tsp-text-box__handle--w,
+.tsp-text-box__handle--sw {
+  left: 0;
+}
+
+.tsp-text-box__handle--n,
+.tsp-text-box__handle--s {
+  left: calc(50% + 2px);
+}
+
+.tsp-text-box__handle--ne,
+.tsp-text-box__handle--e,
+.tsp-text-box__handle--se {
+  left: calc(100% + 3px);
+}
+
+.tsp-text-box__handle--nw,
+.tsp-text-box__handle--se {
+  cursor: nwse-resize;
+}
+
+.tsp-text-box__handle--ne,
+.tsp-text-box__handle--sw {
+  cursor: nesw-resize;
+}
+
+.tsp-text-box__handle--n,
+.tsp-text-box__handle--s {
+  cursor: ns-resize;
+}
+
+.tsp-text-box__handle--e,
+.tsp-text-box__handle--w {
+  cursor: ew-resize;
+}

@@ -5,6 +5,7 @@ import {
   MENU_STRUCTURE,
   NON_MENU_SHORTCUTS,
   getMenuStructure,
+  MenuFlags,
 } from './ts-paint.config';
 import { MenuActionType } from '../../types/menu/menu-action-type';
 import { MenuItem } from '../../types/menu/menu-item';
@@ -98,18 +99,39 @@ describe('MENU_STRUCTURE', () => {
 });
 
 describe('getMenuStructure', () => {
+  const FLAGS: MenuFlags = { drawOpaque: true, textBoxOpen: false, textToolbarVisible: true };
+
+  function item(menu: MenuItem[], name: string): MenuItem {
+    return flattenMenu(menu).find((menuItem) => menuItem.name === name);
+  }
+
   function drawOpaqueItem(menu: MenuItem[]): MenuItem {
-    return flattenMenu(menu).find((item) => item.name === 'Draw Opaque');
+    return item(menu, 'Draw Opaque');
   }
 
   it('checks Options > Draw Opaque to match the flag', () => {
-    expect(drawOpaqueItem(getMenuStructure({ drawOpaque: true })).checked).toBe(true);
-    expect(drawOpaqueItem(getMenuStructure({ drawOpaque: false })).checked).toBe(false);
-    expect(drawOpaqueItem(getMenuStructure({ drawOpaque: true })).action).toBe(MenuActionType.TOGGLE_DRAW_OPAQUE);
+    expect(drawOpaqueItem(getMenuStructure(FLAGS)).checked).toBe(true);
+    expect(drawOpaqueItem(getMenuStructure({ ...FLAGS, drawOpaque: false })).checked).toBe(false);
+    expect(drawOpaqueItem(getMenuStructure(FLAGS)).action).toBe(MenuActionType.TOGGLE_DRAW_OPAQUE);
+  });
+
+  it('enables View > Text Toolbar only while a text box is open, and checks it while the toolbar is shown', () => {
+    expect(item(getMenuStructure(FLAGS), 'Text Toolbar')).toEqual({
+      name: 'Text Toolbar',
+      action: MenuActionType.TOGGLE_TEXT_TOOLBAR,
+      disabled: true,
+      checked: true,
+    });
+    const open: MenuItem = item(
+      getMenuStructure({ ...FLAGS, textBoxOpen: true, textToolbarVisible: false }),
+      'Text Toolbar'
+    );
+    expect(open.disabled).toBe(false);
+    expect(open.checked).toBe(false);
   });
 
   it('keeps the items that do not depend on a flag', () => {
-    const menu: MenuItem[] = getMenuStructure({ drawOpaque: false });
+    const menu: MenuItem[] = getMenuStructure({ ...FLAGS, drawOpaque: false });
     expect(menu.map((item) => item.name)).toEqual(MENU_STRUCTURE.map((item) => item.name));
     expect(menu[0]).toBe(MENU_STRUCTURE[0]);
     expect(flattenMenu(menu).length).toBe(flattenMenu(MENU_STRUCTURE).length);
@@ -134,12 +156,23 @@ describe('DEFAULT_DRAWING_TOOL_OPTIONS', () => {
     ).toEqual(
       [
         DrawingToolType.rectangleSelect,
+        DrawingToolType.text,
         DrawingToolType.rectangle,
         DrawingToolType.line,
         DrawingToolType.eraser,
         DrawingToolType.brush,
       ].sort((a, b) => a - b)
     );
+  });
+
+  it('starts the text tool with plain 10pt Arial', () => {
+    expect(DEFAULT_DRAWING_TOOL_OPTIONS[DrawingToolType.text]).toEqual({
+      fontFamily: 'Arial',
+      fontSize: 10,
+      bold: false,
+      italic: false,
+      underline: false,
+    });
   });
 
   it('starts with Draw Opaque on like MS Paint', () => {

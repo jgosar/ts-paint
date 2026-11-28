@@ -48,7 +48,7 @@ export class DrawingToolOptionsComponent implements OnChanges {
     this.selectedBrushShape = undefined;
     this.selectedDrawOpaque = undefined;
 
-    if (this.selectedTool === DrawingToolType.rectangleSelect) {
+    if ([DrawingToolType.rectangleSelect, DrawingToolType.text].includes(this.selectedTool)) {
       this.displayedPicker = 'drawOpaquePicker';
       this.selectedDrawOpaque = this.options[DrawingToolType.rectangleSelect].drawOpaque;
     } else if ([DrawingToolType.rectangle].includes(this.selectedTool)) {

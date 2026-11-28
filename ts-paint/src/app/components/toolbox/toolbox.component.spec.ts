@@ -22,7 +22,7 @@ describe('ToolboxComponent', () => {
     return buttons().filter((button) => button.classList.contains('tsp-toolbox__button--selected'));
   }
 
-  it('renders the 10 drawing tools in enum order, each with its icon class', () => {
+  it('renders the 11 drawing tools in enum order, each with its icon class', () => {
     const iconClasses: string[] = buttons().map((button) =>
       Array.from(button.classList).find((c) => c.endsWith('Icon'))
     );
@@ -34,6 +34,7 @@ describe('ToolboxComponent', () => {
       'tsp-toolbox__button--magnifierIcon',
       'tsp-toolbox__button--pencilIcon',
       'tsp-toolbox__button--brushIcon',
+      'tsp-toolbox__button--textIcon',
       'tsp-toolbox__button--lineIcon',
       'tsp-toolbox__button--rectangleIcon',
       'tsp-toolbox__button--ellipseIcon',
@@ -56,7 +57,7 @@ describe('ToolboxComponent', () => {
     const emitted: DrawingToolType[] = [];
     component.selectedToolChange.subscribe((tool) => emitted.push(tool));
 
-    buttons()[7].click();
+    buttons()[8].click();
     buttons()[0].click();
 
     expect(emitted).toEqual([DrawingToolType.line, DrawingToolType.rectangleSelect]);

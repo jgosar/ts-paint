@@ -4,11 +4,11 @@ import { Point } from '../../types/base/point';
 import { drawDashedFrame } from '../../helpers/drawing.helpers';
 
 @Component({
-    selector: 'tsp-selection-frame',
-    templateUrl: './selection-frame.component.html',
-    styleUrls: ['./selection-frame.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    standalone: false
+  selector: 'tsp-selection-frame',
+  templateUrl: './selection-frame.component.html',
+  styleUrls: ['./selection-frame.component.less'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: false,
 })
 export class SelectionFrameComponent implements OnChanges {
   @Input()
@@ -20,7 +20,8 @@ export class SelectionFrameComponent implements OnChanges {
   @Input()
   offset: Point = { w: 0, h: 0 };
 
-  @ViewChild('imageCanvas')
+  // Static: the first ngOnChanges can already have an image to frame (the text box frame)
+  @ViewChild('imageCanvas', { static: true })
   public imageCanvas: ElementRef;
 
   SELECTION_PADDING: 2 = 2;

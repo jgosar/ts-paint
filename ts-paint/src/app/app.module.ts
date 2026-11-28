@@ -30,6 +30,9 @@ import { LineThicknessPickerComponent } from './components/line-thickness-picker
 import { EraserSizePickerComponent } from './components/eraser-size-picker/eraser-size-picker.component';
 import { BrushShapePickerComponent } from './components/brush-shape-picker/brush-shape-picker.component';
 import { DrawOpaquePickerComponent } from './components/draw-opaque-picker/draw-opaque-picker.component';
+import { TextBoxComponent } from './components/text-box/text-box.component';
+import { FontsWindowComponent } from './components/fonts-window/fonts-window.component';
+import { DragDirective } from './directives/drag.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { AppUpdateService } from './services/app-update/app-update.service';
 import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.service';
@@ -58,6 +61,8 @@ import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.serv
     EraserSizePickerComponent,
     BrushShapePickerComponent,
     DrawOpaquePickerComponent,
+    TextBoxComponent,
+    FontsWindowComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module
     DropdownComponent, // TODO: make a separate inputs module
@@ -66,6 +71,7 @@ import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.serv
   imports: [
     BrowserModule,
     FormsModule,
+    DragDirective,
     RouterModule.forRoot([], {}),
     ServiceWorkerModule.register('ngsw-worker.js', {
       enabled: !isDevMode(),

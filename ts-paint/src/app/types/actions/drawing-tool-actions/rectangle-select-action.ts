@@ -1,5 +1,5 @@
 import { DrawingToolAction } from './drawing-tool-action';
-import { getLinePoints, setPixelInOriginalImage, drawRectangle } from '../../../helpers/drawing.helpers';
+import { drawDashedRectangle } from '../../../helpers/drawing.helpers';
 import { Point } from '../../../types/base/point';
 import { Color } from '../../../types/base/color';
 import { TsPaintStoreState } from '../../../services/ts-paint/ts-paint.store.state';
@@ -14,7 +14,7 @@ export class RectangleSelectAction extends DrawingToolAction {
 
   protected draw(points: Point[], color1: Color, color2: Color, image: ImageData, state: TsPaintStoreState) {
     if (this.renderIn === 'preview') {
-      drawRectangle({ start: points[0], end: points[1] }, COLOR_WHITE, image, this.getDashedLineStyle(state));
+      drawDashedRectangle({ start: points[0], end: points[1] }, COLOR_WHITE, image, state.zoom);
     } else if (this.renderIn === 'image') {
       const area: RectangleArea = { start: points[0], end: points[1] };
       fillAreaInOriginalImage(image, state.secondaryColor, area);
@@ -31,19 +31,5 @@ export class RectangleSelectAction extends DrawingToolAction {
     }
 
     return patches;
-  }
-
-  private getDashedLineStyle(
-    state: TsPaintStoreState
-  ): (start: Point, end: Point, color: Color, image: ImageData) => void {
-    return (start: Point, end: Point, color: Color, image: ImageData) => {
-      const dashLength: number = Math.ceil(4 / state.zoom);
-      const pointsToPaint: Point[] = getLinePoints(start, end);
-      pointsToPaint.forEach((point, index) => {
-        if (Math.floor(index / dashLength) % 2 === 0) {
-          setPixelInOriginalImage(point, color, image);
-        }
-      });
-    };
   }
 }

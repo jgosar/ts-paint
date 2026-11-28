@@ -1,13 +1,19 @@
+import { DragDirective } from '../../directives/drag.directive';
 import { ComponentRef, createComponent, EnvironmentInjector } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ModalWindowComponent } from './modal-window.component';
+import { usePageZoom } from '../../../testing/page-zoom.helpers';
+import { Point } from '../../types/base/point';
 
 describe('ModalWindowComponent', () => {
   let fixture: ComponentFixture<ModalWindowComponent>;
   let component: ModalWindowComponent;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({ declarations: [ModalWindowComponent] }).compileComponents();
+    await TestBed.configureTestingModule({
+      declarations: [ModalWindowComponent],
+      imports: [DragDirective],
+    }).compileComponents();
     fixture = TestBed.createComponent(ModalWindowComponent);
     component = fixture.componentInstance;
   });
@@ -20,6 +26,69 @@ describe('ModalWindowComponent', () => {
     fixture.componentRef.setInput('title', 'Attributes');
     fixture.detectChanges();
     expect(query('.tsp-modal-window__title-bar .tsp-can-grow').textContent.trim()).toBe('Attributes');
+  });
+
+  describe('floating', () => {
+    usePageZoom();
+    function pointer(type: string, x: number, y: number): PointerEvent {
+      return new PointerEvent(type, { clientX: x, clientY: y, button: 0, pointerId: 1, bubbles: true });
+    }
+
+    beforeEach(() => {
+      // The test host is a div, which :host(tsp-modal-window) does not match: cover the page like the real element
+      fixture.nativeElement.style.cssText = 'position: fixed; inset: 0';
+      fixture.componentRef.setInput('floating', true);
+      fixture.componentRef.setInput('closable', true);
+      fixture.componentRef.setInput('position', { w: 30, h: 20 });
+      fixture.detectChanges();
+    });
+
+    it('sits at its position and lets clicks through around it', () => {
+      const container: HTMLElement = query('.tsp-modal-window__container');
+      expect(fixture.nativeElement.classList).toContain('tsp-modal-window--floating');
+      expect([container.style.left, container.style.top]).toEqual(['30px', '20px']);
+      expect(getComputedStyle(fixture.nativeElement).pointerEvents).toBe('none');
+      expect(getComputedStyle(container).pointerEvents).toBe('auto');
+    });
+
+    it('is dragged by its title bar, keeping the title bar on the page', () => {
+      const positions: Point[] = [];
+      component.positionChange.subscribe((position) => positions.push(position));
+      const titleBar: HTMLElement = query('.tsp-modal-window__title-bar');
+
+      titleBar.dispatchEvent(pointer('pointerdown', 40, 25));
+      titleBar.dispatchEvent(pointer('pointermove', 52, 30));
+      titleBar.dispatchEvent(pointer('pointermove', 40, -100));
+      titleBar.dispatchEvent(pointer('pointermove', 10000, 10000));
+
+      const page: HTMLElement = fixture.nativeElement;
+      expect(positions).toEqual([
+        { w: 42, h: 25 },
+        { w: 30, h: 0 },
+        { w: page.clientWidth - 40, h: page.clientHeight - 18 },
+      ]);
+    });
+
+    it('can still be closed with its close button', () => {
+      let closed: number = 0;
+      component.closeClicked.subscribe(() => closed++);
+      const close: HTMLElement = query('.tsp-modal-window__close-button');
+      close.dispatchEvent(pointer('pointerdown', 40, 25));
+      close.click();
+      expect(closed).toBe(1);
+    });
+
+    it('cannot be dragged when it is not floating', () => {
+      fixture.componentRef.setInput('floating', false);
+      fixture.detectChanges();
+      const positions: Point[] = [];
+      component.positionChange.subscribe((position) => positions.push(position));
+      const titleBar: HTMLElement = query('.tsp-modal-window__title-bar');
+      titleBar.dispatchEvent(pointer('pointerdown', 40, 25));
+      titleBar.dispatchEvent(pointer('pointermove', 52, 30));
+      expect(positions).toEqual([]);
+      expect(query('.tsp-modal-window__container').style.left).toBe('');
+    });
   });
 
   it('is not fullscreen, closable or iconed by default', () => {

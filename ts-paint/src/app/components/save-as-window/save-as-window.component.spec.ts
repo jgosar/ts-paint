@@ -1,3 +1,4 @@
+import { DragDirective } from '../../directives/drag.directive';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SaveAsWindowComponent } from './save-as-window.component';
 import { ModalWindowComponent } from '../modal-window/modal-window.component';
@@ -15,6 +16,7 @@ describe('SaveAsWindowComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [SaveAsWindowComponent, ModalWindowComponent, TextInputComponent, DropdownComponent],
+      imports: [DragDirective],
     }).compileComponents();
     fixture = TestBed.createComponent(SaveAsWindowComponent);
     component = fixture.componentInstance;

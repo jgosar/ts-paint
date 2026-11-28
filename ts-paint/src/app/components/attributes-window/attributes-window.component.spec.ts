@@ -1,3 +1,4 @@
+import { DragDirective } from '../../directives/drag.directive';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { AttributesWindowComponent } from './attributes-window.component';
@@ -18,7 +19,7 @@ describe('AttributesWindowComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [AttributesWindowComponent, ModalWindowComponent, IntegerInputComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, DragDirective],
     }).compileComponents();
     fixture = TestBed.createComponent(AttributesWindowComponent);
     component = fixture.componentInstance;
