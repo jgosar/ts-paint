@@ -99,7 +99,13 @@ describe('MENU_STRUCTURE', () => {
 });
 
 describe('getMenuStructure', () => {
-  const FLAGS: MenuFlags = { drawOpaque: true, textBoxOpen: false, textToolbarVisible: true };
+  const FLAGS: MenuFlags = {
+    drawOpaque: true,
+    textBoxOpen: false,
+    textToolbarVisible: true,
+    gridAvailable: false,
+    showGrid: false,
+  };
 
   function item(menu: MenuItem[], name: string): MenuItem {
     return flattenMenu(menu).find((menuItem) => menuItem.name === name);
@@ -128,6 +134,27 @@ describe('getMenuStructure', () => {
     );
     expect(open.disabled).toBe(false);
     expect(open.checked).toBe(false);
+  });
+
+  it('enables View > Zoom > Show Grid only while the grid is available, and checks it while the grid is shown', () => {
+    expect(item(getMenuStructure(FLAGS), 'Zoom').disabled, 'the submenu itself always opens').toBeFalsy();
+    expect(item(getMenuStructure(FLAGS), 'Show Grid')).toEqual({
+      name: 'Show Grid',
+      hotkeys: ['Ctrl', 'G'],
+      action: MenuActionType.TOGGLE_SHOW_GRID,
+      disabled: true,
+      checked: false,
+    });
+    const shown: MenuItem = item(getMenuStructure({ ...FLAGS, gridAvailable: true, showGrid: true }), 'Show Grid');
+    expect(shown.disabled).toBe(false);
+    expect(shown.checked).toBe(true);
+    const available: MenuItem = item(getMenuStructure({ ...FLAGS, gridAvailable: true }), 'Show Grid');
+    expect(available.disabled).toBe(false);
+    expect(available.checked).toBe(false);
+  });
+
+  it('shows no check mark on Show Grid while the zoom is too low for the grid, even if it is switched on', () => {
+    expect(item(getMenuStructure({ ...FLAGS, showGrid: true }), 'Show Grid').checked).toBe(false);
   });
 
   it('keeps the items that do not depend on a flag', () => {

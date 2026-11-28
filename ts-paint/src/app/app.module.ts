@@ -31,6 +31,7 @@ import { EraserSizePickerComponent } from './components/eraser-size-picker/erase
 import { BrushShapePickerComponent } from './components/brush-shape-picker/brush-shape-picker.component';
 import { DrawOpaquePickerComponent } from './components/draw-opaque-picker/draw-opaque-picker.component';
 import { TextBoxComponent } from './components/text-box/text-box.component';
+import { PixelGridComponent } from './components/pixel-grid/pixel-grid.component';
 import { FontsWindowComponent } from './components/fonts-window/fonts-window.component';
 import { DragDirective } from './directives/drag.directive';
 import { ServiceWorkerModule } from '@angular/service-worker';
@@ -62,6 +63,7 @@ import { PixelScalingService } from './services/pixel-scaling/pixel-scaling.serv
     BrushShapePickerComponent,
     DrawOpaquePickerComponent,
     TextBoxComponent,
+    PixelGridComponent,
     FontsWindowComponent,
     IntegerInputComponent, // TODO: make a separate inputs module
     RadioButtonGroupComponent, // TODO: make a separate inputs module

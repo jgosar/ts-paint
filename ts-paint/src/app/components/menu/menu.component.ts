@@ -52,8 +52,9 @@ export class MenuComponent implements OnChanges {
     this._element.nativeElement.focus();
   }
 
+  /** A click on an item that holds a submenu selects nothing; that includes the clicks bubbling up from its submenu */
   selectItem(item: MenuItem) {
-    if (!item.disabled) {
+    if (!item.disabled && !item.menus) {
       this.itemSelected.emit(item);
     }
   }

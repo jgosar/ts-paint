@@ -67,3 +67,42 @@ export async function expectPixels(page: Page, color: Rgb, points: [number, numb
     await expectPixel(page, w, h, color);
   }
 }
+
+/**
+ * What the screen really shows in a rectangle of the page (the image with everything drawn over it), one character
+ * per pixel: the key of that pixel's color in `legend`, or '?' for any other color. Only meaningful at device scale 1.
+ */
+export async function screenMask(
+  page: Page,
+  clip: { x: number; y: number; width: number; height: number },
+  legend: { [character: string]: Rgb }
+): Promise<string[]> {
+  const screenshot: Buffer = await page.screenshot({ clip });
+  return page.evaluate(
+    async ({ base64, colors }) => {
+      const picture: HTMLImageElement = new Image();
+      picture.src = 'data:image/png;base64,' + base64;
+      await picture.decode();
+      const canvas: HTMLCanvasElement = document.createElement('canvas');
+      canvas.width = picture.width;
+      canvas.height = picture.height;
+      const context: CanvasRenderingContext2D = canvas.getContext('2d');
+      context.drawImage(picture, 0, 0);
+      const data: Uint8ClampedArray = context.getImageData(0, 0, canvas.width, canvas.height).data;
+      const rows: string[] = [];
+      for (let h = 0; h < canvas.height; h++) {
+        let row: string = '';
+        for (let w = 0; w < canvas.width; w++) {
+          const i: number = 4 * (w + canvas.width * h);
+          const match = Object.entries(colors).find(
+            ([, c]) => data[i] === c.r && data[i + 1] === c.g && data[i + 2] === c.b
+          );
+          row += match ? match[0] : '?';
+        }
+        rows.push(row);
+      }
+      return rows;
+    },
+    { base64: screenshot.toString('base64'), colors: legend }
+  );
+}

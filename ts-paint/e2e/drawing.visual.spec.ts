@@ -82,4 +82,28 @@ test.describe('drawing', () => {
     await expect(paint.canvasTracker.locator('xpath=..')).toHaveScreenshot('drawing-zoomed.png');
     void page;
   });
+
+  test('the pixel grid at 8x and 16x zoom', async () => {
+    await paint.menu('Image', 'Attributes');
+    const window = paint.window('tsp-attributes-window');
+    await paint.setIntegerInput(window, 'Width', '16');
+    await paint.setIntegerInput(window, 'Height', '10');
+    await paint.clickButton(window, 'OK');
+    await paint.drag([
+      [2, 2],
+      [13, 7],
+    ]);
+    await paint.selectTool(DrawingToolType.magnifier);
+    for (let i = 0; i < 3; i++) {
+      await paint.clickCanvas(0, 0);
+    }
+    await paint.hotkey('Control+g');
+    await paint.selectTool(DrawingToolType.pencil);
+    await expect(paint.canvasTracker.locator('xpath=..')).toHaveScreenshot('drawing-grid-8x.png');
+
+    await paint.selectTool(DrawingToolType.magnifier);
+    await paint.clickCanvas(0, 0);
+    await paint.selectTool(DrawingToolType.pencil);
+    await expect(paint.canvasTracker.locator('xpath=..')).toHaveScreenshot('drawing-grid-16x.png');
+  });
 });

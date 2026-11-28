@@ -8,7 +8,7 @@ Playwright tests that run against the production build (`npm run build`, served 
 playwright.config.ts        two projects, see below; starts the web server itself
 e2e/
   pages/paint.page.ts       PaintPage page object: toolbox, palette, canvas drags, menus, dialogs
-  helpers/pixels.ts         read the image canvas back (imagePixel, imageMask, expectPixel)
+  helpers/pixels.ts         read the image canvas back (imagePixel, imageMask, expectPixel) or the screen (screenMask)
   helpers/files.ts          fakes for the File System Access API and window.launchQueue, paste/drop helpers
   helpers/touch.ts          real touch input (taps, drags, pans, pinches) through the DevTools protocol
   fixtures/png.ts           tiny PNG encoder (no dependencies) for generated test images
