@@ -1,3 +1,13 @@
+<ng-template #itemContent let-entry>
+  @if (entry.item.checked) {
+    <div class="tsp-menu__check"></div>
+  }
+  <div>{{ entry.item.name }}</div>
+  @if (entry.hotkeyLabel) {
+    <div class="tsp-menu__menu-item-hotkeys">{{ entry.hotkeyLabel }}</div>
+  }
+</ng-template>
+
 @for (menu1 of entries; track menu1.item) {
   <div class="tsp-menu__menu-level-1" (click)="focusMenu()">
     {{ menu1.item.name }}
@@ -11,14 +21,32 @@
                 [class.tsp-menu__menu-level-2--disabled]="menu2.item.disabled"
                 [attr.role]="menu2.item.checked === undefined ? 'menuitem' : 'menuitemcheckbox'"
                 [attr.aria-checked]="menu2.item.checked"
+                [attr.aria-haspopup]="menu2.menus ? 'true' : null"
                 (click)="selectItem(menu2.item)"
                 >
-                @if (menu2.item.checked) {
-                  <div class="tsp-menu__check"></div>
-                }
-                <div>{{ menu2.item.name }}</div>
-                @if (menu2.hotkeyLabel) {
-                  <div class="tsp-menu__menu-item-hotkeys">{{ menu2.hotkeyLabel }}</div>
+                <ng-container *ngTemplateOutlet="itemContent; context: { $implicit: menu2 }"></ng-container>
+                @if (menu2.menus) {
+                  <div class="tsp-menu__arrow"></div>
+                  <div class="tsp-raised-item-container tsp-menu__menu-level-3-container">
+                    <div class="tsp-raised-item">
+                      @for (menu3 of menu2.menus; track menu3.item) {
+                        @if (menu3.item.name) {
+                          <div
+                            class="tsp-menu__menu-level-3"
+                            [class.tsp-menu__menu-level-3--disabled]="menu3.item.disabled"
+                            [attr.role]="menu3.item.checked === undefined ? 'menuitem' : 'menuitemcheckbox'"
+                            [attr.aria-checked]="menu3.item.checked"
+                            (click)="selectItem(menu3.item)"
+                            >
+                            <ng-container *ngTemplateOutlet="itemContent; context: { $implicit: menu3 }"></ng-container>
+                          </div>
+                        }
+                        @if (!menu3.item.name) {
+                          <hr />
+                        }
+                      }
+                    </div>
+                  </div>
                 }
               </div>
             }

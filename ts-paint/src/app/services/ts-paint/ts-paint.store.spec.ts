@@ -1090,6 +1090,71 @@ describe('TsPaintStore', () => {
     });
   });
 
+  describe('Show Grid', () => {
+    function showGridItem(store: TsPaintStore): MenuItem {
+      return store.state.menuStructure
+        .find((menu) => menu.name === 'View')
+        .menus.find((item) => item.name === 'Zoom')
+        .menus.find((item) => item.name === 'Show Grid');
+    }
+
+    it('is off at first, and not offered at 100%', () => {
+      const store: TsPaintStore = createStore();
+      expect(store.gridVisible).toBe(false);
+      expect(showGridItem(store)).toEqual(expect.objectContaining({ disabled: true, checked: false }));
+    });
+
+    it('TOGGLE_SHOW_GRID shows and hides the grid from 400% up and keeps the menu check mark in line', () => {
+      const store: TsPaintStore = createStore({ zoom: 4 });
+      expect(showGridItem(store)).toEqual(expect.objectContaining({ disabled: false, checked: false }));
+
+      store.executeMenuAction(MenuActionType.TOGGLE_SHOW_GRID);
+      expect(store.gridVisible).toBe(true);
+      expect(showGridItem(store).checked).toBe(true);
+
+      store.executeMenuAction(MenuActionType.TOGGLE_SHOW_GRID);
+      expect(store.gridVisible).toBe(false);
+      expect(showGridItem(store).checked).toBe(false);
+    });
+
+    it('Ctrl+G toggles the grid', () => {
+      const store: TsPaintStore = createStore({ zoom: 8 });
+      expect(store.executeHotkeyAction(keyEvent({ key: 'g', ctrlKey: true }))).toBe(true);
+      expect(store.gridVisible).toBe(true);
+    });
+
+    it('does nothing below 400%, but still keeps Ctrl+G away from the browser', () => {
+      const store: TsPaintStore = createStore({ zoom: 2 });
+      expect(store.executeHotkeyAction(keyEvent({ key: 'g', ctrlKey: true }))).toBe(true);
+      store.executeMenuAction(MenuActionType.TOGGLE_SHOW_GRID);
+      expect(store.state.showGrid).toBe(false);
+      expect(store.gridVisible).toBe(false);
+    });
+
+    it('hides the grid while zoomed out below 400% and brings it back when zooming in again', () => {
+      const store: TsPaintStore = createStore({ zoom: 4 });
+      store.executeMenuAction(MenuActionType.TOGGLE_SHOW_GRID);
+
+      store.pinchZoom({ anchor: { w: 10, h: 10 }, centre: { w: 10, h: 10 }, zoomIn: false });
+      expect(store.state.zoom).toBe(2);
+      expect(store.gridVisible).toBe(false);
+      expect(showGridItem(store)).toEqual(expect.objectContaining({ disabled: true, checked: false }));
+
+      store.pinchZoom({ anchor: { w: 10, h: 10 }, centre: { w: 10, h: 10 }, zoomIn: true });
+      store.pinchZoom({ anchor: { w: 10, h: 10 }, centre: { w: 10, h: 10 }, zoomIn: true });
+      expect(store.state.zoom).toBe(8);
+      expect(store.gridVisible).toBe(true);
+      expect(showGridItem(store)).toEqual(expect.objectContaining({ disabled: false, checked: true }));
+    });
+
+    it('is not an undo step', () => {
+      const store: TsPaintStore = createStore({ zoom: 4 });
+      const actionCount: number = store.state.actions.length;
+      store.executeMenuAction(MenuActionType.TOGGLE_SHOW_GRID);
+      expect(store.state.actions.length).toBe(actionCount);
+    });
+  });
+
   describe('executeHotkeyAction', () => {
     function storeWithStroke(): TsPaintStore {
       const store: TsPaintStore = createStore();
@@ -1302,6 +1367,9 @@ describe('TsPaintStore', () => {
 
       withBox.executeMenuAction(MenuActionType.TOGGLE_DRAW_OPAQUE);
       expect(withBox.state.textBox, 'Draw Opaque keeps the box open too').toBeDefined();
+
+      withBox.executeMenuAction(MenuActionType.TOGGLE_SHOW_GRID);
+      expect(withBox.state.textBox, 'and so does Show Grid').toBeDefined();
     });
 
     it('remembers where the Fonts window was moved to', () => {

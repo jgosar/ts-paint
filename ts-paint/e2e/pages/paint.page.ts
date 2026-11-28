@@ -18,6 +18,8 @@ export class PaintPage {
   readonly textArea: Locator;
   /** The Fonts toolbar of the text tool */
   readonly fontsWindow: Locator;
+  /** The grid of View > Zoom > Show Grid, drawn over the image */
+  readonly pixelGrid: Locator;
 
   constructor(readonly page: Page) {
     this.toolbox = page.locator('tsp-toolbox');
@@ -32,6 +34,7 @@ export class PaintPage {
     this.textBox = page.locator('tsp-text-box .tsp-text-box');
     this.textArea = page.locator('tsp-text-box textarea');
     this.fontsWindow = this.window('tsp-fonts-window');
+    this.pixelGrid = page.locator('tsp-pixel-grid');
   }
 
   async goto(query: string = ''): Promise<void> {
@@ -124,6 +127,21 @@ export class PaintPage {
     const escaped: string = itemName.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
     const exactName: RegExp = new RegExp(`^\\s*${escaped}(\\.\\.\\.)?\\s*$`);
     return menu.locator('.tsp-menu__menu-level-2').filter({ has: this.page.locator('div', { hasText: exactName }) });
+  }
+
+  /** Opens the submenu of a second-level item (View > Zoom) by hovering it, and returns that item */
+  async openSubmenu(menu: Locator, itemName: string): Promise<Locator> {
+    const parent: Locator = this.menuItem(menu, itemName);
+    await parent.hover();
+    await expect(parent.locator('.tsp-menu__menu-level-3-container')).toBeVisible();
+    return parent;
+  }
+
+  /** An item of an open submenu by its exact name, like menuItem */
+  submenuItem(parent: Locator, itemName: string): Locator {
+    const escaped: string = itemName.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+    const exactName: RegExp = new RegExp(`^\\s*${escaped}(\\.\\.\\.)?\\s*$`);
+    return parent.locator('.tsp-menu__menu-level-3').filter({ has: this.page.locator('div', { hasText: exactName }) });
   }
 
   async menu(menuName: string, itemName: string): Promise<void> {

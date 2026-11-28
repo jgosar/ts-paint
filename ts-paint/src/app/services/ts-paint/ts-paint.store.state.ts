@@ -51,6 +51,8 @@ export class TsPaintStoreState {
   textToolbarVisible: boolean = true;
   /** Where the Fonts window is, in css px from the top left of the page */
   textToolbarPosition: Point = { w: 88, h: 36 };
+  /** View > Zoom > Show Grid: whether the pixel grid shows once the zoom is high enough for it */
+  showGrid: boolean = false;
   /** The fonts the Fonts window offers; found when the first text box opens */
   availableFonts: string[] = [];
   /** True once every installed font is listed (Local Font Access) */
@@ -59,6 +61,8 @@ export class TsPaintStoreState {
     drawOpaque: DEFAULT_DRAWING_TOOL_OPTIONS[DrawingToolType.rectangleSelect].drawOpaque,
     textBoxOpen: false,
     textToolbarVisible: true,
+    gridAvailable: false,
+    showGrid: false,
   });
   hiddenHotkeyShortcuts: MenuItem[] = NON_MENU_SHORTCUTS;
 }

@@ -60,7 +60,6 @@ To install the extension, follow these steps:
 - Reduce scrollbar lengths after Reducing size of image
 
 ### Immediate TODO list
-- View/Zoom/Show Grid option
 - Modernize Angular code: signals, standalone components
 - Options/Edit Colors window, include some extra modern features, like HSL colors and hex color codes
 

@@ -42,6 +42,7 @@ import { RotateImageAction } from 'src/app/types/actions/rotate-image-action';
 import { TspMouseEvent } from 'src/app/types/mouse-tracker/tsp-mouse-event';
 import { TspPinchEvent } from 'src/app/types/mouse-tracker/tsp-pinch-event';
 import { getScrollPositionAnchoredOn } from 'src/app/helpers/zoom.helpers';
+import { isGridAvailable } from 'src/app/helpers/grid.helpers';
 import { CropAction } from 'src/app/types/actions/crop-action';
 import { StretchSkewParams } from 'src/app/types/action-params/stretch-skew-params';
 import { StretchImageAction } from 'src/app/types/actions/stretch-image-action';
@@ -69,6 +70,8 @@ function getMenuFlags(state: TsPaintStoreState): MenuFlags {
     drawOpaque: state.drawingToolOptions[DrawingToolType.rectangleSelect].drawOpaque,
     textBoxOpen: state.textBox !== undefined,
     textToolbarVisible: state.textToolbarVisible,
+    gridAvailable: isGridAvailable(state.zoom),
+    showGrid: state.showGrid,
   };
 }
 
@@ -76,6 +79,7 @@ function getMenuFlags(state: TsPaintStoreState): MenuFlags {
 const MENU_ACTIONS_KEEPING_THE_TEXT_BOX: MenuActionType[] = [
   MenuActionType.TOGGLE_DRAW_OPAQUE,
   MenuActionType.TOGGLE_TEXT_TOOLBAR,
+  MenuActionType.TOGGLE_SHOW_GRID,
 ];
 
 function menuFlagsEqual(a: MenuFlags, b: MenuFlags): boolean {
@@ -396,6 +400,20 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
     this.setState({ ...this.state, zoom, scrollPosition });
   }
 
+  ////////////////////////////// Grid //////////////////////////////
+
+  /** The grid shows while it is switched on and the zoom is high enough for it */
+  get gridVisible(): boolean {
+    return this.state.showGrid && isGridAvailable(this.state.zoom);
+  }
+
+  /** Ctrl+G gets here at any zoom, also while the menu item is disabled */
+  private toggleShowGrid() {
+    if (isGridAvailable(this.state.zoom)) {
+      this.patchState(!this.state.showGrid, 'showGrid');
+    }
+  }
+
   ////////////////////////////// Menu actions //////////////////////////////
 
   executeMenuAction(menuAction: MenuActionType) {
@@ -449,6 +467,8 @@ export class TsPaintStore extends Store<TsPaintStoreState> {
         return this.toggleDrawOpaque.bind(this);
       case MenuActionType.TOGGLE_TEXT_TOOLBAR:
         return this.toggleTextToolbar.bind(this);
+      case MenuActionType.TOGGLE_SHOW_GRID:
+        return this.toggleShowGrid.bind(this);
     }
 
     assertUnreachable(menuAction);

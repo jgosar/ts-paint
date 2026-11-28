@@ -105,6 +105,76 @@ describe('MenuComponent', () => {
     expect(items[0].children[1].textContent.trim()).toBe('On');
   });
 
+  describe('with a submenu', () => {
+    const gridItem: MenuItem = { name: 'Show Grid', hotkeys: ['Ctrl', 'G'], checked: true, action: MenuActionType.CROP };
+    const thumbnailItem: MenuItem = { name: 'Show Thumbnail', disabled: true, action: MenuActionType.CUT };
+    const zoomItem: MenuItem = { name: 'Zoom', menus: [{ name: 'Custom...', disabled: true }, {}, gridItem, thumbnailItem] };
+
+    beforeEach(() => {
+      fixture.componentRef.setInput('menuStructure', [{ name: 'View', menus: [{ name: 'Status Bar' }, zoomItem] }]);
+      fixture.detectChanges();
+    });
+
+    function level3(item: HTMLElement): HTMLElement[] {
+      return Array.from(item.querySelectorAll('.tsp-menu__menu-level-3'));
+    }
+
+    function zoom(): HTMLElement {
+      return level2(level1()[0])[1];
+    }
+
+    it('renders the submenu inside its second-level item, with an arrow pointing at it', () => {
+      expect(level2(level1()[0]).map(textOf)).toEqual(['Status Bar', 'Zoom']);
+      expect(level3(zoom()).map(textOf)).toEqual(['Custom...', '', 'Show Thumbnail']);
+      expect(zoom().querySelector('.tsp-menu__menu-level-3-container hr')).not.toBeNull();
+      expect(zoom().querySelector(':scope > .tsp-menu__arrow')).not.toBeNull();
+      expect(zoom().getAttribute('aria-haspopup')).toBe('true');
+    });
+
+    it('renders no arrow or submenu for an item without sub-menus', () => {
+      const statusBar: HTMLElement = level2(level1()[0])[0];
+      expect(statusBar.querySelector('.tsp-menu__arrow')).toBeNull();
+      expect(statusBar.querySelector('.tsp-menu__menu-level-3-container')).toBeNull();
+      expect(statusBar.getAttribute('aria-haspopup')).toBeNull();
+    });
+
+    it('shows check marks, hotkeys and the disabled state of submenu items', () => {
+      const [custom, grid, thumbnail] = level3(zoom());
+      expect(grid.querySelector('.tsp-menu__check')).not.toBeNull();
+      expect(grid.getAttribute('aria-checked')).toBe('true');
+      expect(grid.querySelector('.tsp-menu__menu-item-hotkeys').textContent.trim()).toBe('Ctrl+G');
+      expect(custom.querySelector('.tsp-menu__check')).toBeNull();
+      expect(
+        [custom, grid, thumbnail].map((item) => item.classList.contains('tsp-menu__menu-level-3--disabled'))
+      ).toEqual([true, false, true]);
+    });
+
+    it('emits a clicked submenu item, and only that', () => {
+      const emitted: MenuItem[] = [];
+      component.itemSelected.subscribe((item) => emitted.push(item));
+
+      level3(zoom())[1].click();
+
+      expect(emitted).toEqual([gridItem]);
+    });
+
+    it('does not emit when a disabled submenu item or the item holding the submenu is clicked', () => {
+      const emitted: MenuItem[] = [];
+      component.itemSelected.subscribe((item) => emitted.push(item));
+
+      level3(zoom())[2].click();
+      zoom().click();
+
+      expect(emitted).toEqual([]);
+    });
+
+    it('opens the submenu next to the hovered item, level with it, while the menu has focus', () => {
+      const container: HTMLElement = zoom().querySelector('.tsp-menu__menu-level-3-container');
+      expect(getComputedStyle(container).display).toBe('none');
+      expect(getComputedStyle(container).position).toBe('absolute');
+    });
+  });
+
   it('makes the host focusable with tabindex -1', () => {
     expect(fixture.nativeElement.getAttribute('tabindex')).toBe('-1');
   });

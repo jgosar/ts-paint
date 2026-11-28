@@ -43,6 +43,9 @@
               [offset]="store.state.selectionOffset"
               [transparentColor]="store.selectionTransparentColor"
             ></tsp-zoomable-canvas>
+            @if (store.gridVisible) {
+              <tsp-pixel-grid [zoom]="store.state.zoom" [image]="store.state.image"></tsp-pixel-grid>
+            }
             <tsp-selection-frame
               [ngStyle]="{ display: store.state.selectionImage ? 'block' : 'none' }"
               [zoom]="store.state.zoom"

@@ -161,7 +161,6 @@ export const MENU_STRUCTURE: MenuItem[] = [
       {},
       {
         name: 'Zoom',
-        disabled: true,
         menus: [
           {
             name: 'Normal Size',
@@ -177,8 +176,10 @@ export const MENU_STRUCTURE: MenuItem[] = [
           },
           {},
           {
+            // Enabled and checked by getMenuStructure once the zoom is high enough for the grid
             name: 'Show Grid',
-            disabled: true,
+            hotkeys: ['Ctrl', 'G'],
+            action: MenuActionType.TOGGLE_SHOW_GRID,
           },
           {
             name: 'Show Thumbnail',
@@ -270,6 +271,9 @@ export interface MenuFlags {
   drawOpaque: boolean;
   textBoxOpen: boolean;
   textToolbarVisible: boolean;
+  /** The zoom is high enough for the grid */
+  gridAvailable: boolean;
+  showGrid: boolean;
 }
 
 /** The menu with the check marks and enabled states of the given flags applied. Items whose state does not depend on
@@ -285,6 +289,9 @@ function applyMenuFlags(menu: MenuItem[], flags: MenuFlags): MenuItem[] {
     }
     if (item.action === MenuActionType.TOGGLE_TEXT_TOOLBAR) {
       return { ...item, disabled: !flags.textBoxOpen, checked: flags.textToolbarVisible };
+    }
+    if (item.action === MenuActionType.TOGGLE_SHOW_GRID) {
+      return { ...item, disabled: !flags.gridAvailable, checked: flags.gridAvailable && flags.showGrid };
     }
     if (item.menus) {
       const menus: MenuItem[] = applyMenuFlags(item.menus, flags);
