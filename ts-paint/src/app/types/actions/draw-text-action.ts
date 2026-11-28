@@ -3,7 +3,7 @@ import { TsPaintStoreState } from '../../services/ts-paint/ts-paint.store.state'
 import { PartialActionResult } from './partial-action-result';
 import { Point } from '../base/point';
 import { RectangleArea } from '../base/rectangle-area';
-import { blendImagePart, getImagePart } from '../../helpers/image.helpers';
+import { pasteImagePart, getImagePart } from '../../helpers/image.helpers';
 import { PasteImageAction } from './paste-image-action';
 import { MoveSelectionAction } from './move-selection-action';
 import { DeselectSelectionAction } from './deselect-selection-action';
@@ -19,7 +19,7 @@ export class DrawTextAction extends TsPaintAction {
 
   protected addPatchesAndDraw(state: TsPaintStoreState): PartialActionResult {
     return {
-      image: blendImagePart(this.offset, this.textImage, state.image),
+      image: pasteImagePart(this.offset, this.textImage, state.image),
       patches: { textBox: undefined },
     };
   }
